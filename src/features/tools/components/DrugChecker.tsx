@@ -229,7 +229,7 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
 
       {results && results.pairs.length > 0 && (
         <div className="space-y-5" style={{ animation: 'fadeInUp 0.5s cubic-bezier(0.16,1,0.3,1) both' }}>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {selected.map((s, i) => (
               <div
                 key={s.name}

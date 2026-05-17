@@ -173,7 +173,7 @@ export default function DXMCalculator() {
               borderColor: result.plateau ? `${result.plateau.color}15` : 'var(--border)',
             }}
           >
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-5">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 mb-5">
               <div>
                 <div className="text-[10px] font-mono text-[var(--text4)] uppercase tracking-wider mb-1">HBR Equivalent</div>
                 <div className="text-lg font-display font-bold text-white">{result.hbrDosage.toFixed(0)} <span className="text-xs font-mono text-[var(--text3)] font-normal">mg</span></div>
