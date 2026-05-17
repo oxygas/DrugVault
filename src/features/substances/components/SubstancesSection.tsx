@@ -42,6 +42,7 @@ function SubstancesSectionInner({
         </span>
       </div>
       <SubstanceGrid
+        key={filtered.map(s => s.name).join()}
         substances={filtered}
         onSubstanceClick={onSubstanceClick}
       />

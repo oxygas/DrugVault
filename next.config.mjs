@@ -13,7 +13,7 @@ const nextConfig = {
     ],
   },
   turbopack: {
-    root: resolve(__dirname, '..'),
+    root: __dirname,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,

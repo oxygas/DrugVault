@@ -10,23 +10,12 @@ interface SubstanceGridProps {
 }
 
 export default function SubstanceGrid({ substances, onSubstanceClick }: SubstanceGridProps) {
-  const [visible, setVisible] = useState<Set<string>>(new Set())
+  const [visible, setVisible] = useState<Set<string>>(() => new Set(substances.slice(0, 12).map(s => s.name)))
   const observerRef = useRef<IntersectionObserver | null>(null)
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
   useEffect(() => {
-    setVisible(new Set())
-  }, [substances])
-
-  useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect()
-
-    const firstBatch = substances.slice(0, 12).map(s => s.name)
-    setVisible(prev => {
-      const next = new Set(prev)
-      for (const name of firstBatch) next.add(name)
-      return next
-    })
 
     observerRef.current = new IntersectionObserver(
       entries => {

@@ -29,8 +29,6 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = '' }
   }, [onClose])
 
-  useEffect(() => { setTab('overview') }, [substance.name])
-
   const catColor = CATEGORY_COLORS[substance.category]
   const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
 
@@ -251,10 +249,6 @@ function ChemicalStructureImage({
 
   useEffect(() => {
     if (sanityUrl) {
-      setImageUrl(sanityUrl)
-      setSource('sanity')
-      setLoading(false)
-      setError(false)
       fetchedRef.current = substanceName
       return
     }
@@ -310,7 +304,6 @@ function ChemicalStructureImage({
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={imageUrl}
       alt={alt}

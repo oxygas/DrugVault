@@ -17,7 +17,9 @@ async function lookupPubChemCID(name: string): Promise<number | null> {
       PUBCHEM_CID_CACHE.set(name, cid)
       return cid
     }
-  } catch {}
+  } catch (e) {
+    console.error(`[chemical-structure] PubChem lookup failed for ${name}:`, e)
+  }
 
   return null
 }
