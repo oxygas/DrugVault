@@ -44,6 +44,11 @@ export default memo(function RadarChart({ substance, size: propSize }: RadarChar
 
     ctx.clearRect(0, 0, size, size)
 
+    ctx.beginPath()
+    ctx.arc(cx, cy, r + size * 0.07, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(255,255,255,0.02)'
+    ctx.fill()
+
     for (let ring = 1; ring <= 4; ring++) {
       ctx.beginPath()
       for (let i = 0; i <= n; i++) {
