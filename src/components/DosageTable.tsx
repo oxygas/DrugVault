@@ -7,11 +7,21 @@ interface DosageTableProps {
   substance: Substance
 }
 
+function hasMeaningfulDose(roa: Roa): boolean {
+  if (!roa.d) return false
+  return [roa.d.t, roa.d.l, roa.d.c, roa.d.s, roa.d.h].some(v => {
+    const s = String(v).trim()
+    return s !== '?' && s !== '' && s !== '0'
+  })
+}
+
 export default function DosageTable({ substance }: DosageTableProps) {
   const catColor = CATEGORY_COLORS[substance.category]
   const roas = substance.pwRoas
 
-  if (!roas || roas.length === 0) {
+  const meaningfulRoas = roas?.filter(hasMeaningfulDose) ?? []
+
+  if (meaningfulRoas.length === 0) {
     return (
       <div className="w-full">
       <h4 className="text-xs lg:text-sm font-semibold text-[var(--text2)] mb-3 flex items-center gap-2 font-display">
@@ -37,7 +47,7 @@ export default function DosageTable({ substance }: DosageTableProps) {
       Dosage Information
     </h4>
     <div className="space-y-3">
-        {roas.map(roa => (
+        {meaningfulRoas.map(roa => (
           <RoaCard key={roa.n} roa={roa} />
         ))}
       </div>

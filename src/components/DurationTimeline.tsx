@@ -18,7 +18,7 @@ const SEGMENT_COLORS = [
 interface Seg { label: string; minutes: number; color: string; bg: string }
 
 function parseDurationToMinutes(dur: string): number {
-  if (!dur) return 0
+  if (!dur || dur.toLowerCase().startsWith('null')) return 0
   const lower = dur.toLowerCase()
   const hours = lower.match(/(\d+\.?\d*)\s*h/)
   const mins = lower.match(/(\d+)\s*min/)
@@ -29,13 +29,14 @@ function parseDurationToMinutes(dur: string): number {
     const nums = lower.match(/(\d+)/g)
     if (nums) total = parseInt(nums[0]) * 60
   }
-  return total || 120
+  return total || 0
 }
 
 function buildSegments(substance: Substance): Seg[] {
   const roas = substance.pwRoas
   if (!roas || roas.length === 0) {
     const total = parseDurationToMinutes(substance.duration)
+    if (total === 0) return []
     const onset = parseDurationToMinutes(substance.onset) || total * 0.1
     return [
       { label: 'Onset', minutes: onset, color: SEGMENT_COLORS[0].color, bg: SEGMENT_COLORS[0].bg },
@@ -47,21 +48,31 @@ function buildSegments(substance: Substance): Seg[] {
   const roa = roas[0]
   const segs: Seg[] = []
   if (roa.dur) {
-    if (roa.dur.o) segs.push({ label: 'Onset', minutes: parseDurationToMinutes(roa.dur.o), color: SEGMENT_COLORS[0].color, bg: SEGMENT_COLORS[0].bg })
-    if (roa.dur.p) segs.push({ label: 'Peak', minutes: parseDurationToMinutes(roa.dur.p), color: SEGMENT_COLORS[2].color, bg: SEGMENT_COLORS[2].bg })
+    if (roa.dur.o) {
+      const onsetMin = parseDurationToMinutes(roa.dur.o)
+      if (onsetMin > 0) segs.push({ label: 'Onset', minutes: onsetMin, color: SEGMENT_COLORS[0].color, bg: SEGMENT_COLORS[0].bg })
+    }
+    if (roa.dur.p) {
+      const peakMin = parseDurationToMinutes(roa.dur.p)
+      if (peakMin > 0) segs.push({ label: 'Peak', minutes: peakMin, color: SEGMENT_COLORS[2].color, bg: SEGMENT_COLORS[2].bg })
+    }
     if (roa.dur.t) {
-      const offsetAndAfter = parseDurationToMinutes(roa.dur.t) - segs.reduce((s, seg) => s + seg.minutes, 0)
-      if (offsetAndAfter > 0) {
-        segs.push({ label: 'Offset', minutes: offsetAndAfter * 0.6, color: SEGMENT_COLORS[3].color, bg: SEGMENT_COLORS[3].bg })
-        segs.push({ label: 'After', minutes: offsetAndAfter * 0.4, color: SEGMENT_COLORS[4].color, bg: SEGMENT_COLORS[4].bg })
+      const totalMin = parseDurationToMinutes(roa.dur.t)
+      if (totalMin > 0) {
+        const offsetAndAfter = totalMin - segs.reduce((s, seg) => s + seg.minutes, 0)
+        if (offsetAndAfter > 0) {
+          segs.push({ label: 'Offset', minutes: offsetAndAfter * 0.6, color: SEGMENT_COLORS[3].color, bg: SEGMENT_COLORS[3].bg })
+          segs.push({ label: 'After', minutes: offsetAndAfter * 0.4, color: SEGMENT_COLORS[4].color, bg: SEGMENT_COLORS[4].bg })
+        }
       }
     }
   }
-  return segs.length > 0 ? segs : [{ label: 'Total', minutes: 120, color: SEGMENT_COLORS[2].color, bg: SEGMENT_COLORS[2].bg }]
+  return segs
 }
 
 export default function DurationTimeline({ substance }: DurationTimelineProps) {
   const segments = buildSegments(substance)
+  if (segments.length === 0) return null
   const total = segments.reduce((s, seg) => s + seg.minutes, 0)
   const catColor = CATEGORY_COLORS[substance.category]
 

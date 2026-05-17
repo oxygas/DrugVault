@@ -75,15 +75,14 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
         <div className="flex items-center gap-2.5 mb-1">
           <div className="w-1.5 h-8 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
           <div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white">{substance.name}</h2>
             <div className="flex flex-wrap items-center gap-2 mt-1">
+              <span className="text-sm text-[var(--text3)] font-display">{substance.category}</span>
               <span
                 className="px-3 py-0.5 rounded-full text-xs font-semibold uppercase font-mono"
                 style={{ background: `${harmColor}15`, color: harmColor, border: `1px solid ${harmColor}20` }}
               >
                 {substance.harmLevel}
               </span>
-              <span className="text-sm text-[var(--text3)] font-mono">{substance.onset} onset · {substance.duration}</span>
               <span className="text-sm text-[var(--text4)] font-mono">Harm: {substance.harmScore}/100 · Addiction: {substance.addictionScore}/100</span>
             </div>
           </div>
