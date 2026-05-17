@@ -28,10 +28,14 @@ export default withSentryConfig(nextConfig, {
   org: "drugvault",
   project: "drugvault",
   authToken: process.env.SENTRY_AUTH_TOKEN,
-  silent: !process.env.CI,
+  silent: true,
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",
   hideSourceMaps: true,
-  disableLogger: true,
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
   automaticVercelPublish: true,
 })
