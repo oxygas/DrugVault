@@ -618,6 +618,7 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
   max-width: 360px;
   width: 100%;
   overflow: hidden;
+  clip-path: inset(0 round var(--radius-xl));
 }
 @media (pointer: coarse) {
   .substance-card {

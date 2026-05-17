@@ -76,8 +76,6 @@ export default function SubstanceGrid({ substances, onSubstanceClick }: Substanc
             }`}
             style={{
               transitionDelay: `${delay}ms`,
-              contentVisibility: 'auto',
-              containIntrinsicSize: '0 300px',
             }}
           >
             <SubstanceCard substance={substance} onClick={onSubstanceClick} />
