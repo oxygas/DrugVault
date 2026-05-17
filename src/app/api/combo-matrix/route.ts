@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { getComboMatrix, getCategoryStats } from '@/lib/data'
 
@@ -6,8 +7,13 @@ const CACHE_HEADERS = {
 }
 
 export async function GET() {
-  return NextResponse.json(
-    { matrix: getComboMatrix(), categories: getCategoryStats() },
-    { headers: CACHE_HEADERS }
-  )
+  try {
+    return NextResponse.json(
+      { matrix: getComboMatrix(), categories: getCategoryStats() },
+      { headers: CACHE_HEADERS }
+    )
+  } catch (err) {
+    Sentry.captureException(err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }

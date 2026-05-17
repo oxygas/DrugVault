@@ -51,7 +51,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
               </div>
             </div>
             <span className="font-display font-bold text-lg tracking-tight hidden sm:inline">
-              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">dex</span>
+              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Dex</span>
             </span>
           </Link>
           <div className="h-6 w-px bg-[var(--border)] flex-shrink-0" />

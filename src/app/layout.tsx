@@ -26,8 +26,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://tripdex.vercel.app'),
   title: {
-    default: 'Tripdex — Evidence-Based Harm Reduction Database',
-    template: '%s | Tripdex Harm Reduction',
+    default: 'TripDex — Evidence-Based Harm Reduction Database',
+    template: '%s | TripDex Harm Reduction',
   },
   description: 'Comprehensive harm reduction resource with 540+ substances. Check drug interactions, view combination risk matrix, dosage guides, and evidence-based safety information.',
   keywords: [
@@ -44,9 +44,9 @@ export const metadata: Metadata = {
     'harm reduction database',
     'interaction checker',
   ],
-  authors: [{ name: 'Tripdex' }],
-  creator: 'Tripdex',
-  publisher: 'Tripdex',
+  authors: [{ name: 'TripDex' }],
+  creator: 'TripDex',
+  publisher: 'TripDex',
   robots: {
     index: true,
     follow: true,
@@ -62,15 +62,15 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://tripdex.vercel.app',
-    siteName: 'Tripdex',
-    title: 'Tripdex — Evidence-Based Harm Reduction Database',
+    siteName: 'TripDex',
+    title: 'TripDex — Evidence-Based Harm Reduction Database',
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Tripdex — Evidence-Based Harm Reduction',
+        alt: 'TripDex — Evidence-Based Harm Reduction',
       },
     ],
   },

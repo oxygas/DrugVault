@@ -127,7 +127,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
               </div>
             </div>
             <span className="font-display font-bold text-base sm:text-lg tracking-tight">
-              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">dex</span>
+              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Dex</span>
             </span>
           </a>
           <div className="flex gap-1 p-1 rounded-full bg-[rgba(255,255,255,0.03)] border border-[var(--border)]">
@@ -194,7 +194,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
             </div>
           </div>
           <span className="font-display font-semibold text-sm text-[var(--text2)]">
-            Trip<span className="text-[var(--accent2)]">dex</span>
+            Trip<span className="text-[var(--accent2)]">Dex</span>
           </span>
         </div>
         <p className="text-xs text-[var(--text3)] max-w-md mx-auto leading-relaxed">

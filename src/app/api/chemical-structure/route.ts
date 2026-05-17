@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 
 const PUBCHEM_CID_CACHE = new Map<string, number>()
@@ -60,6 +61,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ error: 'No structure found', source: null, imageUrl: null }, { status: 404 })
   } catch (err) {
+    Sentry.captureException(err)
     console.error('[chemical-structure] Unexpected error:', err)
     return NextResponse.json({ error: 'Internal server error', source: null, imageUrl: null }, { status: 500 })
   }
