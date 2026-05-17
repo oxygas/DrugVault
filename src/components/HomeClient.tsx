@@ -22,15 +22,18 @@ interface HomeClientProps {
   categories: CategoryMeta[]
   comboMatrix: Record<string, ComboLevel>
   substanceCombos?: SubstanceCombo[]
+  isMobileSubdomain?: boolean
 }
 
-export default function HomeClient({ substances, stats, categories, comboMatrix, substanceCombos }: HomeClientProps) {
+export default function HomeClient({ substances, stats, categories, comboMatrix, substanceCombos, isMobileSubdomain = false }: HomeClientProps) {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [popupSubstance, setPopupSubstance] = useState<Substance | null>(null)
   const [activeSection, setActiveSection] = useState<Section>('substances')
   const [mounted, setMounted] = useState(false)
   const [navOpacity, setNavOpacity] = useState(0)
+  const [showBackToTop, setShowBackToTop] = useState(false)
   const isTouch = typeof window !== 'undefined' && 'ontouchstart' in window
+  const isMobile = isTouch || isMobileSubdomain
 
   useEffect(() => {
     let ticking = false
@@ -38,6 +41,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       if (!ticking) {
         requestAnimationFrame(() => {
           setNavOpacity(Math.min(window.scrollY / 200, 1))
+          setShowBackToTop(window.scrollY > 500)
           ticking = false
         })
         ticking = true
@@ -50,6 +54,39 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   useEffect(() => {
     requestAnimationFrame(() => setMounted(true))
   }, [])
+
+  // Keyboard shortcuts for desktop
+  useEffect(() => {
+    if (isMobile) return
+    
+    const onKeyDown = (e: KeyboardEvent) => {
+      // Alt+1/2/3 for section switching
+      if (e.altKey && e.key === '1') {
+        e.preventDefault()
+        setActiveSection('substances')
+      }
+      if (e.altKey && e.key === '2') {
+        e.preventDefault()
+        setActiveSection('matrix')
+      }
+      if (e.altKey && e.key === '3') {
+        e.preventDefault()
+        setActiveSection('tools')
+      }
+      // Escape to close popup
+      if (e.key === 'Escape' && popupSubstance) {
+        setPopupSubstance(null)
+      }
+      // Ctrl+K or Cmd+K for search focus (if search exists)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        // Could focus search here if we had a ref
+      }
+    }
+    
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [isMobile, popupSubstance])
 
   const toggleCategory = useCallback((cat: Category) => {
     setSelectedCategories(prev =>
@@ -109,9 +146,10 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   }
 
   return (
-    <div className={`transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'} flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px]`}>
+    <div className={`transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'} flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px] ${isMobile ? 'pb-16' : ''}`}>
+      {/* Desktop/Tablet Top Nav */}
       <nav
-        className="sticky top-0 z-50 border-b border-[var(--border)]"
+        className="sticky top-0 z-50 border-b border-[var(--border)] hidden sm:flex"
         style={{
           background: `rgba(4, 4, 12, ${0.75 + navOpacity * 0.2})`,
           backdropFilter: isTouch ? 'blur(12px)' : 'blur(24px) saturate(1.6)',
@@ -147,14 +185,37 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         </div>
       </nav>
 
-      <main className="w-full px-5 sm:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10 flex-1">
+      {/* Mobile Top Bar (simplified) */}
+      <nav className="sticky top-0 z-50 border-b border-[var(--border)] sm:hidden"
+        style={{
+          background: `rgba(4, 4, 12, ${0.85 + navOpacity * 0.15})`,
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        }}
+      >
+        <div className="w-full px-4 h-14 flex items-center justify-center">
+          <a href="#" className="flex items-center gap-2">
+            <div className="relative w-7 h-7 rounded-lg overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
+              <div className="absolute inset-[1px] rounded-[6px] bg-[var(--bg)] flex items-center justify-center">
+                <span className="text-xs font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
+              </div>
+            </div>
+            <span className="font-display font-bold text-base tracking-tight">
+              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Dex</span>
+            </span>
+          </a>
+        </div>
+      </nav>
+
+      <main className="w-full px-4 sm:px-8 py-6 sm:py-10 space-y-6 sm:space-y-10 flex-1">
         <header className="text-center py-2 sm:py-3 lg:py-4 relative">
           <div className="hero-glow" />
           <div className="hero-badge mx-auto">
             <span className="dot" />
             {stats.total} substances indexed
           </div>
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-display font-extrabold leading-[1.05] tracking-tight gradient-text">
+          <h1 className="text-4xl sm:text-7xl lg:text-8xl font-display font-extrabold leading-[1.05] tracking-tight gradient-text">
             Evidence-Based<br />Harm Reduction
           </h1>
           <p className="text-base sm:text-xl text-[var(--text3)] max-w-xl mx-auto leading-relaxed">
@@ -183,7 +244,36 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         </section>
       </main>
 
-      <footer className="w-full text-center py-16 sm:py-24 border-t border-[var(--border)] relative mt-8">
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] sm:hidden"
+        style={{
+          background: 'rgba(4, 4, 12, 0.95)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        }}
+      >
+        <div className="flex items-center justify-around h-16">
+          {FEATURES.map(feature => (
+            <button
+              key={feature.key}
+              onClick={() => setActiveSection(feature.key as Section)}
+              className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors ${
+                activeSection === feature.key
+                  ? 'text-[var(--accent2)]'
+                  : 'text-[var(--text3)]'
+              }`}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d={feature.icon} />
+              </svg>
+              <span className="text-xs font-medium">{feature.label}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      <footer className="w-full text-center py-12 sm:py-24 border-t border-[var(--border)] relative mt-8 mb-16 sm:mb-0">
         <div className="absolute top-0 left-[20%] right-[20%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.2)] to-transparent" />
         <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.15)] to-transparent" />
         <div className="flex items-center justify-center gap-2.5 mb-4">
@@ -213,6 +303,19 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           onNavigate={sub => setPopupSubstance(sub)}
           allSubstances={substances}
         />
+      )}
+
+      {/* Desktop Back to Top Button */}
+      {!isMobile && showBackToTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-[var(--accent)]/20 backdrop-blur-sm border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)]/30 transition-all duration-300 hover:scale-110"
+          aria-label="Back to top"
+        >
+          <svg className="w-5 h-5 text-[var(--accent2)]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
       )}
     </div>
   )
