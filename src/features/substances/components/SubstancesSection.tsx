@@ -43,7 +43,6 @@ function SubstancesSectionInner({
       </div>
       <SubstanceGrid
         substances={filtered}
-        selectedCategories={selectedCategories}
         onSubstanceClick={onSubstanceClick}
       />
     </div>

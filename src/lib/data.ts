@@ -143,13 +143,15 @@ export function getCategoryStats(): CategoryMeta[] {
   }))
 }
 
-const comboMatrixCache: Record<string, ComboLevel> | null = null
+let comboMatrixCache: Record<string, ComboLevel> | null = null
 
 export function getComboMatrix(): Record<string, ComboLevel> {
+  if (comboMatrixCache) return comboMatrixCache
   const matrix: Record<string, ComboLevel> = {}
   for (const rule of comboRules) {
     matrix[`${rule.categoryA}+${rule.categoryB}`] = rule.level
   }
+  comboMatrixCache = matrix
   return matrix
 }
 

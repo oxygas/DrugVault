@@ -268,34 +268,9 @@ function ChemicalStructureImage({
 
     async function fetchStructure() {
     try {
-      // Fast fallback: try PubChem direct first (no proxy)
-      let pubChemUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(substanceName)}/PNG?image_size=large`;
-      
-      // Try PubChem first (fastest, most reliable)
-      const pubChemTest = await fetch(pubChemUrl, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
-      if (pubChemTest.ok) {
-        setImageUrl(pubChemUrl);
-        setSource('pubchem');
-        setLoading(false);
-        return;
-      }
-      
-      // Fallback to SMILES if available
-      if (smiles) {
-        const smilesUrl = `https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(smiles)}/image`;
-        const smilesTest = await fetch(smilesUrl, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
-        if (smilesTest.ok) {
-          setImageUrl(smilesUrl);
-          setSource('cactus');
-          setLoading(false);
-          return;
-        }
-      }
-      
-      // Last resort: our API with caching
       const res = await fetch(
         `/api/chemical-structure?name=${encodeURIComponent(substanceName)}${smiles ? `&smiles=${encodeURIComponent(smiles)}` : ''}`,
-        { signal: AbortSignal.timeout(5000) }
+        { signal: AbortSignal.timeout(8000) }
       );
       if (!res.ok) throw new Error('not found');
       const data = await res.json();

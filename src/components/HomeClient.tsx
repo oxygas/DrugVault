@@ -6,7 +6,13 @@ import type { Substance, Category, ComboLevel, CategoryMeta, SubstanceCombo } fr
 import { FEATURES, type FeatureConfig } from '@/features/registry'
 import StatsBar from '@/components/StatsBar'
 
-const SubstancePopup = dynamic(() => import('@/features/substances/components/SubstancePopup'))
+const SubstancePopup = dynamic(() => import('@/features/substances/components/SubstancePopup'), {
+  loading: () => (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+    </div>
+  ),
+})
 
 type Section = 'substances' | 'matrix' | 'tools'
 

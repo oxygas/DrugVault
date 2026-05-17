@@ -9,18 +9,15 @@ export interface FeatureConfig {
 }
 
 const SubstancesSection = dynamic(
-  () => import('@/features/substances/components/SubstancesSection'),
-  { ssr: false }
+  () => import('@/features/substances/components/SubstancesSection')
 )
 
 const MatrixSection = dynamic(
-  () => import('@/features/matrix/components/MatrixSection'),
-  { ssr: false }
+  () => import('@/features/matrix/components/MatrixSection')
 )
 
 const ToolsSection = dynamic(
-  () => import('@/features/tools/components/ToolsSection'),
-  { ssr: false }
+  () => import('@/features/tools/components/ToolsSection')
 )
 
 export const FEATURES: FeatureConfig[] = [

@@ -1,32 +1,27 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import type { Substance, Category } from '@/lib/types'
+import type { Substance } from '@/lib/types'
 import SubstanceCard from './SubstanceCard'
 
 interface SubstanceGridProps {
   substances: Substance[]
-  selectedCategories: Category[]
   onSubstanceClick: (substance: Substance) => void
 }
 
-export default function SubstanceGrid({ substances, selectedCategories, onSubstanceClick }: SubstanceGridProps) {
+export default function SubstanceGrid({ substances, onSubstanceClick }: SubstanceGridProps) {
   const [visible, setVisible] = useState<Set<string>>(new Set())
   const observerRef = useRef<IntersectionObserver | null>(null)
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
-  const filtered = selectedCategories.length > 0
-    ? substances.filter(s => selectedCategories.includes(s.category))
-    : substances
-
   useEffect(() => {
     setVisible(new Set())
-  }, [filtered])
+  }, [substances])
 
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect()
 
-    const firstBatch = filtered.slice(0, 12).map(s => s.name)
+    const firstBatch = substances.slice(0, 12).map(s => s.name)
     setVisible(prev => {
       const next = new Set(prev)
       for (const name of firstBatch) next.add(name)
@@ -51,9 +46,9 @@ export default function SubstanceGrid({ substances, selectedCategories, onSubsta
 
     cardRefs.current.forEach(el => observerRef.current?.observe(el))
     return () => observerRef.current?.disconnect()
-  }, [filtered])
+  }, [substances])
 
-  if (filtered.length === 0) {
+  if (substances.length === 0) {
     return (
       <div className="text-center py-16 sm:py-24">
         <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[rgba(255,255,255,0.03)] flex items-center justify-center">
@@ -69,7 +64,7 @@ export default function SubstanceGrid({ substances, selectedCategories, onSubsta
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6 justify-items-center">
-      {filtered.map((substance, i) => (
+      {substances.map((substance, i) => (
         <div
           key={substance.name}
           ref={el => { if (el) cardRefs.current.set(substance.name, el) }}
