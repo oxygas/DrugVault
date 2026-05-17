@@ -147,8 +147,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         </div>
       </nav>
 
-      <main className="w-full px-5 sm:px-8 py-10 sm:py-14 space-y-12 sm:space-y-16 flex-1">
-        <header className="text-center py-16 sm:py-24 lg:py-32 space-y-7 sm:space-y-8 relative">
+      <main className="w-full px-5 sm:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10 flex-1">
+        <header className="text-center py-12 sm:py-16 lg:py-20 relative">
           <div className="hero-glow" />
           <div className="hero-badge mx-auto">
             <span className="dot" />

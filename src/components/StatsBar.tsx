@@ -21,11 +21,11 @@ export default function StatsBar({ stats, categories }: StatsBarProps) {
   ]
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
       {items.map((item, i) => (
         <div
           key={item.label}
-          className="metric-card group text-center"
+          className="metric-card group text-center p-3 sm:p-4"
           style={{ '--metric-c': item.color, animationDelay: `${i * 80}ms` } as React.CSSProperties}
         >
           <div className="flex items-center justify-center gap-2 mb-3">
