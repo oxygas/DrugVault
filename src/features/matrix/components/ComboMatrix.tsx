@@ -92,9 +92,6 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
 
                 {categories.map((col, ci) => {
                   const c = ci + 2
-                  if (ci < ri) {
-                    return <div key={`${row}-${col}`} style={{ gridColumn: c, gridRow: r }} />
-                  }
 
                   const level = getLevel(row, col)
                   const isSelf = ri === ci
