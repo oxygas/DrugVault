@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, Fragment } from 'react'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
 
@@ -73,7 +73,7 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
             ))}
 
             {categories.map((row, ri) => (
-              <div key={row} className="contents">
+              <Fragment key={row}>
                 <div
                   className="flex items-center justify-end text-[9px] sm:text-[10px] lg:text-[11px] font-display font-medium pr-1.5 truncate"
                   style={{ color: CATEGORY_COLORS[row] }}
@@ -110,7 +110,7 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
 
                   return <div key={`${row}-${col}`} />
                 })}
-              </div>
+              </Fragment>
             ))}
           </div>
         </div>
