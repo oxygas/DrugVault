@@ -35,12 +35,12 @@ export const CATEGORY_REGISTRY: CategoryConfig[] = [
 ]
 
 export const COMBO_LEVEL_REGISTRY: ComboLevelConfig[] = [
-  { key: 'safe', label: 'Safe', color: '#22c55e', description: 'Generally safe. Low risk of physical harm or dangerous interactions.', order: 0 },
-  { key: 'low_risk', label: 'Low Risk', color: '#66ffb2', description: 'Low risk, but caution is still advised. Monitor effects.', order: 1 },
-  { key: 'caution', label: 'Caution', color: '#eab308', description: 'Caution advised. Effects may be unpredictable or synergize in uncomfortable ways.', order: 2 },
+  { key: 'safe', label: 'Safe', color: '#10b981', description: 'Generally safe. Low risk of physical harm or dangerous interactions.', order: 0 },
+  { key: 'low_risk', label: 'Low Risk', color: '#06b6d4', description: 'Low risk, but caution is still advised. Monitor effects.', order: 1 },
+  { key: 'caution', label: 'Caution', color: '#f59e0b', description: 'Caution advised. Effects may be unpredictable or synergize in uncomfortable ways.', order: 2 },
   { key: 'unsafe', label: 'Unsafe', color: '#f97316', description: 'Unsafe combination. Significant risk of adverse physical or psychological reactions.', order: 3 },
   { key: 'dangerous', label: 'Dangerous', color: '#ef4444', description: 'Dangerous combination. High risk of severe medical emergency, physical harm, or intense psychological distress.', order: 4 },
-  { key: 'deadly', label: 'Deadly', color: '#ff1a1a', description: 'Potentially deadly combination. Extreme risk of fatal respiratory depression, serotonin syndrome, or cardiac arrest.', order: 5 },
+  { key: 'deadly', label: 'Deadly', color: '#b91c1c', description: 'Potentially deadly combination. Extreme risk of fatal respiratory depression, serotonin syndrome, or cardiac arrest.', order: 5 },
 ]
 
 export const HARM_LEVEL_REGISTRY: HarmLevelConfig[] = [
