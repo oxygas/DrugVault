@@ -609,12 +609,15 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
 .metric-card:hover::before { opacity: 1; }
 
 .substance-card {
+  display: block;
   background: #0c0c1c;
-  border-radius: 0;
+  border-radius: var(--radius-xl);
   padding: 24px;
   cursor: pointer;
   max-width: 360px;
   width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 @media (pointer: coarse) {
   .substance-card {
@@ -629,7 +632,7 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
   .substance-card { padding: 32px; max-width: 380px; }
 }
 .substance-card:hover {
-  /* hover effects removed */
+  transform: translateY(-4px);
 }
 .substance-card:focus-visible {
   outline: 2px solid var(--accent);
