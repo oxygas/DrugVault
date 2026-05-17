@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
@@ -14,6 +14,14 @@ const mono = JetBrains_Mono({
   display: 'swap',
 })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: '#04040c',
+}
+
 export const metadata: Metadata = {
   title: 'Tripdex — Evidence-Based Harm Reduction',
   description: 'Comprehensive harm reduction resource with 150+ substances, drug combination matrix, interaction checker, and dosage guides.',
@@ -27,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable} dark`}>
     <body className="antialiased">
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
     <div className="orb orb-1" />
     <div className="orb orb-2" />
     <div className="orb orb-3" />

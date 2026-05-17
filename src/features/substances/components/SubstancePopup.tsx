@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
@@ -21,13 +21,18 @@ type Tab = 'overview' | 'risks' | 'dosage' | 'interactions'
 export default function SubstancePopup({ substance, comboMatrix, onClose, onNavigate, allSubstances }: SubstancePopupProps) {
   const [tab, setTab] = useState<Tab>('overview')
   const overlayRef = useRef<HTMLDivElement>(null)
+  const onCloseRef = useRef(onClose)
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    onCloseRef.current = onClose
+  }, [onClose])
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onCloseRef.current() }
     document.addEventListener('keydown', handler)
     document.body.style.overflow = 'hidden'
     return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = '' }
-  }, [onClose])
+  }, [])
 
   const catColor = CATEGORY_COLORS[substance.category]
   const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
@@ -55,14 +60,15 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
       ref={overlayRef}
       className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={e => { if (e.target === overlayRef.current) onClose() }}
+      onTouchStart={e => { if (e.target === overlayRef.current) onClose() }}
       role="dialog"
       aria-modal="true"
       aria-label={`${substance.name} details`}
-      style={{ animation: 'fadeIn 0.2s ease-out' }}
+      style={{ animation: 'fadeIn 0.2s ease-out', touchAction: 'none' }}
     >
       <div
         className="glass-strong w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92vh] sm:max-h-[85vh] sm:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col"
-        style={{ animation: 'slideUp 0.3s cubic-bezier(0.16,1,0.3,1)' }}
+        style={{ animation: 'slideUp 0.3s cubic-bezier(0.16,1,0.3,1)', overscrollBehavior: 'contain' }}
       >
     <div className="popup-header sticky top-0 z-10 p-4 sm:p-5 lg:p-6">
       <div className="flex items-start justify-between gap-3">
