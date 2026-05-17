@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { checkInteraction } from '@/lib/data'
 
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
       headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
     })
   } catch (err) {
-    console.error('[interaction-check] Error:', err)
+    Sentry.captureException(err)
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 }

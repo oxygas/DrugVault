@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { getSubstanceBySlug, getSubstanceByName } from '@/lib/data'
 
@@ -9,13 +10,18 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { slug } = await params
-  const name = decodeURIComponent(slug).replace(/-/g, ' ')
+  try {
+    const { slug } = await params
+    const name = decodeURIComponent(slug).replace(/-/g, ' ')
 
-  const substance = getSubstanceBySlug(slug) || getSubstanceByName(name)
-  if (!substance) {
-    return NextResponse.json({ error: 'Substance not found' }, { status: 404 })
+    const substance = getSubstanceBySlug(slug) || getSubstanceByName(name)
+    if (!substance) {
+      return NextResponse.json({ error: 'Substance not found' }, { status: 404 })
+    }
+
+    return NextResponse.json(substance, { headers: CACHE_HEADERS })
+  } catch (err) {
+    Sentry.captureException(err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  return NextResponse.json(substance, { headers: CACHE_HEADERS })
 }

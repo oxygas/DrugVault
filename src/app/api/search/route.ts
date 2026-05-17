@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { searchSubstances } from '@/lib/data'
 
@@ -6,16 +7,21 @@ const CACHE_HEADERS = {
 }
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const q = searchParams.get('q') || ''
-  if (q.length < 2) {
-    return NextResponse.json({ results: [] }, { headers: CACHE_HEADERS })
+  try {
+    const { searchParams } = new URL(request.url)
+    const q = searchParams.get('q') || ''
+    if (q.length < 2) {
+      return NextResponse.json({ results: [] }, { headers: CACHE_HEADERS })
+    }
+    const results = searchSubstances(q).slice(0, 20).map(s => ({
+      name: s.name,
+      category: s.category,
+      harmLevel: s.harmLevel,
+      harmScore: s.harmScore,
+    }))
+    return NextResponse.json({ results }, { headers: CACHE_HEADERS })
+  } catch (err) {
+    Sentry.captureException(err)
+    return NextResponse.json({ error: 'Search failed' }, { status: 500 })
   }
-  const results = searchSubstances(q).slice(0, 20).map(s => ({
-    name: s.name,
-    category: s.category,
-    harmLevel: s.harmLevel,
-    harmScore: s.harmScore,
-  }))
-  return NextResponse.json({ results }, { headers: CACHE_HEADERS })
 }

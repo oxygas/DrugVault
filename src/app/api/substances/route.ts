@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
 import { getAllSubstances, searchSubstances, getSubstanceStats, getCategoryStats } from '@/lib/data'
 
@@ -45,7 +46,7 @@ export async function GET(request: Request) {
       { headers: CACHE_HEADERS }
     )
   } catch (err) {
-    console.error('[api/substances] Error:', err)
+    Sentry.captureException(err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

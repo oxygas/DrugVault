@@ -1,3 +1,5 @@
+import {withSentryConfig} from "@sentry/nextjs";
+
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -22,4 +24,14 @@ const nextConfig = {
   reactStrictMode: true,
 }
 
-export default nextConfig
+export default withSentryConfig(nextConfig, {
+  org: "drugvault",
+  project: "drugvault",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  hideSourceMaps: true,
+  disableLogger: true,
+  automaticVercelPublish: true,
+})

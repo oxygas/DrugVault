@@ -1,8 +1,10 @@
 'use client'
 
 import { memo, useCallback } from 'react'
+import Link from 'next/link'
 import type { Substance } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS } from '@/lib/types'
+import { slugify } from '@/lib/data'
 
 interface SubstanceCardProps {
   substance: Substance
@@ -12,8 +14,9 @@ interface SubstanceCardProps {
 function SubstanceCardInner({ substance, onClick }: SubstanceCardProps) {
   const catColor = CATEGORY_COLORS[substance.category]
   const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
+  const slug = slugify(substance.name)
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const x = ((e.clientX - rect.left) / rect.width) * 100
     const y = ((e.clientY - rect.top) / rect.height) * 100
@@ -22,8 +25,12 @@ function SubstanceCardInner({ substance, onClick }: SubstanceCardProps) {
   }, [])
 
   return (
-    <button
-      onClick={() => onClick(substance)}
+    <Link
+      href={`/substances/${slug}`}
+      onClick={(e) => {
+        e.preventDefault()
+        onClick(substance)
+      }}
       onMouseMove={handleMouseMove}
       className="substance-card w-full text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
       style={{ '--card-accent': catColor } as React.CSSProperties}
@@ -75,7 +82,7 @@ function SubstanceCardInner({ substance, onClick }: SubstanceCardProps) {
         )}
       </div>
     )}
-    </button>
+    </Link>
   )
 }
 
