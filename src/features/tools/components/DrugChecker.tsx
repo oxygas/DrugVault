@@ -229,11 +229,11 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
 
       {results && results.pairs.length > 0 && (
         <div className="space-y-5" style={{ animation: 'fadeInUp 0.5s cubic-bezier(0.16,1,0.3,1) both' }}>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {selected.map((s, i) => (
               <div
                 key={s.name}
-                className="glass-aero rounded-xl p-4 border border-[var(--border)] transition-all duration-300 hover:border-[var(--border2)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+                className="glass-aero rounded-xl p-5 border border-[var(--border)] transition-all duration-300 hover:border-[var(--border2)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
                 style={{
                   animation: `fadeInUp 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 0.08}s both`,
                   '--card-accent': CATEGORY_COLORS[s.category],
@@ -265,13 +265,13 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
             ))}
           </div>
 
-          <div className="glass-aero rounded-xl p-5 border border-[var(--border)] overflow-x-auto">
-            <h4 className="text-sm font-display font-semibold text-[var(--text2)] mb-4">Pairwise Interactions</h4>
+          <div className="glass-aero rounded-xl p-5 sm:p-6 border border-[var(--border)] overflow-x-auto">
+            <h4 className="text-sm font-display font-semibold text-[var(--text2)] mb-5">Pairwise Interactions</h4>
             <div className="inline-block min-w-fit">
               <div
-                className="grid gap-1.5"
+                className="grid gap-2"
                 style={{
-                  gridTemplateColumns: `repeat(${selected.length + 1}, minmax(90px, 120px))`,
+                  gridTemplateColumns: `repeat(${selected.length + 1}, minmax(110px, 140px))`,
                 }}
               >
                 <div className="text-[10px] text-[var(--text4)] font-mono flex items-center" />

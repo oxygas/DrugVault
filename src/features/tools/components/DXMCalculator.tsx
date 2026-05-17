@@ -83,7 +83,7 @@ export default function DXMCalculator() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3 text-sm text-[var(--text3)] p-4 glass-aero rounded-xl border border-[var(--border)]">
+      <div className="flex items-center gap-4 text-sm text-[var(--text3)] p-5 glass-aero rounded-xl border border-[var(--border)]">
         <div className="w-10 h-10 rounded-xl bg-[rgba(59,130,246,0.08)] flex items-center justify-center flex-shrink-0 border border-[rgba(59,130,246,0.08)]">
           <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
@@ -92,7 +92,7 @@ export default function DXMCalculator() {
         <span>Calculate DXM plateau based on body weight and dosage</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="space-y-1.5">
           <label className="text-[11px] font-mono text-[var(--text4)] uppercase tracking-wider">Body Weight</label>
           <div className="flex gap-1.5">
@@ -173,7 +173,7 @@ export default function DXMCalculator() {
               borderColor: result.plateau ? `${result.plateau.color}15` : 'var(--border)',
             }}
           >
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-5">
               <div>
                 <div className="text-[10px] font-mono text-[var(--text4)] uppercase tracking-wider mb-1">HBR Equivalent</div>
                 <div className="text-lg font-display font-bold text-white">{result.hbrDosage.toFixed(0)} <span className="text-xs font-mono text-[var(--text3)] font-normal">mg</span></div>
