@@ -33,29 +33,34 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'name parameter required' }, { status: 400 })
   }
 
-  const cid = await lookupPubChemCID(name)
+  try {
+    const cid = await lookupPubChemCID(name)
 
-  if (cid) {
-    return NextResponse.json({
-      source: 'pubchem',
-      imageUrl: `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/PNG?image_size=large`,
-      cid,
-      name,
-    }, {
-      headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' },
-    })
+    if (cid) {
+      return NextResponse.json({
+        source: 'pubchem',
+        imageUrl: `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/PNG?image_size=large`,
+        cid,
+        name,
+      }, {
+        headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' },
+      })
+    }
+
+    if (smiles) {
+      return NextResponse.json({
+        source: 'cactus',
+        imageUrl: `https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(smiles)}/image`,
+        cid: null,
+        name,
+      }, {
+        headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' },
+      })
+    }
+
+    return NextResponse.json({ error: 'No structure found', source: null, imageUrl: null }, { status: 404 })
+  } catch (err) {
+    console.error('[chemical-structure] Unexpected error:', err)
+    return NextResponse.json({ error: 'Internal server error', source: null, imageUrl: null }, { status: 500 })
   }
-
-  if (smiles) {
-    return NextResponse.json({
-      source: 'cactus',
-      imageUrl: `https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(smiles)}/image`,
-      cid: null,
-      name,
-    }, {
-      headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' },
-    })
-  }
-
-  return NextResponse.json({ error: 'No structure found', source: null, imageUrl: null }, { status: 404 })
 }

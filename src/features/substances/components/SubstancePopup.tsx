@@ -268,10 +268,15 @@ function ChemicalStructureImage({
 
     async function fetchStructure() {
     try {
+      const hasTimeout = typeof AbortSignal !== 'undefined' && 'timeout' in AbortSignal
+      const controller = hasTimeout ? new AbortController() : null
+      const timeoutId = controller ? setTimeout(() => controller?.abort(), 8000) : null
+
       const res = await fetch(
         `/api/chemical-structure?name=${encodeURIComponent(substanceName)}${smiles ? `&smiles=${encodeURIComponent(smiles)}` : ''}`,
-        { signal: AbortSignal.timeout(8000) }
+        controller ? { signal: controller.signal } : undefined
       );
+      if (timeoutId) clearTimeout(timeoutId);
       if (!res.ok) throw new Error('not found');
       const data = await res.json();
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, Fragment } from 'react'
+import { useState, useMemo, useCallback, Fragment, useRef, useEffect } from 'react'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
 
@@ -13,11 +13,24 @@ interface DrugCheckerProps {
 export default function DrugChecker({ substances, comboRules, substanceCombos }: DrugCheckerProps) {
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<Substance[]>([])
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const [results, setResults] = useState<{
     pairs: { a: Substance; b: Substance; level: ComboLevel; description: string; note?: string | null }[]
     worstLevel: ComboLevel
     drugNames: string[]
   } | null>(null)
+  const searchRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
 
   const subComboMap = useMemo(() => {
     const m = new Map<string, { level: ComboLevel; note?: string | null }>()
@@ -56,6 +69,8 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
     setSelected(prev => [...prev, sub])
     setQuery('')
     setResults(null)
+    setDropdownOpen(false)
+    inputRef.current?.focus()
   }, [])
 
   const removeDrug = useCallback((name: string) => {
@@ -112,13 +127,15 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
   return (
     <div className="space-y-6">
       <div>
-        <div className="relative">
+        <div className="relative" ref={searchRef}>
           <div className="flex items-center gap-2 mb-3">
             <div className="flex-1 relative">
               <input
+                ref={inputRef}
                 type="text"
                 value={query}
-                onChange={e => setQuery(e.target.value)}
+                onChange={e => { setQuery(e.target.value); setDropdownOpen(true) }}
+                onFocus={() => setDropdownOpen(true)}
                 placeholder={selected.length === 0 ? 'Search and add substances...' : 'Add another substance...'}
                 className="w-full pl-11 pr-4 py-3.5 rounded-xl glass-aero border border-[var(--border2)] text-sm text-white placeholder:text-[var(--text4)] focus:outline-none focus:border-[var(--accent)]/40 focus:shadow-[0_0_24px_rgba(168,85,247,0.06)] transition-all bg-transparent"
               />
@@ -128,7 +145,7 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
             </div>
           </div>
 
-          {filtered.length > 0 && (
+          {dropdownOpen && filtered.length > 0 && (
             <div className="absolute z-20 w-full mt-1.5 glass-aero rounded-xl overflow-hidden shadow-xl border border-[var(--border2)] max-h-56 overflow-y-auto">
               {filtered.map(s => (
                 <button

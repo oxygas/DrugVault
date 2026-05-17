@@ -33,7 +33,7 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
   }, [substances])
 
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
+    function handleClick(e: MouseEvent | TouchEvent) {
       if (
         dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
         inputRef.current && !inputRef.current.contains(e.target as Node)
@@ -42,7 +42,8 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
       }
     }
     document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
+    document.addEventListener('touchstart', handleClick)
+    return () => { document.removeEventListener('mousedown', handleClick); document.removeEventListener('touchstart', handleClick) }
   }, [])
 
   const categories = Object.entries(CATEGORY_COLORS) as [Category, string][]

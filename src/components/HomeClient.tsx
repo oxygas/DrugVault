@@ -30,6 +30,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [activeSection, setActiveSection] = useState<Section>('substances')
   const [mounted, setMounted] = useState(false)
   const [navOpacity, setNavOpacity] = useState(0)
+  const isTouch = typeof window !== 'undefined' && 'ontouchstart' in window
 
   useEffect(() => {
     let ticking = false
@@ -113,8 +114,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         className="sticky top-0 z-50 border-b border-[var(--border)]"
         style={{
           background: `rgba(4, 4, 12, ${0.75 + navOpacity * 0.2})`,
-          backdropFilter: 'blur(24px) saturate(1.6)',
-          WebkitBackdropFilter: 'blur(24px) saturate(1.6)',
+          backdropFilter: isTouch ? 'blur(12px)' : 'blur(24px) saturate(1.6)',
+          WebkitBackdropFilter: isTouch ? 'blur(12px)' : 'blur(24px) saturate(1.6)',
         }}
       >
         <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center justify-between">

@@ -32,7 +32,7 @@ export default function DXMCalculator() {
 
   const weightKg = useMemo(() => {
     const w = parseFloat(weight)
-    if (!w || w <= 0) return 0
+    if (!w || w <= 0 || w > 500) return 0
     return weightUnit === 'lb' ? w * LB_TO_KG : w
   }, [weight, weightUnit])
 
