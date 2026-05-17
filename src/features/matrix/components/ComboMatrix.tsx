@@ -29,6 +29,9 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
     [substances]
   )
 
+  const isTouch = typeof window !== 'undefined' && 'ontouchstart' in window
+  const maxPopoverDrugs = isTouch ? 6 : 12
+
   const N = categories.length
 
   const getLevel = useCallback((a: string, b: string): ComboLevel => {
@@ -128,9 +131,10 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
                         transform: isHov ? 'scale(1.15)' : 'scale(1)',
                         zIndex: isHov ? 10 : 1,
                       }}
-                      onMouseEnter={() => setHovered({ row, col })}
-                      onMouseLeave={() => setHovered(null)}
-                      onClick={() => setSelected({ row, col, level })}
+                      {...(isTouch
+                        ? { onClick: (e: React.MouseEvent) => { e.stopPropagation(); setHovered(hovered?.row === row && hovered?.col === col ? null : { row, col }); setSelected({ row, col, level }) } }
+                        : { onMouseEnter: () => setHovered({ row, col }), onMouseLeave: () => setHovered(null), onClick: () => setSelected({ row, col, level }) }
+                      )}
                       aria-label={`${row} + ${col}: ${COMBO_LEVEL_LABELS[level]}`}>
                       {COMBO_LEVEL_LABELS[level].charAt(0)}
                     </button>
@@ -174,7 +178,7 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
                 <div key={cat}>
                   <div className="text-[10px] font-mono text-[var(--text4)] mb-1.5 uppercase tracking-wider">{cat} ({drugs.length})</div>
                   <div className="flex flex-wrap gap-1">
-                    {drugs.slice(0, 12).map(s => (
+                    {drugs.slice(0, maxPopoverDrugs).map(s => (
                       <button key={s.name}
                         onClick={() => onSelectSubstance?.(s)}
                         className="text-[10px] px-2 py-0.5 rounded-full font-mono transition-all hover:scale-105"
@@ -186,8 +190,8 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
                         {s.name}
                       </button>
                     ))}
-                    {drugs.length > 12 && (
-                      <span className="text-[10px] text-[var(--text4)] font-mono px-1">+{drugs.length - 12} more</span>
+                    {drugs.length > maxPopoverDrugs && (
+                      <span className="text-[10px] text-[var(--text4)] font-mono px-1">+{drugs.length - maxPopoverDrugs} more</span>
                     )}
                   </div>
                 </div>
