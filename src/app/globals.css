@@ -637,17 +637,6 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
 @media (min-width: 1024px) {
   .substance-card { padding: 32px; max-width: 380px; }
 }
-.substance-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--card-accent, var(--accent)), transparent);
-  opacity: 0.4;
-  transition: all 0.3s ease;
-}
 .substance-card::after {
   content: '';
   position: absolute;
@@ -661,11 +650,6 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
   border-color: var(--border2);
   transform: translateY(-4px);
   box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 40px color-mix(in srgb, var(--card-accent, var(--accent)) 6%, transparent);
-}
-.substance-card:hover::before {
-  opacity: 1;
-  background: linear-gradient(90deg, var(--card-accent, var(--accent)), var(--card-accent, var(--accent)));
-  box-shadow: 0 2px 16px color-mix(in srgb, var(--card-accent, var(--accent)) 30%, transparent);
 }
 .substance-card:hover::after { opacity: 1; }
 .substance-card .shimmer-overlay {
