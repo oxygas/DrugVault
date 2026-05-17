@@ -10,7 +10,7 @@ const bySlug = new Map<string, Substance>()
 const byCategory = new Map<string, Substance[]>()
 const substanceComboMap = new Map<string, SubstanceCombo>()
 
-let searchIndex: Map<string, Substance[]> | null = null
+let searchIndex: Map<string, Set<Substance>> | null = null
 
 function buildIndices() {
   if (byName.size > 0) return
@@ -54,7 +54,7 @@ function buildSearchIndex() {
     }
   }
 
-  searchIndex = trigrams as unknown as Map<string, Substance[]>
+  searchIndex = trigrams
 }
 
 buildIndices()
@@ -104,6 +104,7 @@ export function searchSubstances(query: string): Substance[] {
   }
 
   buildSearchIndex()
+  if (!searchIndex) return substances
 
   const scores = new Map<Substance, number>()
 
@@ -111,7 +112,7 @@ export function searchSubstances(query: string): Substance[] {
   for (const token of tokens) {
     for (let i = 0; i <= token.length - 2; i++) {
       const bigram = token.slice(i, i + 2)
-      const matches = (searchIndex as unknown as Map<string, Set<Substance>>).get(bigram)
+      const matches = searchIndex.get(bigram)
       if (matches) {
         for (const s of matches) {
           scores.set(s, (scores.get(s) ?? 0) + 1)

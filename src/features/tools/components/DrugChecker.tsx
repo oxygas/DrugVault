@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, Fragment } from 'react'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
 
@@ -264,7 +264,7 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
                   </div>
                 ))}
                 {selected.map((row, i) => (
-                  <>
+                  <Fragment key={row.name}>
                     <div className="text-[10px] font-display font-medium flex items-center truncate pr-2" style={{ color: CATEGORY_COLORS[row.category] }}>
                       {row.name}
                     </div>
@@ -298,7 +298,7 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
                         </div>
                       )
                     })}
-                  </>
+                  </Fragment>
                 ))}
               </div>
             </div>

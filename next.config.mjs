@@ -20,7 +20,6 @@ const nextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
-  allowedDevOrigins: ['10.3.3.221'],
 }
 
 export default nextConfig

@@ -35,6 +35,7 @@
   --text2: #cbd5e1;
   --text3: #64748b;
   --text4: #475569;
+  --text5: #334155;
 
   --font: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-mono), 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
