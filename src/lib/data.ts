@@ -1,9 +1,49 @@
-import { substances } from '@/data/substances'
-import { comboRules } from '@/data/comboMatrix'
-import { substanceCombos } from '@/data/substanceCombos'
-import type { Substance, Category, ComboRule, ComboLevel, CategoryMeta, SubstanceCombo } from '@/lib/types'
+import rawData from '@/data/all-data.json'
+import type { Substance, Category, ComboRule, ComboLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration } from '@/lib/types'
 import { CATEGORY_REGISTRY, COMBO_LEVEL_REGISTRY } from '@/lib/registry'
 import { CATEGORIES, CATEGORY_COLORS, COMBO_DESCRIPTIONS } from '@/lib/types'
+
+// Compact key types matching all-data.json
+interface RawSubstance {
+  n: string; a: string[]; c: string; hl: string; hs: number; as: number
+  o: string; d: string; od: number; ws: number; id: number; dl: number
+  r: string[]; od2: string[]; s: string[]; i: string[]
+  w?: string[]; rc?: string[]; sm: string; bm?: string; nm?: string
+  pw: string | null; pr: RawRoa[] | null
+}
+interface RawRoa { n: string; d: RawDose | null; dur: RawDur | null }
+interface RawDose { t: number | string; l: string; c: string; s: string; h: string | number; u: string }
+interface RawDur { o: string; p: string; t: string }
+interface RawCombo { a: string; b: string; l: string; n: string | null }
+interface RawComboRule { a: string; b: string; l: string }
+
+interface RawData { s: RawSubstance[]; c: RawCombo[]; m: RawComboRule[] }
+
+const data = rawData as RawData
+
+// Expand compact JSON to full types
+function expandSubstance(r: RawSubstance): Substance {
+  return {
+    name: r.n, aliases: r.a, category: r.c as Category,
+    harmLevel: r.hl, harmScore: r.hs, addictionScore: r.as,
+    onset: r.o, duration: r.d, odRisk: r.od,
+    withdrawalSeverity: r.ws, interactionDanger: r.id, dependenceLiability: r.dl,
+    risks: r.r, overdose: r.od2, safety: r.s, interactions: r.i,
+    withdrawal: r.w && r.w.length ? r.w : undefined,
+    recovery: r.rc && r.rc.length ? r.rc : undefined,
+    smiles: r.sm, chemicalStructure: null,
+    bestMix: r.bm || undefined, neverMix: r.nm || undefined,
+    pwSummary: r.pw, pwRoas: r.pr ? r.pr.map((p: RawRoa) => ({
+      n: p.n,
+      d: p.d ? { t: p.d.t, l: p.d.l, c: p.d.c, s: p.d.s, h: p.d.h, u: p.d.u } as RoaDose : null,
+      dur: p.dur ? { o: p.dur.o, p: p.dur.p, t: p.dur.t } as RoaDuration : null
+    })) : null
+  }
+}
+
+const substances: Substance[] = data.s.map(expandSubstance)
+const comboRules: ComboRule[] = data.m.map(r => ({ categoryA: r.a as Category, categoryB: r.b as Category, level: r.l as ComboLevel }))
+const substanceCombos: SubstanceCombo[] = data.c.map(c => ({ substanceA: c.a, substanceB: c.b, level: c.l as ComboLevel, note: c.n }))
 
 const byName = new Map<string, Substance>()
 const bySlug = new Map<string, Substance>()
