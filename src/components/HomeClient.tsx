@@ -31,12 +31,14 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [mounted, setMounted] = useState(false)
   const [navOpacity, setNavOpacity] = useState(0)
   const [showBackToTop, setShowBackToTop] = useState(false)
-  const isTouch = useMemo(() => {
-    return typeof window !== 'undefined' && 'ontouchstart' in window
+  const [isTouch, setIsTouch] = useState(false)
+  const isMobile = isTouch
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsTouch('ontouchstart' in window)
+    requestAnimationFrame(() => setMounted(true))
   }, [])
-  const isMobile = useMemo(() => {
-    return isTouch
-  }, [isTouch])
 
   useEffect(() => {
     let ticking = false
