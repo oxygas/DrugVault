@@ -22,18 +22,21 @@ interface HomeClientProps {
   categories: CategoryMeta[]
   comboMatrix: Record<string, ComboLevel>
   substanceCombos?: SubstanceCombo[]
-  isMobileSubdomain?: boolean
 }
 
-export default function HomeClient({ substances, stats, categories, comboMatrix, substanceCombos, isMobileSubdomain = false }: HomeClientProps) {
+export default function HomeClient({ substances, stats, categories, comboMatrix, substanceCombos }: HomeClientProps) {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [popupSubstance, setPopupSubstance] = useState<Substance | null>(null)
   const [activeSection, setActiveSection] = useState<Section>('substances')
   const [mounted, setMounted] = useState(false)
   const [navOpacity, setNavOpacity] = useState(0)
   const [showBackToTop, setShowBackToTop] = useState(false)
-  const isTouch = typeof window !== 'undefined' && 'ontouchstart' in window
-  const isMobile = isTouch || isMobileSubdomain
+  const isTouch = useMemo(() => {
+    return typeof window !== 'undefined' && 'ontouchstart' in window
+  }, [])
+  const isMobile = useMemo(() => {
+    return isTouch
+  }, [isTouch])
 
   useEffect(() => {
     let ticking = false

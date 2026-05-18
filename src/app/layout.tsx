@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import Script from 'next/script'
-import { headers } from 'next/headers'
 import './globals.css'
 
 const inter = Inter({
@@ -122,13 +121,8 @@ export default async function RootLayout({
     },
   }
 
-  // Detect mobile subdomain from request headers
-  const headersList = await headers()
-  const host = headersList.get('host') || ''
-  const isMobileSubdomain = host.startsWith('m.')
-
   return (
-    <html lang="en" className={`${inter.variable} ${mono.variable} dark`} data-mobile-subdomain={isMobileSubdomain ? 'true' : 'false'}>
+    <html lang="en" className={`${inter.variable} ${mono.variable} dark`}>
       <head>
         <Script
           id="json-ld"

@@ -23,13 +23,17 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
+    function handleClick(e: MouseEvent | TouchEvent) {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setDropdownOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
+    document.addEventListener('touchstart', handleClick)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('touchstart', handleClick)
+    }
   }, [])
 
   const subComboMap = useMemo(() => {

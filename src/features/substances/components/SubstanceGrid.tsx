@@ -22,6 +22,16 @@ export default function SubstanceGrid({ substances, onSubstanceClick }: Substanc
     []
   )
 
+  // Reset visible set when substances list changes (e.g., category filter)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(prev => {
+        return new Set(substances.slice(0, batchSize).map(s => s.name))
+      })
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [substances, batchSize])
+
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect()
 

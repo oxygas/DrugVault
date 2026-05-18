@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -241,6 +241,51 @@ function ChemicalStructureImage({
   const [source, setSource] = useState<'sanity' | 'pubchem' | 'cactus' | null>(sanityUrl ? 'sanity' : null)
   const [loading, setLoading] = useState(!sanityUrl)
   const [error, setError] = useState(false)
+  const fetchedRef = useRef<string>('')
+
+  useEffect(() => {
+    if (sanityUrl) {
+      fetchedRef.current = substanceName
+      return
+    }
+
+    if (fetchedRef.current === substanceName) return
+    fetchedRef.current = substanceName
+    setLoading(true)
+    setError(false)
+
+    let cancelled = false
+
+    async function fetchStructure() {
+      try {
+        const hasTimeout = typeof AbortSignal !== 'undefined' && 'timeout' in AbortSignal
+        const controller = hasTimeout ? new AbortController() : null
+        const timeoutId = controller ? setTimeout(() => controller?.abort(), 8000) : null
+
+        const res = await fetch(
+          `/api/chemical-structure?name=${encodeURIComponent(substanceName)}${smiles ? `&smiles=${encodeURIComponent(smiles)}` : ''}`,
+          controller ? { signal: controller.signal } : undefined
+        )
+        if (timeoutId) clearTimeout(timeoutId)
+        if (!res.ok) throw new Error('not found')
+        const data = await res.json()
+
+        if (data.imageUrl) {
+          setImageUrl(data.imageUrl)
+          setSource(data.source)
+        } else {
+          setError(true)
+        }
+      } catch {
+        if (!cancelled) setError(true)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    fetchStructure()
+    return () => { cancelled = true }
+  }, [substanceName, smiles, sanityUrl])
 
   if (loading) {
     return (
@@ -292,7 +337,7 @@ function InfoList({ title, items, color, icon }: { title: string; items: string[
           <li key={i} className="text-sm lg:text-[15px] text-[var(--text3)] leading-relaxed flex gap-2">
             <span className="text-[var(--text4)] mt-0.5 flex-shrink-0">•</span>
             <span>
-              {item.startsWith('DANGEROUS:') || item.startsWith('Risky:') || item.startsWith('Caution:')
+              {item.startsWith('DEADLY:') || item.startsWith('DANGEROUS:') || item.startsWith('Risky:') || item.startsWith('Caution:')
                 ? <><span className="text-[var(--text2)] font-semibold">{item.split(':')[0]}:</span>{item.split(':').slice(1).join(':')}</>
                 : item
               }

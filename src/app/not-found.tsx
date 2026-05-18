@@ -10,7 +10,7 @@ export default function NotFound() {
         <div>
           <h2 className="text-2xl font-display font-bold text-white mb-2">Page Not Found</h2>
           <p className="text-sm text-[var(--text3)] leading-relaxed">
-            The substance or page you're looking for doesn't exist in our database.
+            The substance or page you&apos;re looking for doesn&apos;t exist in our database.
           </p>
         </div>
         <Link

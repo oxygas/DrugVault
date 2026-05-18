@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
 
@@ -36,13 +37,13 @@ export default function Error({
           >
             Try Again
           </button>
-          <a
+          <Link
             href="/"
             className="cta-btn"
             style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border)' }}
           >
             Go Home
-          </a>
+          </Link>
         </div>
         {process.env.NODE_ENV === 'development' && (
           <details className="text-left text-xs text-[var(--text4)] font-mono bg-[rgba(255,255,255,0.02)] p-4 rounded-lg overflow-auto max-h-48">
