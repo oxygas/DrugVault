@@ -9,7 +9,6 @@ interface PlateauInfo {
   name: string
   range: string
   color: string
-  colorName: string
   effects: string
   risks: string[]
 }
@@ -18,27 +17,24 @@ const PLATEAUS: PlateauInfo[] = [
   {
     level: 1,
     name: 'First Plateau',
-    range: '1.5 - 2.5 mg/kg',
+    range: '1.5 – 2.5 mg/kg',
     color: '#10b981',
-    colorName: 'green',
     effects: 'Mild mood lift, increased music appreciation, slight body relaxation, enhanced social connection',
     risks: ['Mild impairment', 'Increased heart rate'],
   },
   {
     level: 2,
     name: 'Second Plateau',
-    range: '2.5 - 7.5 mg/kg',
+    range: '2.5 – 7.5 mg/kg',
     color: '#f59e0b',
-    colorName: 'amber',
-    effects: 'Strong euphoria, dreamlike state, altered perception of time, mild visual distortions',
+    effects: 'Strong euphoria, dreamlike state, altered time perception, mild visual distortions',
     risks: ['Impaired coordination', 'Nausea', 'Dizziness', 'Confusion'],
   },
   {
     level: 3,
     name: 'Third Plateau',
-    range: '7.5 - 15 mg/kg',
+    range: '7.5 – 15 mg/kg',
     color: '#f97316',
-    colorName: 'orange',
     effects: 'Deep dissociation, out-of-body sensations, vivid closed-eye visuals, loss of self',
     risks: ['Severe impairment', 'Blackout risk', 'Vomiting', 'Unable to stand'],
   },
@@ -47,7 +43,6 @@ const PLATEAUS: PlateauInfo[] = [
     name: 'Fourth Plateau',
     range: '15+ mg/kg',
     color: '#ef4444',
-    colorName: 'red',
     effects: 'Complete dissociation, ego death, near-total loss of physical form, profound mystical experiences',
     risks: ['Dangerous dissociation', 'Respiratory depression', 'Unconsciousness', 'Medical emergency'],
   },
@@ -90,9 +85,9 @@ export default function DXMCalculator() {
     }
 
     let plateau: PlateauInfo | null = null
-    if (mgPerKg >= 1.5 && mgPerKg < 2.5) plateau = PLATEAUS[0]
-    else if (mgPerKg >= 2.5 && mgPerKg < 7.5) plateau = PLATEAUS[1]
-    else if (mgPerKg >= 7.5 && mgPerKg < 15) plateau = PLATEAUS[2]
+    if (mgPerKg < 2.5) plateau = PLATEAUS[0]
+    else if (mgPerKg < 7.5) plateau = PLATEAUS[1]
+    else if (mgPerKg < 15) plateau = PLATEAUS[2]
     else plateau = PLATEAUS[3]
 
     return { type: 'plateau', mgPerKg, hbrDosage: hbrEq, weightKg, plateau } as const
@@ -107,226 +102,255 @@ export default function DXMCalculator() {
     return 85 + Math.min((result.mgPerKg - 15) / 15, 1) * 15
   }, [result])
 
-  return (
-    <div className="w-full max-w-4xl mx-auto space-y-8">
-      {/* Input Card */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Weight */}
-          <div>
-            <label className="flex items-center gap-2 text-base font-medium text-gray-300 mb-3">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 17l3-1m0 0l-3-9m0 0a5.002 5.002 0 006.001 0M15 7a2 2 0 114 0m-4 0a2 2 0 114 0m7 0a2 2 0 11-4 0m-4 0a2 2 0 114 0" />
-              </svg>
-              Body Weight
-            </label>
-            <div className="flex gap-3">
-              <input
-                type="number"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                placeholder={weightUnit === 'kg' ? '70' : '154'}
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-5 py-4 text-white text-lg placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
-              />
-              <div className="flex rounded-lg overflow-hidden border border-white/10">
-                <button
-                  onClick={() => setWeightUnit('kg')}
-                  className={`px-5 py-3 text-base font-medium transition-colors ${
-                    weightUnit === 'kg' ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-400 hover:text-white'
-                  }`}
-                >
-                  kg
-                </button>
-                <button
-                  onClick={() => setWeightUnit('lb')}
-                  className={`px-5 py-3 text-base font-medium transition-colors ${
-                    weightUnit === 'lb' ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-400 hover:text-white'
-                  }`}
-                >
-                  lb
-                </button>
-              </div>
-            </div>
-          </div>
+  const isWaiting = result?.type === 'waiting'
 
-          {/* Dosage */}
-          <div>
-            <label className="flex items-center gap-2 text-base font-medium text-gray-300 mb-3">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-5.338 0l-.318-.158a6 6 0 00-3.86-.517L2.572 14.88a2 2 0 01-1.022.547" />
-              </svg>
-              Dosage (mg)
-            </label>
+  return (
+    <div className="w-full max-w-4xl mx-auto space-y-12">
+      {/* Input Section */}
+      <div className="rounded-2xl border border-[var(--border)] p-10 space-y-10"
+        style={{ background: 'rgba(8,8,24,0.4)' }}
+      >
+        {/* Body Weight */}
+        <div className="space-y-4">
+          <label className="flex items-center gap-3 text-sm font-mono text-[var(--text4)] uppercase tracking-widest">
+            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+            </svg>
+            Body Weight
+          </label>
+          <div className="flex gap-3">
             <input
               type="number"
-              value={dosage}
-              onChange={(e) => setDosage(e.target.value)}
-              placeholder="300"
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-5 py-4 text-white text-lg placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+              value={weight}
+              onChange={e => setWeight(e.target.value)}
+              placeholder={weightUnit === 'kg' ? 'e.g. 70' : 'e.g. 154'}
+              className="flex-1 min-w-0 px-6 py-4 rounded-xl text-base text-white placeholder:text-[var(--text4)] bg-[rgba(10,10,30,0.5)] border border-[var(--border2)] focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
             />
-          </div>
-
-          {/* Form */}
-          <div>
-            <label className="flex items-center gap-2 text-base font-medium text-gray-300 mb-3">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              DXM Form
-            </label>
-            <div className="flex rounded-lg overflow-hidden border border-white/10">
+            <div className="flex rounded-xl overflow-hidden border border-[var(--border2)] bg-[rgba(10,10,30,0.5)]">
               <button
-                onClick={() => setForm('hbr')}
-                className={`flex-1 py-3.5 text-base font-medium transition-all ${
-                  form === 'hbr' ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-400 hover:text-white'
-                }`}
+                onClick={() => setWeightUnit('kg')}
+                className={`px-6 py-4 text-sm font-mono font-semibold transition-all ${weightUnit === 'kg' ? 'text-blue-400 bg-blue-500/10' : 'text-[var(--text4)] hover:text-white'}`}
               >
-                HBr
+                KG
               </button>
               <button
-                onClick={() => setForm('freebase')}
-                className={`flex-1 py-3.5 text-base font-medium transition-all ${
-                  form === 'freebase' ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-400 hover:text-white'
-                }`}
+                onClick={() => setWeightUnit('lb')}
+                className={`px-6 py-4 text-sm font-mono font-semibold transition-all ${weightUnit === 'lb' ? 'text-blue-400 bg-blue-500/10' : 'text-[var(--text4)] hover:text-white'}`}
               >
-                Freebase
+                LB
               </button>
             </div>
           </div>
         </div>
+
+        {/* Dosage */}
+        <div className="space-y-4">
+          <label className="flex items-center gap-3 text-sm font-mono text-[var(--text4)] uppercase tracking-widest">
+            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621 0.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            Total Dosage (mg)
+          </label>
+          <input
+            type="number"
+            value={dosage}
+            onChange={e => setDosage(e.target.value)}
+            placeholder="e.g. 300"
+            className="w-full px-6 py-4 rounded-xl text-base text-white placeholder:text-[var(--text4)] bg-[rgba(10,10,30,0.5)] border border-[var(--border2)] focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
+          />
+        </div>
+
+        {/* Form */}
+        <div className="space-y-4">
+          <label className="flex items-center gap-3 text-sm font-mono text-[var(--text4)] uppercase tracking-widest">
+            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+            </svg>
+            DXM Form
+          </label>
+          <div className="flex rounded-xl overflow-hidden border border-[var(--border2)] bg-[rgba(10,10,30,0.5)]">
+            {(['hbr', 'freebase'] as const).map(f => (
+              <button
+                key={f}
+                onClick={() => setForm(f)}
+                className={`flex-1 py-4 text-base font-semibold tracking-wider transition-all ${
+                  form === f
+                    ? 'text-white bg-purple-500/15'
+                    : 'text-[var(--text4)] hover:text-white'
+                }`}
+              >
+                {f === 'hbr' ? 'HBr' : 'Freebase'}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Results */}
-      {result && result.type !== 'waiting' && (
-        <>
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-              <div className="text-sm text-gray-400 mb-2">HBr Equivalent</div>
-              <div className="text-3xl font-bold text-white">{result.hbrDosage.toFixed(0)} <span className="text-base font-normal text-gray-400">mg</span></div>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-              <div className="text-sm text-gray-400 mb-2">mg / kg</div>
-              <div className="text-3xl font-bold text-white">{result.mgPerKg.toFixed(2)}</div>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-              <div className="text-sm text-gray-400 mb-2">Weight</div>
-              <div className="text-3xl font-bold text-white">{result.weightKg.toFixed(1)} <span className="text-base font-normal text-gray-400">kg</span></div>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-              <div className="text-sm text-gray-400 mb-2">Form</div>
-              <div className="text-3xl font-bold text-white">{form === 'hbr' ? 'HBr' : 'Freebase'}</div>
-            </div>
+      {/* Results Area */}
+      {isWaiting && (
+        <div className="rounded-2xl border border-[var(--border)] p-14 text-center"
+          style={{ background: 'rgba(8,8,24,0.3)' }}
+        >
+          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+            <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+            </svg>
+          </div>
+          <p className="text-lg text-[var(--text3)]">Enter your body weight to calculate the plateau.</p>
+        </div>
+      )}
+
+      {result && !isWaiting && (
+        <div className="space-y-8" style={{ animation: 'fadeInUp 0.5s cubic-bezier(0.16,1,0.3,1) both' }}>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: 'HBr Equivalent', value: `${result.hbrDosage.toFixed(0)} mg` },
+              { label: 'Dosage per kg', value: `${result.mgPerKg.toFixed(2)} mg/kg` },
+              { label: 'Body Weight', value: `${result.weightKg.toFixed(1)} kg${weightUnit === 'lb' ? ` (${weight} lb)` : ''}` },
+              { label: 'Form', value: form === 'hbr' ? 'HBr' : 'Freebase' },
+            ].map(stat => (
+              <div
+                key={stat.label}
+                className="rounded-xl border border-[var(--border)] p-6"
+                style={{ background: 'rgba(8,8,24,0.3)' }}
+              >
+                <div className="text-xs font-mono text-[var(--text4)] uppercase tracking-wider mb-2">{stat.label}</div>
+                <div className="text-xl font-display font-bold text-white">{stat.value}</div>
+              </div>
+            ))}
           </div>
 
-          {/* Below threshold */}
+          {/* Below-threshold warning */}
           {result.type === 'below' && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-6 flex items-start gap-4">
-              <svg className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <div className="rounded-2xl border p-8 flex items-start gap-5"
+              style={{ background: 'rgba(245,158,11,0.06)', borderColor: 'rgba(245,158,11,0.2)' }}
+            >
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)' }}
+              >
+                <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+              </div>
               <div>
-                <div className="text-amber-400 font-medium mb-2 text-lg">Below threshold</div>
-                <p className="text-base text-gray-300">
-                  This dose is below the first plateau. Add approximately <strong className="text-white text-lg">{result.needMore.toFixed(0)} mg</strong> more to reach the first plateau.
+                <h4 className="text-lg font-semibold text-amber-300 mb-2">Below First Plateau</h4>
+                <p className="text-base text-[var(--text3)] leading-relaxed">
+                  Your dosage of {result.mgPerKg.toFixed(2)} mg/kg is below the 1st plateau threshold.
+                  Take approximately <strong className="text-amber-300">{result.needMore.toFixed(0)} mg</strong> more
+                  ({((result.needMore + parseFloat(dosage || '0')) / (form === 'freebase' ? HBR_FACTOR : 1)).toFixed(0)} mg{' '}
+                  {form === 'freebase' ? 'freebase' : 'HBr'} total) to reach the 1st plateau.
                 </p>
               </div>
             </div>
           )}
 
-          {/* Gauge */}
-          {result.type === 'plateau' && (
-            <>
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-                <div className="relative h-6 rounded-full overflow-hidden mb-6" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                  <div
-                    className="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
-                    style={{
-                      width: `${gaugePosition}%`,
-                      background: 'linear-gradient(90deg, #10b981 0%, #f59e0b 25%, #f97316 50%, #ef4444 100%)',
-                    }}
-                  />
+          {/* Plateau Result */}
+          {result.plateau && (
+            <div className="rounded-2xl border p-10 space-y-8"
+              style={{ background: `${result.plateau.color}06`, borderColor: `${result.plateau.color}20` }}
+            >
+              {/* Plateau header */}
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <div className="text-xs font-mono text-[var(--text4)] uppercase tracking-widest mb-3">Current Plateau</div>
+                  <h2 className="text-3xl sm:text-4xl font-display font-bold transition-colors duration-500"
+                    style={{ color: result.plateau.color }}
+                  >
+                    {result.plateau.name}
+                  </h2>
+                  <p className="text-sm text-[var(--text4)] font-mono mt-2">{result.plateau.range}</p>
                 </div>
-                <div className="flex justify-between text-base text-gray-400">
-                  <span>1st</span>
-                  <span>2nd</span>
-                  <span>3rd</span>
-                  <span>4th</span>
+                <span className="px-5 py-2 rounded-full text-sm font-mono font-semibold uppercase flex-shrink-0"
+                  style={{ background: `${result.plateau.color}15`, color: result.plateau.color, border: `1px solid ${result.plateau.color}25` }}
+                >
+                  Level {result.plateau.level}
+                </span>
+              </div>
+
+              {/* Gauge */}
+              <div className="relative h-3 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out"
+                  style={{
+                    width: `${gaugePosition}%`,
+                    background: `linear-gradient(90deg, ${result.plateau.color}, ${result.plateau.color}88)`,
+                  }}
+                />
+              </div>
+
+              {/* Effects */}
+              <div>
+                <h4 className="text-sm font-mono text-[var(--text4)] uppercase tracking-widest mb-3">Expected Effects</h4>
+                <p className="text-base text-[var(--text3)] leading-relaxed">{result.plateau.effects}</p>
+              </div>
+
+              {/* Risks */}
+              <div>
+                <h4 className="text-sm font-mono text-[var(--text4)] uppercase tracking-widest mb-3">Risks & Side Effects</h4>
+                <div className="flex flex-wrap gap-2">
+                  {result.plateau.risks.map(risk => (
+                    <span
+                      key={risk}
+                      className="px-4 py-2 rounded-lg text-sm font-medium"
+                      style={{ background: `${result.plateau.color}10`, color: result.plateau.color, border: `1px solid ${result.plateau.color}20` }}
+                    >
+                      {risk}
+                    </span>
+                  ))}
                 </div>
               </div>
 
-              {/* Plateau Card */}
-              {result.plateau && (
-                <div className="space-y-6">
-                  <div
-                    className="rounded-2xl p-8 border-2"
-                    style={{ borderColor: result.plateau.color, background: result.plateau.color + '10' }}
-                  >
-                    <div className="flex items-center justify-between mb-6">
-                      <div>
-                        <h3 className="text-3xl font-bold text-white">{result.plateau.name}</h3>
-                        <p className="text-base text-gray-400 mt-2">{result.plateau.range}</p>
-                      </div>
-                      <span
-                        className="px-5 py-2.5 rounded-full text-base font-bold uppercase"
-                        style={{ background: result.plateau.color + '20', color: result.plateau.color }}
-                      >
-                        Plateau {result.plateau.level}
-                      </span>
-                    </div>
-                    <p className="text-lg text-gray-300 mb-6">{result.plateau.effects}</p>
-                    <div>
-                      <div className="text-base font-medium text-gray-400 mb-3">Effects & Risks:</div>
-                      <div className="flex flex-wrap gap-3">
-                        {result.plateau.risks.map((risk) => (
-                          <span
-                            key={risk}
-                            className="px-4 py-2 rounded-full text-sm font-medium"
-                            style={{ background: result.plateau.color + '20', color: result.plateau.color }}
-                          >
-                            {risk}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+              {/* High-dose warning */}
+              {result.plateau.level >= 3 && (
+                <div className="rounded-xl p-6 flex items-start gap-4 text-sm leading-relaxed"
+                  style={{ background: `${result.plateau.color}08`, border: `1px solid ${result.plateau.color}20` }}
+                >
+                  <svg className="w-6 h-6 mt-0.5 flex-shrink-0" style={{ color: result.plateau.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                  </svg>
+                  <div>
+                    <strong style={{ color: result.plateau.color }}>High-dose warning:</strong>{' '}
+                    <span className="text-[var(--text3)]">
+                      DXM at this level carries risks of psychosis, serotonin syndrome, and physical harm.
+                      Ensure safe set and setting. Never combine with other substances.
+                    </span>
                   </div>
-
-                  {/* Safety Warning */}
-                  {result.plateau.level >= 3 && (
-                    <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 flex items-start gap-4">
-                      <svg className="w-7 h-7 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                      <div>
-                        <div className="text-red-400 font-bold mb-2 text-lg">High-Dose Warning</div>
-                        <p className="text-base text-gray-300">
-                          Doses at this level carry serious risks including psychosis, serotonin syndrome, and physical harm. Ensure safe set and setting. Never combine with other substances. Have a sober sitter present.
-                        </p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
-            </>
+            </div>
           )}
-        </>
+        </div>
       )}
 
-      {/* Waiting for input */}
-      {result?.type === 'waiting' && (
-        <div className="text-center py-16 text-gray-400 text-lg">
-          Enter your body weight to see results
+      {/* Empty State */}
+      {!result && !isWaiting && (weight || dosage) && (
+        <div className="rounded-2xl border border-[var(--border)] p-14 text-center"
+          style={{ background: 'rgba(8,8,24,0.3)' }}
+        >
+          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center">
+            <svg className="w-8 h-8 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+            </svg>
+          </div>
+          <p className="text-lg text-[var(--text3)]">Enter both weight and dosage to calculate your plateau.</p>
         </div>
       )}
 
       {!result && !weight && !dosage && (
-        <div className="text-center py-20">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white/5 flex items-center justify-center">
-            <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        <div className="rounded-2xl border border-[var(--border)] p-16 text-center"
+          style={{ background: 'rgba(8,8,24,0.2)' }}
+        >
+          <div className="w-20 h-20 mx-auto mb-8 rounded-2xl bg-[var(--accent)]/5 border border-[var(--border)] flex items-center justify-center">
+            <svg className="w-10 h-10 text-[var(--text4)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
             </svg>
           </div>
-          <p className="text-lg text-gray-400">Enter your weight and dosage to calculate</p>
+          <h3 className="text-2xl font-display font-bold text-white mb-3">DXM Plateau Calculator</h3>
+          <p className="text-base text-[var(--text4)] max-w-md mx-auto leading-relaxed">
+            Enter your weight and dosage above to determine your DXM plateau.
+            Supports both HBr and Freebase formulations with automatic conversion.
+          </p>
         </div>
       )}
     </div>

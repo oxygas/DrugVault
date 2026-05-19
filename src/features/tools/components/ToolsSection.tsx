@@ -9,6 +9,7 @@ interface ToolsSectionProps {
   substances: Substance[]
   comboRules: Record<string, ComboLevel>
   substanceCombos?: { substanceA: string; substanceB: string; level: ComboLevel; note?: string | null }[]
+  onFindSubstance?: (name: string) => Substance | undefined
 }
 
 type ToolTab = 'checker' | 'dxm'
@@ -34,8 +35,9 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
   const [activeTool, setActiveTool] = useState<ToolTab>('checker')
 
   return (
-    <div className="w-full space-y-8">
-      <div className="flex gap-4 sm:gap-6 w-full">
+    <div className="w-full space-y-12">
+      {/* Tool Tabs */}
+      <div className="flex gap-5 sm:gap-8 w-full">
         {TOOLS.map(t => {
           const active = activeTool === t.key
           const col = `var(${t.color})`.includes('--') ? `var(${t.color})` : t.color
@@ -53,21 +55,21 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
             >
               {active && (
                 <div
-                  className="absolute top-0 left-0 right-0 h-1"
+                  className="absolute top-0 left-0 right-0 h-[2px]"
                   style={{ background: `linear-gradient(90deg, ${col}, ${col}44, transparent)` }}
                 />
               )}
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center gap-5 mb-2">
+              <div className="p-8 sm:p-10">
+                <div className="flex items-center gap-6">
                   <div
-                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center transition-all duration-300"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center transition-all duration-300"
                     style={{
                       background: active ? `${col}15` : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${active ? `${col}25` : 'var(--border)'}`,
+                      border: `1px solid ${active ? `${col}25` : 'var(--border2)'}`,
                     }}
                   >
                     <svg
-                      className={`w-7 h-7 sm:w-8 sm:h-8 transition-all duration-300 ${active ? '' : 'text-[var(--text4)]'}`}
+                      className={`w-8 h-8 sm:w-10 sm:h-10 transition-all duration-300 ${active ? '' : 'text-[var(--text4)]'}`}
                       style={{ color: active ? col : undefined }}
                       fill="none"
                       stroke="currentColor"
@@ -79,12 +81,12 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
                   </div>
                   <div className="min-w-0">
                     <div
-                      className="text-lg sm:text-xl font-display font-semibold truncate transition-colors duration-300"
+                      className="text-xl sm:text-2xl font-display font-semibold truncate transition-colors duration-300"
                       style={{ color: active ? col : 'var(--text2)' }}
                     >
                       {t.label}
                     </div>
-                    <div className="text-sm sm:text-base text-[var(--text4)] truncate">{t.desc}</div>
+                    <div className="text-base sm:text-lg text-[var(--text4)] truncate mt-1">{t.desc}</div>
                   </div>
                 </div>
               </div>
@@ -93,7 +95,8 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
         })}
       </div>
 
-      <div style={{ animation: 'fadeIn 0.3s ease-out both' }}>
+      {/* Content */}
+      <div style={{ animation: 'fadeInUp 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
         {activeTool === 'checker' && (
           <DrugChecker substances={substances} comboRules={comboRules} substanceCombos={substanceCombos} />
         )}
