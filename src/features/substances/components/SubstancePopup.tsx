@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
@@ -120,28 +120,27 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
             </div>
           )}
         </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <button
-                onClick={handleFavorite}
-                className={`p-2 rounded-lg transition-colors flex-shrink-0 ${isFav ? 'text-[var(--pink)] hover:bg-[var(--pink)]/10' : 'text-[var(--text4)] hover:text-[var(--pink)] hover:bg-[var(--pink)]/10'}`}
-                aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
-                title={isFav ? 'Remove from favorites' : 'Save to favorites'}
-              >
-                <svg className="w-5 h-5" fill={isFav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                </svg>
-              </button>
-              <button
-                onClick={onClose}
-                className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text4)] hover:text-white flex-shrink-0"
-                aria-label="Close"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleFavorite}
+              className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors flex-shrink-0"
+              aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <svg className="w-5 h-5" fill={isFav ? 'var(--red)' : 'none'} stroke={isFav ? 'var(--red)' : 'currentColor'} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text4)] hover:text-white flex-shrink-0"
+              aria-label="Close"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
+        </div>
 
           <div className="flex gap-1 mt-3 -mx-1 px-1 overflow-x-auto">
             {tabs.map(t => (

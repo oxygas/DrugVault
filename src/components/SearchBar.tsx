@@ -81,7 +81,7 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
     if (externalInputRef) {
       (externalInputRef as React.MutableRefObject<HTMLInputElement | null>).current = inputRef.current
     }
-  })
+  }, [externalInputRef])
 
   const search = useCallback((q: string) => {
     setQuery(q)

@@ -30,6 +30,12 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
       { keys: ['?'], label: 'This panel', description: 'Toggle keyboard shortcuts help' },
     ],
   },
+  {
+    title: 'Interaction Checker',
+    shortcuts: [
+      { keys: ['Tab'], label: 'Next substance', description: 'Move to next selected substance' },
+    ],
+  },
 ]
 
 interface KeyboardShortcutsModalProps {
@@ -38,15 +44,20 @@ interface KeyboardShortcutsModalProps {
 
 export default function KeyboardShortcutsModal({ onClose }: KeyboardShortcutsModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
+  const onCloseRef = useRef(onClose)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' || e.key === '?') onClose()
+      if (e.key === 'Escape' || e.key === '?') onCloseRef.current()
     }
     document.addEventListener('keydown', handler)
     document.body.style.overflow = 'hidden'
     return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = '' }
-  }, [onClose])
+  }, [])
 
   return (
     <div
@@ -79,7 +90,7 @@ export default function KeyboardShortcutsModal({ onClose }: KeyboardShortcutsMod
             className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text4)] hover:text-white"
             aria-label="Close"
           >
-            <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
