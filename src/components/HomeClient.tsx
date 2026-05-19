@@ -258,7 +258,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           <StatsBar stats={stats} categories={categories} />
         </section>
 
-        <section className="section-card" style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both' }}>
+        <section key={activeSection} className="section-card" style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both' }}>
           {FEATURES.map(feature => {
             if (feature.key !== activeSection) return null
             const FeatureComponent = feature.component
