@@ -4,33 +4,100 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import type { Substance, Category } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
 
+const RECENT_SEARCHES_KEY = 'tripdex_recent_searches'
+const MAX_RECENT = 8
+
+function scoreMatch(substance: Substance, query: string): number {
+  const q = query.toLowerCase()
+  const name = substance.name.toLowerCase()
+  const aliases = substance.aliases.map(a => a.toLowerCase())
+
+  if (name === q) return 100
+  if (name.startsWith(q)) return 80
+  for (const alias of aliases) {
+    if (alias === q) return 75
+    if (alias.startsWith(q)) return 65
+  }
+  let best = 0
+  if (name.includes(q)) best = Math.max(best, 50)
+  for (const alias of aliases) {
+    if (alias.includes(q)) best = Math.max(best, 40)
+  }
+  return best
+}
+
+function fuzzySearch(substances: Substance[], query: string, limit = 10): Substance[] {
+  if (!query.trim()) return []
+  const scored = substances
+    .map(s => ({ s, score: scoreMatch(s, query) }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score || a.s.name.localeCompare(b.s.name))
+    .slice(0, limit)
+    .map(({ s }) => s)
+  return scored
+}
+
+function getRecentSearches(): Substance['name'][] {
+  if (typeof window === 'undefined') return []
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || '[]')
+  } catch {
+    return []
+  }
+}
+
+function addRecentSearch(name: Substance['name']) {
+  const recent = getRecentSearches().filter(n => n !== name)
+  recent.unshift(name)
+  localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(recent.slice(0, MAX_RECENT)))
+}
+
+function clearRecentSearches() {
+  localStorage.removeItem(RECENT_SEARCHES_KEY)
+}
+
 interface SearchBarProps {
   substances: Substance[]
   onSelect: (substance: Substance) => void
   selectedCategories: Category[]
   onCategoryToggle: (cat: Category) => void
   onCategoryClear: () => void
+  externalInputRef?: React.RefObject<HTMLInputElement | null>
 }
 
-export default function SearchBar({ substances, onSelect, selectedCategories, onCategoryToggle, onCategoryClear }: SearchBarProps) {
+export default function SearchBar({ substances, onSelect, selectedCategories, onCategoryToggle, onCategoryClear, externalInputRef }: SearchBarProps) {
   const [query, setQuery] = useState('')
   const [focused, setFocused] = useState(false)
   const [results, setResults] = useState<Substance[]>([])
+  const [recentSearches, setRecentSearches] = useState<Substance['name'][]>([])
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setRecentSearches(getRecentSearches())
+  }, [])
+
+  useEffect(() => {
+    if (externalInputRef) {
+      (externalInputRef as React.MutableRefObject<HTMLInputElement | null>).current = inputRef.current
+    }
+  })
 
   const search = useCallback((q: string) => {
     setQuery(q)
     if (q.length < 2) { setResults([]); return }
-    const lower = q.toLowerCase()
-    const matched = substances
-      .filter(s =>
-        s.name.toLowerCase().includes(lower) ||
-        s.aliases.some(a => a.toLowerCase().includes(lower))
-      )
-      .slice(0, 8)
+    const matched = fuzzySearch(substances, q)
     setResults(matched)
   }, [substances])
+
+  const handleSelect = useCallback((substance: Substance) => {
+    onSelect(substance)
+    addRecentSearch(substance.name)
+    setRecentSearches(getRecentSearches())
+    setQuery('')
+    setResults([])
+    setFocused(false)
+  }, [onSelect])
 
   useEffect(() => {
     function handleClick(e: MouseEvent | TouchEvent) {
@@ -61,7 +128,7 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
             value={query}
             onChange={e => search(e.target.value)}
             onFocus={() => setFocused(true)}
-            placeholder="Search substances..."
+            placeholder="Search substances... (press /)"
             className="w-full pl-10 sm:pl-12 pr-10 py-3 sm:py-3.5 lg:py-4 rounded-[var(--radius-lg)] lg:rounded-[var(--radius-xl)] bg-transparent border-0 text-white placeholder:text-[var(--text4)] text-sm sm:text-base lg:text-[15px] focus:outline-none text-center"
             aria-label="Search substances"
           />
@@ -78,32 +145,85 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
           )}
         </div>
 
-        {focused && results.length > 0 && (
+        {focused && (
           <div
             ref={dropdownRef}
             className="absolute z-50 w-full mt-2 glass-strong rounded-xl overflow-hidden shadow-xl max-h-[60vh] overflow-y-auto border border-[var(--border2)]"
           >
-            {results.map((s, i) => (
-              <button
-                key={s.name}
-                onClick={() => { onSelect(s); setQuery(''); setResults([]); setFocused(false) }}
-                className="w-full px-4 py-3 lg:py-4 flex items-center gap-3 hover:bg-[rgba(255,255,255,0.05)] transition-colors text-left border-b border-[var(--border)] last:border-0"
-                style={{ animation: `fadeInUp 0.25s ease-out ${i * 30}ms both` }}
-              >
-                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[s.category], boxShadow: `0 0 6px ${CATEGORY_COLORS[s.category]}40` }} />
-                <div className="min-w-0 flex-1">
-              <div className="font-display font-medium text-sm lg:text-[15px] text-white truncate">{s.name}</div>
-              <div className="text-[11px] lg:text-xs text-[var(--text3)] truncate">{s.category}</div>
+            {query.length >= 2 && results.length > 0 && (
+              <div className="border-b border-[var(--border)]">
+                <div className="px-3 py-1.5 text-[10px] font-mono text-[var(--text4)] uppercase tracking-wider">
+                  Results
                 </div>
-                <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{
-                  background: `${CATEGORY_COLORS[s.category]}12`,
-                  color: CATEGORY_COLORS[s.category],
-                  border: `1px solid ${CATEGORY_COLORS[s.category]}20`,
-                }}>
-                  {s.harmScore}
-                </span>
-              </button>
-            ))}
+                {results.map((s, i) => (
+                  <button
+                    key={s.name}
+                    onClick={() => handleSelect(s)}
+                    className="w-full px-4 py-3 lg:py-4 flex items-center gap-3 hover:bg-[rgba(255,255,255,0.05)] transition-colors text-left border-b border-[var(--border)] last:border-0"
+                    style={{ animation: `fadeInUp 0.2s ease-out ${i * 25}ms both` }}
+                  >
+                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[s.category], boxShadow: `0 0 6px ${CATEGORY_COLORS[s.category]}40` }} />
+                    <div className="min-w-0 flex-1">
+                      <div className="font-display font-medium text-sm lg:text-[15px] text-white truncate">{s.name}</div>
+                      <div className="text-[11px] lg:text-xs text-[var(--text3)] truncate">{s.category}</div>
+                    </div>
+                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{
+                      background: `${CATEGORY_COLORS[s.category]}12`,
+                      color: CATEGORY_COLORS[s.category],
+                      border: `1px solid ${CATEGORY_COLORS[s.category]}20`,
+                    }}>
+                      {s.harmScore}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {query.length === 0 && recentSearches.length > 0 && (
+              <div>
+                <div className="px-3 py-1.5 flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-[var(--text4)] uppercase tracking-wider">Recent</span>
+                  <button
+                    onClick={() => { clearRecentSearches(); setRecentSearches([]) }}
+                    className="text-[10px] text-[var(--text4)] hover:text-[var(--text3)] transition-colors"
+                  >
+                    Clear
+                  </button>
+                </div>
+                {recentSearches.map(name => {
+                  const s = substances.find(s => s.name === name)
+                  if (!s) return null
+                  return (
+                    <button
+                      key={name}
+                      onClick={() => handleSelect(s)}
+                      className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-[rgba(255,255,255,0.04)] transition-colors text-left border-b border-[var(--border)] last:border-0"
+                    >
+                      <svg className="w-3.5 h-3.5 text-[var(--text4)] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[s.category] }} />
+                        <span className="font-display text-sm text-[var(--text2)] truncate">{s.name}</span>
+                        <span className="text-[10px] text-[var(--text4)] truncate">{s.category}</span>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
+            {query.length >= 2 && results.length === 0 && (
+              <div className="px-4 py-8 text-center">
+                <p className="text-sm text-[var(--text4)]">No substances found for "{query}"</p>
+              </div>
+            )}
+
+            {query.length > 0 && query.length < 2 && (
+              <div className="px-4 py-3 text-center">
+                <p className="text-xs text-[var(--text4)]">Type at least 2 characters to search</p>
+              </div>
+            )}
           </div>
         )}
       </div>

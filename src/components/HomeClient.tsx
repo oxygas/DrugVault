@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import type { Substance, Category, ComboLevel, CategoryMeta, SubstanceCombo } from '@/lib/types'
 import { FEATURES, type FeatureConfig } from '@/features/registry'
 import StatsBar from '@/components/StatsBar'
+import KeyboardShortcutsModal from '@/components/KeyboardShortcutsModal'
 
 const SubstancePopup = dynamic(() => import('@/features/substances/components/SubstancePopup'), {
   loading: () => (
@@ -32,6 +33,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [navOpacity, setNavOpacity] = useState(0)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [isTouch, setIsTouch] = useState(false)
+  const [showShortcuts, setShowShortcuts] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
   const isMobile = isTouch
 
   useEffect(() => {
@@ -63,7 +66,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   // Keyboard shortcuts for desktop
   useEffect(() => {
     if (isMobile) return
-    
+
     const onKeyDown = (e: KeyboardEvent) => {
       // Alt+1/2/3 for section switching
       if (e.altKey && e.key === '1') {
@@ -78,20 +81,39 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         e.preventDefault()
         setActiveSection('tools')
       }
-      // Escape to close popup
+      // Escape to close popup or shortcuts modal
       if (e.key === 'Escape' && popupSubstance) {
         setPopupSubstance(null)
+      }
+      if (e.key === 'Escape' && !popupSubstance && showShortcuts) {
+        setShowShortcuts(false)
       }
       // Ctrl+K or Cmd+K for search focus (if search exists)
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault()
-        // Could focus search here if we had a ref
+        if (searchInputRef.current) {
+          searchInputRef.current.focus()
+          searchInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }
+      // ? to toggle shortcuts modal
+      if (e.key === '?' && !popupSubstance && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)) {
+        e.preventDefault()
+        setShowShortcuts(prev => !prev)
+      }
+      // / to focus search
+      if (e.key === '/' && !popupSubstance && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)) {
+        e.preventDefault()
+        if (searchInputRef.current) {
+          searchInputRef.current.focus()
+          searchInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
       }
     }
-    
+
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isMobile, popupSubstance])
+  }, [isMobile, popupSubstance, showShortcuts])
 
   const toggleCategory = useCallback((cat: Category) => {
     setSelectedCategories(prev =>
@@ -131,11 +153,12 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
   const sectionProps: Record<Section, Record<string, unknown>> = {
     substances: {
-      substances: sortedSubstances, // Use sorted list
+      substances: sortedSubstances,
       selectedCategories,
       onCategoryToggle: toggleCategory,
       onCategoryClear: () => setSelectedCategories([]),
       onSubstanceClick: setPopupSubstance,
+      searchInputRef,
     },
     matrix: {
       substances,
@@ -300,6 +323,10 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         </p>
       </footer>
 
+      {showShortcuts && (
+        <KeyboardShortcutsModal onClose={() => setShowShortcuts(false)} />
+      )}
+
       {popupSubstance && (
         <SubstancePopup
           substance={popupSubstance}
@@ -308,6 +335,20 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           onNavigate={sub => setPopupSubstance(sub)}
           allSubstances={substances}
         />
+      )}
+
+      {/* Keyboard shortcuts hint */}
+      {!isMobile && !showBackToTop && (
+        <button
+          onClick={() => setShowShortcuts(true)}
+          className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-[var(--accent)]/10 backdrop-blur-sm border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)]/20 transition-all duration-300 hover:scale-110 group"
+          aria-label="Keyboard shortcuts"
+          title="Keyboard shortcuts (?)"
+        >
+          <svg className="w-5 h-5 text-[var(--accent2)] group-hover:text-[var(--accent)] transition-colors" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18m-7.5 6.75l-1.591 1.591M12 13.875l1.591-1.591M7.5 10.5H6.375m4.284-5.674l-1.59-1.59m-3.36 5.844l1.59 1.59" />
+          </svg>
+        </button>
       )}
 
       {/* Desktop Back to Top Button */}

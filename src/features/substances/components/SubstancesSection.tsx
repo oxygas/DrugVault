@@ -11,6 +11,7 @@ interface SubstancesSectionProps {
   onCategoryToggle: (cat: Category) => void
   onCategoryClear: () => void
   onSubstanceClick: (substance: Substance) => void
+  searchInputRef?: React.RefObject<HTMLInputElement | null>
 }
 
 function SubstancesSectionInner({
@@ -19,6 +20,7 @@ function SubstancesSectionInner({
   onCategoryToggle,
   onCategoryClear,
   onSubstanceClick,
+  searchInputRef,
 }: SubstancesSectionProps) {
   const filtered = useMemo(() => {
     if (selectedCategories.length === 0) return substances
@@ -33,6 +35,7 @@ function SubstancesSectionInner({
         selectedCategories={selectedCategories}
         onCategoryToggle={onCategoryToggle}
         onCategoryClear={onCategoryClear}
+        externalInputRef={searchInputRef}
       />
       <div className="flex items-center justify-center">
         <span className="text-xs lg:text-sm text-[var(--text3)] font-mono">

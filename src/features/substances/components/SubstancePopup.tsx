@@ -8,6 +8,23 @@ import RadarChart from '@/components/RadarChart'
 import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
 
+const FAVORITES_KEY = 'tripdex_favorites'
+
+function getFavorites(): string[] {
+  if (typeof window === 'undefined') return []
+  try {
+    return JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]')
+  } catch { return [] }
+}
+
+function toggleFavorite(name: string) {
+  const favs = getFavorites().filter(n => n !== name)
+  if (!favs.includes(name)) favs.push(name)
+  else favs.splice(favs.indexOf(name), 1)
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs))
+  return favs
+}
+
 interface SubstancePopupProps {
   substance: Substance
   comboMatrix: Record<string, ComboLevel>
@@ -22,6 +39,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
   const [tab, setTab] = useState<Tab>('overview')
   const overlayRef = useRef<HTMLDivElement>(null)
   const onCloseRef = useRef(onClose)
+  const [isFav, setIsFav] = useState(() => getFavorites().includes(substance.name))
 
   useEffect(() => {
     onCloseRef.current = onClose
@@ -33,6 +51,11 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     document.body.style.overflow = 'hidden'
     return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = '' }
   }, [])
+
+  const handleFavorite = () => {
+    toggleFavorite(substance.name)
+    setIsFav(getFavorites().includes(substance.name))
+  }
 
   const catColor = CATEGORY_COLORS[substance.category]
   const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
@@ -97,15 +120,27 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
             </div>
           )}
         </div>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text4)] hover:text-white flex-shrink-0"
-              aria-label="Close"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <button
+                onClick={handleFavorite}
+                className={`p-2 rounded-lg transition-colors flex-shrink-0 ${isFav ? 'text-[var(--pink)] hover:bg-[var(--pink)]/10' : 'text-[var(--text4)] hover:text-[var(--pink)] hover:bg-[var(--pink)]/10'}`}
+                aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+                title={isFav ? 'Remove from favorites' : 'Save to favorites'}
+              >
+                <svg className="w-5 h-5" fill={isFav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                </svg>
+              </button>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text4)] hover:text-white flex-shrink-0"
+                aria-label="Close"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div className="flex gap-1 mt-3 -mx-1 px-1 overflow-x-auto">
