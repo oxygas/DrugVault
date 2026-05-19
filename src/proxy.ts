@@ -30,7 +30,7 @@ const BLOCKED_BOTS = [
   'PetalBot',
 ]
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const ua = request.headers.get('user-agent') || ''
 
   // Block AI crawlers
