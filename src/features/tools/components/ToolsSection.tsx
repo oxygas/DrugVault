@@ -34,8 +34,8 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
   const [activeTool, setActiveTool] = useState<ToolTab>('checker')
 
   return (
-    <div className="w-full space-y-6">
-      <div className="flex gap-3 sm:gap-4 w-full">
+    <div className="w-full space-y-8">
+      <div className="flex gap-4 sm:gap-6 w-full">
         {TOOLS.map(t => {
           const active = activeTool === t.key
           const col = `var(${t.color})`.includes('--') ? `var(${t.color})` : t.color
@@ -53,21 +53,21 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
             >
               {active && (
                 <div
-                  className="absolute top-0 left-0 right-0 h-0.5"
+                  className="absolute top-0 left-0 right-0 h-1"
                   style={{ background: `linear-gradient(90deg, ${col}, ${col}44, transparent)` }}
                 />
               )}
-              <div className="p-5 sm:p-7">
-                <div className="flex items-center gap-4 mb-2">
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center gap-5 mb-2">
                   <div
-                    className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center transition-all duration-300"
+                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center transition-all duration-300"
                     style={{
                       background: active ? `${col}15` : 'rgba(255,255,255,0.03)',
                       border: `1px solid ${active ? `${col}25` : 'var(--border)'}`,
                     }}
                   >
                     <svg
-                      className={`w-5 h-5 sm:w-7 sm:h-7 transition-all duration-300 ${active ? '' : 'text-[var(--text4)]'}`}
+                      className={`w-7 h-7 sm:w-8 sm:h-8 transition-all duration-300 ${active ? '' : 'text-[var(--text4)]'}`}
                       style={{ color: active ? col : undefined }}
                       fill="none"
                       stroke="currentColor"
@@ -79,12 +79,12 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
                   </div>
                   <div className="min-w-0">
                     <div
-                      className="text-base sm:text-lg font-display font-semibold truncate transition-colors duration-300"
+                      className="text-lg sm:text-xl font-display font-semibold truncate transition-colors duration-300"
                       style={{ color: active ? col : 'var(--text2)' }}
                     >
                       {t.label}
                     </div>
-                    <div className="text-xs sm:text-sm text-[var(--text4)] truncate">{t.desc}</div>
+                    <div className="text-sm sm:text-base text-[var(--text4)] truncate">{t.desc}</div>
                   </div>
                 </div>
               </div>

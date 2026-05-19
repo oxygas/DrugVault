@@ -157,17 +157,17 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
   const pairCount = selected.length >= 2 ? selected.length * (selected.length - 1) / 2 : 0
 
   return (
-    <div className="space-y-6">
-      <div ref={searchRef} className="space-y-4">
+    <div className="space-y-8">
+      <div ref={searchRef} className="space-y-5">
         <div className="relative">
           <div
-            className="flex items-center gap-2 rounded-2xl border transition-all duration-300 bg-[rgba(8,8,24,0.6)]"
+            className="flex items-center gap-3 rounded-2xl border transition-all duration-300 bg-[rgba(8,8,24,0.6)]"
             style={{
               borderColor: query ? 'rgba(168,85,247,0.3)' : 'var(--border2)',
             }}
           >
-            <div className="pl-4 flex-shrink-0">
-              <svg className={`w-4 h-4 transition-colors duration-300 ${query ? 'text-[var(--accent2)]' : 'text-[var(--text4)]'}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <div className="pl-6 flex-shrink-0">
+              <svg className={`w-6 h-6 transition-colors duration-300 ${query ? 'text-[var(--accent2)]' : 'text-[var(--text4)]'}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
               </svg>
             </div>
@@ -178,14 +178,14 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
               onChange={e => { setQuery(e.target.value); setDropdownOpen(true) }}
               onFocus={() => setDropdownOpen(true)}
               placeholder={selected.length === 0 ? 'Search substances to check...' : 'Add another substance...'}
-              className="flex-1 py-3.5 bg-transparent text-sm text-white placeholder:text-[var(--text4)] focus:outline-none"
+              className="flex-1 py-5 bg-transparent text-lg text-white placeholder:text-[var(--text4)] focus:outline-none"
             />
             {query && (
               <button
                 onClick={() => { setQuery(''); setDropdownOpen(false); inputRef.current?.focus() }}
-                className="mr-3 p-1 rounded-lg text-[var(--text4)] hover:text-white hover:bg-[rgba(255,255,255,0.06)] transition-all"
+                className="mr-5 p-2 rounded-lg text-[var(--text4)] hover:text-white hover:bg-[rgba(255,255,255,0.06)] transition-all"
               >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -193,20 +193,20 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
           </div>
 
           {dropdownOpen && filtered.length > 0 && (
-            <div className="absolute z-20 w-full mt-1.5 rounded-xl overflow-hidden border border-[var(--border2)] shadow-xl max-h-56 overflow-y-auto" style={{ background: '#0a0a1e' }}>
+            <div className="absolute z-20 w-full mt-2 rounded-xl overflow-hidden border border-[var(--border2)] shadow-xl max-h-72 overflow-y-auto" style={{ background: '#0a0a1e' }}>
               {filtered.map((s, i) => {
                 const catColor = CATEGORY_COLORS[s.category]
                 return (
                   <button
                     key={s.name}
                     onClick={() => addDrug(s)}
-                    className="w-full px-4 py-3 flex items-center gap-3 transition-colors text-left border-b border-[var(--border)] last:border-b-0 hover:bg-[rgba(255,255,255,0.03)]"
+                    className="w-full px-6 py-4 flex items-center gap-4 transition-colors text-left border-b border-[var(--border)] last:border-b-0 hover:bg-[rgba(255,255,255,0.03)]"
                     style={{ animation: `fadeIn 0.15s ease-out ${i * 0.03}s both` }}
                   >
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: catColor, boxShadow: `0 0 8px ${catColor}50` }} />
-                    <span className="text-sm text-white font-display truncate flex-1">{s.name}</span>
-                    <span className="text-[10px] text-[var(--text4)] font-mono">{s.category}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full font-mono font-semibold" style={{ background: `${HARM_LEVEL_COLORS[s.harmLevel]}15`, color: HARM_LEVEL_COLORS[s.harmLevel] }}>
+                    <span className="w-3.5 h-3.5 rounded-full flex-shrink-0" style={{ background: catColor, boxShadow: `0 0 8px ${catColor}50` }} />
+                    <span className="text-lg text-white font-display truncate flex-1">{s.name}</span>
+                    <span className="text-sm text-[var(--text4)] font-mono">{s.category}</span>
+                    <span className="text-sm px-3 py-1 rounded-full font-mono font-semibold" style={{ background: `${HARM_LEVEL_COLORS[s.harmLevel]}15`, color: HARM_LEVEL_COLORS[s.harmLevel] }}>
                       {s.harmLevel}
                     </span>
                   </button>
@@ -217,27 +217,27 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
         </div>
 
         {selected.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-3">
             {selected.map((s, i) => {
               const catColor = CATEGORY_COLORS[s.category]
               return (
                 <div
                   key={s.name}
-                  className="group flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all duration-200"
+                  className="group flex items-center gap-2 px-5 py-3 rounded-xl border transition-all duration-200"
                   style={{
                     background: `${catColor}08`,
                     borderColor: `${catColor}20`,
                     animation: `fadeInUp 0.2s cubic-bezier(0.16,1,0.3,1) ${i * 0.04}s both`,
                   }}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: catColor }} />
-                  <span className="text-xs sm:text-sm text-white font-display">{s.name}</span>
+                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: catColor }} />
+                  <span className="text-base sm:text-lg text-white font-display">{s.name}</span>
                   <button
                     onClick={() => removeDrug(s.name)}
-                    className="ml-1 p-0.5 rounded text-[var(--text4)] hover:text-red-400 transition-all opacity-0 group-hover:opacity-100"
+                    className="ml-2 p-1 rounded text-[var(--text4)] hover:text-red-400 transition-all opacity-0 group-hover:opacity-100"
                     aria-label={`Remove ${s.name}`}
                   >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
@@ -246,19 +246,19 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
             })}
             <button
               onClick={clearAll}
-              className="text-[10px] text-[var(--text4)] hover:text-white transition-colors px-2 py-1 ml-1"
+              className="text-sm text-[var(--text4)] hover:text-white transition-colors px-4 py-2 ml-1 rounded-lg hover:bg-[rgba(255,255,255,0.04)]"
             >
-              Clear
+              Clear all
             </button>
           </div>
         )}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-5">
         <button
           onClick={checkAll}
           disabled={!canCheck}
-          className="flex-1 sm:flex-none relative overflow-hidden rounded-2xl py-3.5 px-8 text-sm font-display font-semibold transition-all duration-300 disabled:opacity-25 disabled:pointer-events-none"
+          className="flex-1 sm:flex-none relative overflow-hidden rounded-2xl py-5 px-12 text-lg font-display font-semibold transition-all duration-300 disabled:opacity-25 disabled:pointer-events-none"
           style={{
             background: canCheck && results
               ? LEVEL_BANNER[results.worstLevel]
@@ -285,14 +285,14 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
               }}
             />
           )}
-          <span className="flex items-center justify-center gap-2.5">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+          <span className="flex items-center justify-center gap-3">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            {results ? 'Re-check' : 'Check Interactions'}
+            {results ? 'Re-check Interactions' : 'Check Interactions'}
           </span>
         </button>
-        <span className="text-[11px] text-[var(--text4)] font-mono flex-shrink-0">
+        <span className="text-base text-[var(--text4)] font-mono flex-shrink-0">
           {selected.length === 0
             ? 'Select 2+ substances'
             : !canCheck
@@ -303,23 +303,23 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
       </div>
 
       {results && results.pairs.length > 0 && (
-        <div className="space-y-6" style={{ animation: 'fadeInUp 0.5s cubic-bezier(0.16,1,0.3,1) both' }}>
+        <div className="space-y-8" style={{ animation: 'fadeInUp 0.5s cubic-bezier(0.16,1,0.3,1) both' }}>
           <div
-            className="rounded-2xl p-6 border relative overflow-hidden"
+            className="rounded-2xl p-8 border relative overflow-hidden"
             style={{
               background: LEVEL_BG[results.worstLevel],
               borderColor: LEVEL_BORDER[results.worstLevel],
             }}
           >
-            <div className="flex items-start justify-between gap-6 mb-3">
+            <div className="flex items-start justify-between gap-8 mb-4">
               <div>
-                <div className="text-xs font-mono text-[var(--text4)] uppercase tracking-wider mb-2">Overall Assessment</div>
-                <h4 className="text-2xl sm:text-3xl font-display font-bold" style={{ color: COMBO_LEVEL_COLORS[results.worstLevel] }}>
+                <div className="text-sm font-mono text-[var(--text4)] uppercase tracking-wider mb-2">Overall Assessment</div>
+                <h4 className="text-3xl sm:text-4xl font-display font-bold" style={{ color: COMBO_LEVEL_COLORS[results.worstLevel] }}>
                   {COMBO_LEVEL_LABELS[results.worstLevel]}
                 </h4>
               </div>
               <span
-                className="px-4 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider flex-shrink-0"
+                className="px-5 py-2 rounded-full text-sm font-mono font-bold uppercase tracking-wider flex-shrink-0"
                 style={{
                   background: `${COMBO_LEVEL_COLORS[results.worstLevel]}15`,
                   color: COMBO_LEVEL_COLORS[results.worstLevel],
@@ -333,12 +333,12 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
                  results.worstLevel === 'dangerous' ? 'Dangerous' : 'Deadly'}
               </span>
             </div>
-            <p className="text-base text-[var(--text3)] leading-relaxed">
+            <p className="text-lg text-[var(--text3)] leading-relaxed">
               {results.drugNames.slice(0, -1).join(', ')} and {results.drugNames.slice(-1)} — worst pairwise interaction is <strong style={{ color: COMBO_LEVEL_COLORS[results.worstLevel] }}>{COMBO_LEVEL_LABELS[results.worstLevel].toLowerCase()}</strong>.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {selected.map((s, i) => {
               const catColor = CATEGORY_COLORS[s.category]
               return (
@@ -351,13 +351,13 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
                     animation: `fadeInUp 0.3s cubic-bezier(0.16,1,0.3,1) ${i * 0.06}s both`,
                   }}
                 >
-                  <div className="h-1.5" style={{ background: `linear-gradient(90deg, ${catColor}, ${catColor}66)` }} />
-                  <div className="p-5">
-                    <div className="flex items-center gap-2.5 mb-4">
-                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: catColor }} />
-                      <span className="text-base font-display font-semibold text-white truncate">{s.name}</span>
+                  <div className="h-2" style={{ background: `linear-gradient(90deg, ${catColor}, ${catColor}66)` }} />
+                  <div className="p-6">
+                    <div className="flex items-center gap-3 mb-5">
+                      <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: catColor }} />
+                      <span className="text-lg font-display font-semibold text-white truncate">{s.name}</span>
                     </div>
-                    <div className="space-y-2 text-xs font-mono text-[var(--text4)]">
+                    <div className="space-y-3 text-sm font-mono text-[var(--text4)]">
                       <div className="flex justify-between">
                         <span>Category</span>
                         <span className="text-[var(--text3)] truncate ml-2">{s.category}</span>
@@ -381,30 +381,30 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
             })}
           </div>
 
-          <div className="rounded-2xl border border-[var(--border)] p-6 sm:p-8 overflow-x-auto" style={{ background: 'rgba(8,8,24,0.4)' }}>
-            <h4 className="text-base font-display font-semibold text-[var(--text2)] mb-6">Interaction Matrix</h4>
+          <div className="rounded-2xl border border-[var(--border)] p-8 sm:p-10 overflow-x-auto" style={{ background: 'rgba(8,8,24,0.4)' }}>
+            <h4 className="text-lg font-display font-semibold text-[var(--text2)] mb-8">Interaction Matrix</h4>
             <div className="inline-block min-w-fit">
               <div
-                className="grid gap-2"
+                className="grid gap-3"
                 style={{
-                  gridTemplateColumns: `repeat(${selected.length + 1}, minmax(100px, 140px))`,
+                  gridTemplateColumns: `repeat(${selected.length + 1}, minmax(120px, 160px))`,
                 }}
               >
-                <div className="text-xs text-[var(--text5)] font-mono" />
+                <div className="text-sm text-[var(--text5)] font-mono" />
                 {selected.map(s => (
-                  <div key={s.name} className="text-xs font-display font-medium text-center truncate px-1" style={{ color: CATEGORY_COLORS[s.category] }}>
+                  <div key={s.name} className="text-sm font-display font-medium text-center truncate px-2" style={{ color: CATEGORY_COLORS[s.category] }}>
                     {s.name}
                   </div>
                 ))}
                 {selected.map((row, i) => (
                   <Fragment key={row.name}>
-                    <div className="text-xs font-display font-medium flex items-center truncate pr-3" style={{ color: CATEGORY_COLORS[row.category] }}>
+                    <div className="text-sm font-display font-medium flex items-center truncate pr-4" style={{ color: CATEGORY_COLORS[row.category] }}>
                       {row.name}
                     </div>
                     {selected.map((col, j) => {
                       if (i === j) {
                         return (
-                          <div key={`${row.name}-${col.name}`} className="flex items-center justify-center rounded-lg min-h-[44px] text-xs font-mono text-[var(--text5)]" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                          <div key={`${row.name}-${col.name}`} className="flex items-center justify-center rounded-lg min-h-[56px] text-sm font-mono text-[var(--text5)]" style={{ background: 'rgba(255,255,255,0.02)' }}>
                             —
                           </div>
                         )
@@ -418,12 +418,12 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
                       return (
                         <div
                           key={`${row.name}-${col.name}`}
-                          className="flex items-center justify-center rounded-lg min-h-[44px] text-xs font-mono font-semibold transition-all duration-200 hover:scale-105 cursor-default"
+                          className="flex items-center justify-center rounded-lg min-h-[56px] text-sm font-mono font-semibold transition-all duration-200 hover:scale-105 cursor-default"
                           style={{
                             background: `${lc}15`,
                             color: lc,
                             border: `1px solid ${lc}25`,
-                            boxShadow: pair.level === 'deadly' ? `0 0 16px ${lc}30` : pair.level === 'dangerous' ? `0 0 10px ${lc}20` : undefined,
+                            boxShadow: pair.level === 'deadly' ? `0 0 20px ${lc}30` : pair.level === 'dangerous' ? `0 0 12px ${lc}20` : undefined,
                           }}
                           title={`${row.name} + ${col.name}: ${COMBO_LEVEL_LABELS[pair.level]}`}
                         >
@@ -438,7 +438,7 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {results.pairs
               .sort((a, b) => (LEVEL_ORDER[b.level] ?? 0) - (LEVEL_ORDER[a.level] ?? 0))
               .map((pair, i) => {
@@ -446,27 +446,27 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
                 return (
                   <div
                     key={`${pair.a.name}-${pair.b.name}`}
-                    className="flex items-start gap-4 rounded-xl px-5 py-4 transition-all duration-200 hover:bg-[rgba(255,255,255,0.02)]"
+                    className="flex items-start gap-5 rounded-xl px-6 py-5 transition-all duration-200 hover:bg-[rgba(255,255,255,0.02)]"
                     style={{
                       animation: `fadeIn 0.2s ease-out ${i * 0.04}s both`,
-                      borderLeft: `3px solid ${lc}40`,
+                      borderLeft: `4px solid ${lc}40`,
                     }}
                   >
-                    <div className="flex items-center gap-2 text-sm min-w-0 flex-1 flex-wrap">
-                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[pair.a.category] }} />
+                    <div className="flex items-center gap-3 text-base min-w-0 flex-1 flex-wrap">
+                      <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[pair.a.category] }} />
                       <span className="text-white font-display">{pair.a.name}</span>
                       <span className="text-[var(--text5)]">+</span>
-                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[pair.b.category] }} />
+                      <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[pair.b.category] }} />
                       <span className="text-white font-display">{pair.b.name}</span>
                       <span
-                        className="ml-auto px-3 py-1 rounded-full text-xs font-mono font-semibold uppercase flex-shrink-0"
+                        className="ml-auto px-4 py-1.5 rounded-full text-sm font-mono font-semibold uppercase flex-shrink-0"
                         style={{ background: `${lc}15`, color: lc, border: `1px solid ${lc}25` }}
                       >
                         {COMBO_LEVEL_LABELS[pair.level]}
                       </span>
                     </div>
                     {pair.note && (
-                      <p className="text-sm text-[var(--text4)] leading-relaxed italic w-full mt-2">{pair.note}</p>
+                      <p className="text-base text-[var(--text4)] leading-relaxed italic w-full mt-3">{pair.note}</p>
                     )}
                   </div>
                 )
@@ -476,14 +476,14 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
       )}
 
       {selected.length === 0 && !results && (
-        <div className="text-center py-20 rounded-2xl border border-dashed" style={{ borderColor: 'rgba(168,85,247,0.15)' }}>
-          <div className="w-20 h-20 mx-auto mb-5 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.1)' }}>
-            <svg className="w-10 h-10 text-[var(--accent2)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+        <div className="text-center py-24 rounded-2xl border border-dashed" style={{ borderColor: 'rgba(168,85,247,0.15)' }}>
+          <div className="w-24 h-24 mx-auto mb-6 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.1)' }}>
+            <svg className="w-12 h-12 text-[var(--accent2)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17l-5.384-3.108A2.25 2.25 0 014.5 10.004V7.5a2.25 2.25 0 012.25-2.25h2.25a2.25 2.25 0 012.25 2.25v2.504c0 .576-.22 1.11-.58 1.516l.25.15M11.42 15.17l5.384 3.108a2.25 2.25 0 002.42 0l5.384-3.108M11.42 15.17l.25-.15M20.25 7.5a2.25 2.25 0 00-2.25-2.25h-2.25A2.25 2.25 0 0013.5 7.5v2.504c0 .576.22 1.11.58 1.516l-.25.15m0 0l-5.384 3.108M20.25 7.5v2.504c0 .576-.22 1.11-.58 1.516l.25.15" />
             </svg>
           </div>
-          <p className="text-base text-[var(--text3)]">Select 2 or more substances to check interactions</p>
-          <p className="text-sm text-[var(--text4)] mt-2">Search and add them using the input above</p>
+          <p className="text-lg text-[var(--text3)]">Select 2 or more substances to check interactions</p>
+          <p className="text-base text-[var(--text4)] mt-3">Search and add them using the input above</p>
         </div>
       )}
     </div>
