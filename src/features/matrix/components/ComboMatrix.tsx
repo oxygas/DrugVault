@@ -113,12 +113,12 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
     )
   }
 
-  const cellSize = touchDevice ? 24 : 36
-  const labelSize = touchDevice ? 48 : 80
+  const cellSize = touchDevice ? 24 : 42
+  const labelSize = touchDevice ? 48 : 90
 
   return (
     <div className="flex flex-col items-center gap-3 sm:gap-4 w-full max-w-[100vw] overflow-hidden px-2">
-      <div className="flex items-center gap-2 sm:gap-3 w-full">
+      <div className="flex items-center gap-2 sm:gap-3">
         <h3 className="text-xs sm:text-sm lg:text-base font-display font-semibold text-[var(--text2)]">Combos</h3>
         <span className="text-[10px] sm:text-[11px] text-[var(--text4)] font-mono">{N}</span>
         {showListView && (
@@ -136,16 +136,16 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
           className="glass rounded-xl p-1 sm:p-2 border border-[var(--border)]"
           style={{
             display: 'grid',
-            gap: '2px',
+            gap: '3px',
             gridTemplateColumns: `${labelSize}px repeat(${N}, ${cellSize}px)`,
           }}
         >
-          <div className="flex items-center justify-center text-[8px] text-[var(--text4)] font-mono"
+          <div className="flex items-center justify-center text-[8px] sm:text-[10px] lg:text-[11px] text-[var(--text4)] font-mono"
             style={{ gridColumn: 1, gridRow: 1 }}>↓</div>
 
           {categories.map((cat, ci) => (
             <div key={cat}
-              className="flex items-center justify-center text-[7px] sm:text-[9px] font-display font-medium px-0.5 truncate"
+              className="flex items-center justify-center text-[7px] sm:text-[10px] lg:text-[11px] font-display font-medium px-0.5 truncate"
               style={{ gridColumn: ci + 2, gridRow: 1, color: CATEGORY_COLORS[cat], minHeight: cellSize }}
               title={cat}>{cat}</div>
           ))}
@@ -155,7 +155,7 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
             return (
               <div key={row}>
                 <div
-                  className="flex items-center justify-end text-[8px] sm:text-[9px] font-display font-medium pr-1 truncate"
+                  className="flex items-center justify-end text-[7px] sm:text-[10px] lg:text-[11px] font-display font-medium pr-1 truncate"
                   style={{ gridColumn: 1, gridRow: r, color: CATEGORY_COLORS[row], minHeight: cellSize }}
                   title={row}>{row}</div>
 
@@ -167,7 +167,7 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
                   if (isSelf) {
                     return (
                       <div key={`${row}-${col}`}
-                        className="flex items-center justify-center text-[var(--text4)] font-mono text-[8px] select-none"
+                        className="flex items-center justify-center text-[var(--text4)] font-mono text-[8px] sm:text-[10px] lg:text-[11px] select-none"
                         style={{ gridColumn: c, gridRow: r, background: 'rgba(255,255,255,0.02)', border: '1px solid transparent', minHeight: cellSize }}>—</div>
                     )
                   }
@@ -175,7 +175,7 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
                   const color = COMBO_LEVEL_COLORS[level]
                   return (
                     <button key={`${row}-${col}`}
-                      className={`relative flex items-center justify-center rounded text-[7px] sm:text-[8px] font-mono font-semibold border transition-all ${level === 'deadly' ? 'deadly-pulse' : ''}`}
+                      className={`relative flex items-center justify-center rounded text-[7px] sm:text-[9px] lg:text-[10px] font-mono font-semibold border transition-all ${level === 'deadly' ? 'deadly-pulse' : ''}`}
                       style={{
                         gridColumn: c, gridRow: r, minHeight: cellSize,
                         background: `${color}18`, borderColor: `${color}30`, color,
@@ -201,8 +201,6 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
         if (!row || !col || row === col) return null
         const level = getLevel(row, col)
         const color = COMBO_LEVEL_COLORS[level]
-        const rowDrugs = subMap.get(row) ?? []
-        const colDrugs = subMap.get(col) ?? []
         return (
           <div className="glass-strong rounded-xl p-3 sm:p-4 border border-[var(--border2)] w-full max-w-sm mx-auto"
             style={{ animation: 'fadeInUp 0.2s ease both' }}>
@@ -255,7 +253,7 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
           <div key={level} className="flex items-center gap-1">
             <span className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm border ${level === 'deadly' ? 'deadly-pulse' : ''}`}
               style={{ background: `${color}18`, borderColor: `${color}35` }} />
-            <span className="text-[9px] sm:text-[10px] text-[var(--text4)] font-mono">{COMBO_LEVEL_LABELS[level]}</span>
+            <span className="text-[9px] sm:text-[10px] lg:text-[11px] text-[var(--text4)] font-mono">{COMBO_LEVEL_LABELS[level]}</span>
           </div>
         ))}
       </div>
@@ -266,4 +264,3 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
     </div>
   )
 }
-
