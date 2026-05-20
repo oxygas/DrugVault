@@ -1,5 +1,6 @@
 import rawData from '@/data/all-data.json'
-import type { Substance, Category, ComboRule, ComboLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration } from '@/lib/types'
+import rawEffects from '@/data/subjective-effects.json'
+import type { Substance, Category, ComboRule, ComboLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration, SubjectiveEffect } from '@/lib/types'
 import { CATEGORY_REGISTRY, COMBO_LEVEL_REGISTRY } from '@/lib/registry'
 import { CATEGORIES, CATEGORY_COLORS, COMBO_DESCRIPTIONS } from '@/lib/types'
 
@@ -41,7 +42,15 @@ function expandSubstance(r: RawSubstance): Substance {
   }
 }
 
-const substances: Substance[] = data.s.map(expandSubstance)
+const effectsData = rawEffects as Record<string, SubjectiveEffect>
+const substances: Substance[] = data.s.map(s => {
+  const sub = expandSubstance(s)
+  const nameKey = s.n.toLowerCase()
+  if (effectsData[nameKey]) {
+    sub.subjectiveEffects = effectsData[nameKey]
+  }
+  return sub
+})
 const comboRules: ComboRule[] = data.m.map(r => ({ categoryA: r.a as Category, categoryB: r.b as Category, level: r.l as ComboLevel }))
 const substanceCombos: SubstanceCombo[] = data.c.map(c => ({ substanceA: c.a, substanceB: c.b, level: c.l as ComboLevel, note: c.n }))
 

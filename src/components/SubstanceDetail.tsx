@@ -135,7 +135,46 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
                   </div>
                 </div>
               </div>
-              {substance.pwSummary && (
+              {substance.subjectiveEffects && (substance.subjectiveEffects.positives.length > 0 || substance.subjectiveEffects.negatives.length > 0 || substance.subjectiveEffects.why) && (
+          <div className="info-card" style={{ '--info-c': catColor } as React.CSSProperties}>
+            <h4 className="text-sm font-semibold mb-3 font-display text-[var(--text2)]">Subjective Effects</h4>
+            {substance.subjectiveEffects.why && (
+              <p className="text-sm text-[var(--text3)] leading-relaxed mb-4">{substance.subjectiveEffects.why}</p>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {substance.subjectiveEffects.positives.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span className="text-xs font-semibold text-emerald-400 font-display uppercase tracking-wider">Positive</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {substance.subjectiveEffects.positives.map(e => (
+                      <span key={e} className="text-xs px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/15 font-mono">{e}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {substance.subjectiveEffects.negatives.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                    <span className="text-xs font-semibold text-red-400 font-display uppercase tracking-wider">Negative</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {substance.subjectiveEffects.negatives.map(e => (
+                      <span key={e} className="text-xs px-2 py-1 rounded-md bg-red-500/10 text-red-300 border border-red-500/15 font-mono">{e}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="mt-3 pt-3 border-t border-[var(--border)]">
+              <p className="text-xs text-[var(--text4)] font-mono">Source: PsychonautWiki</p>
+            </div>
+          </div>
+        )}
+        {substance.pwSummary && (
                 <div className="info-card" style={{ '--info-c': catColor } as React.CSSProperties}>
                   <h4 className="text-sm font-semibold mb-2 font-display text-[var(--text2)]">Summary</h4>
                   <p className="text-sm text-[var(--text3)] leading-relaxed">{substance.pwSummary}</p>

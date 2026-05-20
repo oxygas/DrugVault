@@ -37,6 +37,12 @@ export interface SanityImageAsset {
   }
 }
 
+export interface SubjectiveEffect {
+  positives: string[]
+  negatives: string[]
+  why: string
+}
+
 export interface Substance {
   name: string
   aliases: string[]
@@ -65,6 +71,7 @@ export interface Substance {
   neverMix?: string
   pwSummary: string | null
   pwRoas: Roa[] | null
+  subjectiveEffects?: SubjectiveEffect
 }
 
 export interface ComboRule {
