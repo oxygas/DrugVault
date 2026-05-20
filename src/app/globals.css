@@ -7,6 +7,7 @@
   --surface: rgba(12, 12, 28, 0.65);
   --surface-hover: rgba(22, 22, 48, 0.75);
   --surface-solid: rgba(12, 12, 28, 0.92);
+  --surface-elevated: rgba(18, 18, 40, 0.95);
   --border: rgba(255, 255, 255, 0.05);
   --border2: rgba(255, 255, 255, 0.10);
   --border3: rgba(255, 255, 255, 0.16);
