@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 
 type DXMForm = 'hbr' | 'freebase'
 
@@ -56,6 +56,30 @@ export default function DXMCalculator() {
   const [weightUnit, setWeightUnit] = useState<'kg' | 'lb'>('kg')
   const [dosage, setDosage] = useState('')
   const [form, setForm] = useState<DXMForm>('hbr')
+  const [unitSystem, setUnitSystem] = useState<'imperial' | 'metric'>('imperial') // Default to imperial
+  const [loading, setLoading] = useState(true)
+
+  // Auto-detect unit system based on IP geolocation on mount
+  useEffect(() => {
+    const detectUnitSystem = async () => {
+      try {
+        const response = await fetch('/api/ip-geolocation')
+        const data = await response.json()
+        setUnitSystem(data.system === 'metric' ? 'metric' : 'imperial')
+        // Set the weight unit to match the detected system
+        setWeightUnit(data.system === 'metric' ? 'kg' : 'lb')
+      } catch (error) {
+        console.error('Failed to fetch IP geolocation:', error)
+        // Fallback to imperial (lb) for safety with dosage calculations
+        setUnitSystem('imperial')
+        setWeightUnit('lb')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    detectUnitSystem()
+  }, [])
 
   const weightKg = useMemo(() => {
     const w = parseFloat(weight)
@@ -118,33 +142,45 @@ export default function DXMCalculator() {
             </svg>
             Body Weight
           </label>
-          <div className="flex gap-4">
-            <input
-              type="number"
-              value={weight}
-              onChange={e => setWeight(e.target.value)}
-              placeholder={weightUnit === 'kg' ? 'e.g. 70' : 'e.g. 154'}
-              className="flex-1 min-w-0 px-8 py-5 rounded-xl text-xl text-white placeholder:text-[var(--text4)] bg-[rgba(10,10,30,0.5)] border border-[var(--border2)] focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
-            />
-            <div className="flex rounded-xl overflow-hidden border-2 border-[var(--border2)] bg-[rgba(10,10,30,0.5)]">
-              <button
-                onClick={() => setWeightUnit('kg')}
-                className={`px-8 py-5 text-lg font-mono font-bold tracking-wider transition-all min-w-[72px] ${
-                  weightUnit === 'kg' ? 'text-blue-400 bg-blue-500/10' : 'text-[var(--text4)] hover:text-white'
-                }`}
-              >
-                KG
-              </button>
-              <button
-                onClick={() => setWeightUnit('lb')}
-                className={`px-8 py-5 text-lg font-mono font-bold tracking-wider transition-all min-w-[72px] ${
-                  weightUnit === 'lb' ? 'text-blue-400 bg-blue-500/10' : 'text-[var(--text4)] hover:text-white'
-                }`}
-              >
-                LB
-              </button>
-            </div>
-          </div>
+           <div className="flex gap-4">
+             <input
+               type="number"
+               value={weight}
+               onChange={e => setWeight(e.target.value)}
+               placeholder={weightUnit === 'kg' ? 'e.g. 70' : 'e.g. 154'}
+               className="flex-1 min-w-0 px-8 py-5 rounded-xl text-xl text-white placeholder:text-[var(--text4)] bg-[rgba(10,10,30,0.5)] border border-[var(--border2)] focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
+             />
+             <div className="flex items-center space-x-3">
+               <div className="flex rounded-xl overflow-hidden border-2 border-[var(--border2)] bg-[rgba(10,10,30,0.5)]">
+                 <button
+                   onClick={() => setWeightUnit('kg')}
+                   className={`px-8 py-5 text-lg font-mono font-bold tracking-wider transition-all min-w-[72px] ${
+                     weightUnit === 'kg' ? 'text-blue-400 bg-blue-500/10' : 'text-[var(--text4)] hover:text-white'
+                   }`}
+                 >
+                   KG
+                 </button>
+                 <button
+                   onClick={() => setWeightUnit('lb')}
+                   className={`px-8 py-5 text-lg font-mono font-bold tracking-wider transition-all min-w-[72px] ${
+                     weightUnit === 'lb' ? 'text-blue-400 bg-blue-500/10' : 'text-[var(--text4)] hover:text-white'
+                   }`}
+                 >
+                   LB
+                 </button>
+               </div>
+               {!loading && (
+                 <span className="text-xs font-mono text-[var(--text4)]">
+                   Detected: {unitSystem === 'metric' ? 'kg' : 'lb'}
+                 </span>
+               )}
+               {loading && (
+                 <span className="text-xs font-mono text-[var(--text4)] animate-pulse">
+                   Detecting...
+                 </span>
+               )}
+             </div>
+           </div>
         </div>
 
         {/* Dosage + Form Card */}
