@@ -8,12 +8,18 @@ interface MatrixSectionProps {
   substances: Substance[]
   comboRules: Record<string, ComboLevel>
   onSelectSubstance?: (substance: Substance) => void
+  isMobile?: boolean
 }
 
-function MatrixSectionInner({ substances, comboRules, onSelectSubstance }: MatrixSectionProps) {
+function MatrixSectionInner({ substances, comboRules, onSelectSubstance, isMobile }: MatrixSectionProps) {
   return (
     <div className="space-y-6">
-      <ComboMatrix substances={substances} comboRules={comboRules} onSelectSubstance={onSelectSubstance} />
+      <ComboMatrix
+        substances={substances}
+        comboRules={comboRules}
+        onSelectSubstance={onSelectSubstance}
+        isMobile={isMobile}
+      />
     </div>
   )
 }
