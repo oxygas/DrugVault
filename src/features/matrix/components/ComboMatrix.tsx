@@ -79,9 +79,6 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
             const color = COMBO_LEVEL_COLORS[level]
             const pairKey = `${selectedCategory}+${other}`
             const expanded = expandedPair === pairKey
-            const otherDrugs = subMap.get(other) ?? []
-            const selDrugs = subMap.get(selectedCategory) ?? []
-
             return (
               <button
                 key={pairKey}
