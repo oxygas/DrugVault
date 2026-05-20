@@ -56,74 +56,74 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
   return (
     <div className="flex-1 min-h-0 w-full mx-auto max-w-[1800px]">
       <nav className="sticky top-0 z-50 border-b border-[var(--border)]" style={{ background: 'rgba(4, 4, 12, 0.95)', backdropFilter: 'blur(24px) saturate(1.6)' }}>
-        <div className="w-full px-5 sm:px-8 h-16 flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
-            <div className="relative w-8 h-8 rounded-lg overflow-hidden">
+        <div className="w-full px-4 sm:px-6 h-16 flex items-center gap-2 sm:gap-3">
+          <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
+            <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
-              <div className="absolute inset-[1px] rounded-[7px] bg-[var(--bg)] flex items-center justify-center">
-                <span className="text-sm font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
+              <div className="absolute inset-[1px] rounded-[5px] sm:rounded-[7px] bg-[var(--bg)] flex items-center justify-center">
+                <span className="text-xs sm:text-sm font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
               </div>
             </div>
-            <span className="font-display font-bold text-lg tracking-tight hidden sm:inline">
+            <span className="font-display font-bold text-base sm:text-lg tracking-tight hidden sm:inline">
               <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Dex</span>
             </span>
           </Link>
-          <div className="h-6 w-px bg-[var(--border)] flex-shrink-0" />
-          <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text3)] hover:text-white">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+          <div className="h-5 sm:h-6 w-px bg-[var(--border)] flex-shrink-0" />
+          <button onClick={() => router.back()} className="p-1.5 sm:p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text3)] hover:text-white flex-shrink-0">
+            <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
-          {(substance.brandNames.length > 0 || substance.streetNames.length > 0) && (
-            <div className="flex flex-wrap gap-1 ml-auto flex-shrink-0">
-              {substance.brandNames.slice(0, 2).map(b => (
-                <span key={b} className="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 font-mono">🏥 {b}</span>
-              ))}
-              {substance.streetNames.slice(0, 3).map(s => (
-                <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-[rgba(255,255,255,0.04)] text-[var(--text4)] border border-[var(--border)] font-mono">⚡ {s}</span>
-              ))}
-            </div>
-          )}
           {hasEffects && (
             <button
               onClick={() => setEffectsModalOpen(true)}
-              className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-display font-semibold transition-all flex-shrink-0"
+              className="ml-auto flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-display font-semibold transition-all flex-shrink-0"
               style={{
                 background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15))',
                 color: '#a78bfa',
                 border: '1px solid rgba(139,92,246,0.25)',
               }}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
               Effects
             </button>
           )}
+          {(substance.brandNames.length > 0 || substance.streetNames.length > 0) && (
+            <div className="hidden xs:flex flex-wrap gap-1 flex-shrink-0">
+              {substance.brandNames.slice(0, 1).map(b => (
+                <span key={b} className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 font-mono">🏥 {b}</span>
+              ))}
+              {substance.streetNames.slice(0, 2).map(s => (
+                <span key={s} className="text-[10px] px-1.5 py-0.5 rounded bg-[rgba(255,255,255,0.04)] text-[var(--text4)] border border-[var(--border)] font-mono">⚡ {s}</span>
+              ))}
+            </div>
+          )}
           <div className="min-w-0 flex-1">
-            <h1 className="text-lg font-display font-bold text-white truncate">{substance.name}</h1>
-            <div className="flex items-center gap-2 text-xs text-[var(--text4)] font-mono">
+            <h1 className="text-sm sm:text-base lg:text-lg font-display font-bold text-white truncate">{substance.name}</h1>
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[var(--text4)] font-mono">
               <span>{substance.category}</span>
-              <span>·</span>
-              <span>{substance.harmLevel} risk</span>
+              <span className="hidden sm:inline">·</span>
+              <span className="hidden sm:inline">{substance.harmLevel}</span>
             </div>
           </div>
         </div>
       </nav>
 
-      <main className="w-full px-5 sm:px-8 py-6 sm:py-10 space-y-6">
-        <div className="flex items-center gap-2.5 mb-1">
-          <div className="w-1.5 h-8 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
+      <main className="w-full px-4 sm:px-6 py-5 sm:py-8 space-y-5 sm:space-y-6">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-1.5 h-7 sm:h-8 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
           <div>
-            <div className="flex flex-wrap items-center gap-2 mt-1">
-              <span className="text-sm text-[var(--text3)] font-display">{substance.category}</span>
+            <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] sm:text-sm">
+              <span className="text-[var(--text3)] font-display">{substance.category}</span>
               <span
-                className="px-3 py-0.5 rounded-full text-xs font-semibold uppercase font-mono"
+                className="px-2 py-0.5 sm:px-3 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-semibold uppercase font-mono"
                 style={{ background: `${harmColor}15`, color: harmColor, border: `1px solid ${harmColor}20` }}
               >
                 {substance.harmLevel}
               </span>
-              <span className="text-sm text-[var(--text4)] font-mono">Harm: {substance.harmScore}/100 · Addiction: {substance.addictionScore}/100</span>
+              <span className="text-[var(--text4)] font-mono hidden xs:inline">Harm: {substance.harmScore} · Add: {substance.addictionScore}</span>
             </div>
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
         {substance.aliases.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {substance.aliases.map(a => (
-              <span key={a} className="text-xs px-2.5 py-1 rounded-md bg-[rgba(255,255,255,0.04)] text-[var(--text4)] font-mono border border-[var(--border)]">
+              <span key={a} className="text-[11px] sm:text-xs px-2 sm:px-2.5 py-1 rounded-md bg-[rgba(255,255,255,0.04)] text-[var(--text4)] font-mono border border-[var(--border)]">
                 {a}
               </span>
             ))}
@@ -143,9 +143,9 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`tab-btn flex items-center gap-2 flex-shrink-0 ${tab === t.key ? 'active' : ''}`}
+              className={`tab-btn flex items-center gap-1.5 flex-shrink-0 ${tab === t.key ? 'active' : ''}`}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d={t.icon} />
               </svg>
               {t.label}
@@ -153,7 +153,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
           ))}
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5 sm:space-y-6">
           {tab === 'overview' && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

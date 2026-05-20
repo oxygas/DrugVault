@@ -12,7 +12,7 @@ interface SubstanceGridProps {
 const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 
 export default function SubstanceGrid({ substances, onSubstanceClick }: SubstanceGridProps) {
-  const batchSize = isTouchDevice ? 24 : 12
+  const batchSize = isTouchDevice ? 48 : 12
   const [visible, setVisible] = useState<Set<string>>(() => new Set(substances.slice(0, batchSize).map(s => s.name)))
   const observerRef = useRef<IntersectionObserver | null>(null)
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
@@ -71,7 +71,7 @@ export default function SubstanceGrid({ substances, onSubstanceClick }: Substanc
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6 justify-items-center">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 justify-items-center">
       {substances.map((substance, i) => {
         const delay = isTouchDevice ? (i % 8) * 25 : (i % 12) * 40
         return (

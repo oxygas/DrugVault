@@ -90,3 +90,11 @@ export function useDevice(): DeviceInfo {
   const ua = navigator.userAgent
   return detectDevice(ua)
 }
+
+/**
+ * Simple touch device check for mobile optimizations
+ */
+export function isTouchDevice(): boolean {
+  if (typeof window === 'undefined') return false
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0
+}

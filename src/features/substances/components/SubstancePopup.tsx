@@ -41,6 +41,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
   const [tab, setTab] = useState<Tab>('overview')
   const [effectsModalOpen, setEffectsModalOpen] = useState(false)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const onCloseRef = useRef(onClose)
   const [isFav, setIsFav] = useState(() => getFavorites().includes(substance.name))
   const catColor = CATEGORY_COLORS[substance.category]
@@ -54,6 +55,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     substance.subjectiveEffects.timeline.length > 0 ||
     substance.subjectiveEffects.whyUsersLikeIt?.summary
   )
+  const tabKeys: Tab[] = ['overview', 'risks', 'dosage', 'interactions']
 
   useEffect(() => {
     onCloseRef.current = onClose
@@ -65,6 +67,17 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     document.body.style.overflow = 'hidden'
     return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = '' }
   }, [])
+
+  const handleTabTouchStart = (e: React.TouchEvent) => setTouchStartX(e.touches[0].clientX)
+  const handleTabTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return
+    const diff = e.changedTouches[0].clientX - touchStartX
+    if (Math.abs(diff) < 50) { setTouchStartX(null); return }
+    const idx = tabKeys.indexOf(tab)
+    if (diff < 0 && idx < tabKeys.length - 1) setTab(tabKeys[idx + 1])
+    else if (diff > 0 && idx > 0) setTab(tabKeys[idx - 1])
+    setTouchStartX(null)
+  }
 
   const handleFavorite = () => {
     toggleFavorite(substance.name)
@@ -172,14 +185,18 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
           </div>
         </div>
 
-          <div className="flex gap-1 mt-3 -mx-1 px-1 overflow-x-auto">
-            {tabs.map(t => (
+          <div
+            onTouchStart={handleTabTouchStart}
+            onTouchEnd={handleTabTouchEnd}
+            className="flex gap-1 mt-3 -mx-1 px-1 overflow-x-auto"
+          >
+            {tabKeys.map(key => (
               <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                className={`tab-btn flex-shrink-0 ${tab === t.key ? 'active' : ''}`}
+                key={key}
+                onClick={() => setTab(key)}
+                className={`tab-btn flex-shrink-0 ${tab === key ? 'active' : ''}`}
               >
-                {t.label}
+                {key.charAt(0).toUpperCase() + key.slice(1)}
               </button>
             ))}
           </div>
