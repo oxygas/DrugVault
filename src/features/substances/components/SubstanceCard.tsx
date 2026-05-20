@@ -82,6 +82,16 @@ function SubstanceCardInner({ substance, onClick }: SubstanceCardProps) {
         )}
       </div>
     )}
+    {(substance.brandNames.length > 0 || substance.streetNames.length > 0) && (
+      <div className="mt-2 flex flex-wrap gap-1">
+        {substance.brandNames.slice(0, 2).map(b => (
+          <span key={b} className="text-[10px] lg:text-[11px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 font-mono">🏥 {b}</span>
+        ))}
+        {substance.streetNames.slice(0, 3).map(s => (
+          <span key={s} className="text-[10px] lg:text-[11px] px-1.5 py-0.5 rounded bg-[rgba(255,255,255,0.04)] text-[var(--text4)] border border-[var(--border)] font-mono">⚡ {s}</span>
+        ))}
+      </div>
+    )}
     </Link>
   )
 }

@@ -37,15 +37,57 @@ export interface SanityImageAsset {
   }
 }
 
-export interface SubjectiveEffect {
-  positives: string[]
-  negatives: string[]
-  why: string
+export interface EffectEntry {
+  name: string
+  prevalence?: string
+  category: string
+  notes?: string
+}
+
+export interface TimelinePhase {
+  phase: string
+  timeRange: string
+  description: string
+  effects: string[]
+}
+
+export interface WhyReason {
+  category: string
+  description: string
+  sourcePattern: string
+}
+
+export interface UseCase {
+  context: string
+  description: string
+}
+
+export interface StreetQuote {
+  source: string
+  text: string
+}
+
+export interface WhyUsersLikeIt {
+  summary: string
+  reasons: WhyReason[]
+  useCases: UseCase[]
+  streetQuotes: StreetQuote[]
+}
+
+export interface SubjectiveEffects {
+  allEffects: EffectEntry[]
+  mostLoved: string[]
+  riskyEffects: string[]
+  timeline: TimelinePhase[]
+  whyUsersLikeIt: WhyUsersLikeIt
+  source: string
 }
 
 export interface Substance {
   name: string
   aliases: string[]
+  brandNames: string[]
+  streetNames: string[]
   category: Category
   harmLevel: HarmLevel
   harmScore: number
@@ -71,7 +113,7 @@ export interface Substance {
   neverMix?: string
   pwSummary: string | null
   pwRoas: Roa[] | null
-  subjectiveEffects?: SubjectiveEffect
+  subjectiveEffects?: SubjectiveEffects
 }
 
 export interface ComboRule {

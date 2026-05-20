@@ -19,6 +19,10 @@ const substance = defineType({
       title: 'Dosage & Duration',
     },
     {
+      name: 'subjectiveEffects',
+      title: 'Subjective Effects',
+    },
+    {
       name: 'editorial',
       title: 'Editorial',
     },
@@ -44,6 +48,22 @@ const substance = defineType({
       title: 'Aliases',
       type: 'array',
       of: [defineArrayMember({ type: 'string' })],
+      group: 'preview',
+    }),
+    defineField({
+      name: 'brandNames',
+      title: 'Brand Names',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description: 'Pharmaceutical/recognized brand names (e.g. Prozac, Adderall, Vicodin)',
+      group: 'preview',
+    }),
+    defineField({
+      name: 'streetNames',
+      title: 'Street Names',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description: 'Slang/street names not in aliases (e.g. molly, oxy, Tina, percs)',
       group: 'preview',
     }),
     defineField({
@@ -111,7 +131,6 @@ const substance = defineType({
       group: 'preview',
     }),
 
-    // --- Modal-only fields ---
     defineField({
       name: 'chemicalStructure',
       title: 'Chemical Structure Image',
@@ -203,7 +222,6 @@ const substance = defineType({
       group: 'modal',
     }),
 
-    // --- Dosage & Duration group ---
     defineField({
       name: 'durationTotal',
       title: 'Total Duration (min)',
@@ -272,7 +290,147 @@ const substance = defineType({
       group: 'dosage',
     }),
 
-    // --- Editorial group ---
+    defineField({
+      name: 'subjectiveEffects',
+      title: 'Subjective Effects',
+      type: 'object',
+      group: 'subjectiveEffects',
+      fields: [
+        defineField({
+          name: 'allEffects',
+          title: 'All Effects (PsychonautWiki Style)',
+          type: 'array',
+          of: [defineArrayMember({
+            type: 'object',
+            name: 'effect',
+            fields: [
+              defineField({ name: 'name', title: 'Effect Name', type: 'string' }),
+              defineField({
+                name: 'prevalence',
+                title: 'Prevalence',
+                type: 'string',
+                options: {
+                  list: [
+                    { title: 'Almost Always', value: 'almost_always' },
+                    { title: 'Often', value: 'often' },
+                    { title: 'Sometimes', value: 'sometimes' },
+                    { title: 'Rarely', value: 'rarely' },
+                  ],
+                },
+              }),
+              defineField({
+                name: 'category',
+                title: 'Category',
+                type: 'string',
+                options: {
+                  list: [
+                    { title: 'Positive', value: 'positive' },
+                    { title: 'Neutral', value: 'neutral' },
+                    { title: 'Negative', value: 'negative' },
+                  ],
+                },
+              }),
+              defineField({ name: 'notes', title: 'Notes', type: 'text', rows: 2 }),
+            ],
+          })],
+        }),
+        defineField({
+          name: 'mostLoved',
+          title: 'Most Loved Effects',
+          type: 'array',
+          of: [defineArrayMember({ type: 'string' })],
+          description: 'Top effects users actively seek — euphoria, empathy, music enhancement, etc.',
+        }),
+        defineField({
+          name: 'riskyEffects',
+          title: 'Risky / Unpleasant Effects',
+          type: 'array',
+          of: [defineArrayMember({ type: 'string' })],
+          description: 'Effects that are uncomfortable, dangerous, or commonly reported as unpleasant.',
+        }),
+        defineField({
+          name: 'timeline',
+          title: 'Effects Timeline',
+          type: 'array',
+          of: [defineArrayMember({
+            type: 'object',
+            name: 'phase',
+            fields: [
+              defineField({ name: 'phase', title: 'Phase Name', type: 'string' }),
+              defineField({ name: 'timeRange', title: 'Time Range (min)', type: 'string' }),
+              defineField({ name: 'description', title: 'Description', type: 'text', rows: 2 }),
+              defineField({
+                name: 'effects',
+                title: 'Effects During This Phase',
+                type: 'array',
+                of: [defineArrayMember({ type: 'string' })],
+              }),
+            ],
+          })],
+        }),
+        defineField({
+          name: 'whyUsersLikeIt',
+          title: 'Why Users Like It',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'summary',
+              title: 'Summary',
+              type: 'text',
+              rows: 3,
+              description: 'One-paragraph street-smart explanation of what users get from this substance.',
+            }),
+            defineField({
+              name: 'reasons',
+              title: 'Top Reasons (for users)',
+              type: 'array',
+              of: [defineArrayMember({
+                type: 'object',
+                name: 'reason',
+                fields: [
+                  defineField({ name: 'category', title: 'Category', type: 'string', description: 'e.g. Euphoria, Empathy, Music, Sex, Therapy, Productivity' }),
+                  defineField({ name: 'description', title: 'Description', type: 'text', rows: 2 }),
+                  defineField({ name: 'sourcePattern', title: 'Source Pattern', type: 'string', description: 'Aggregated pattern from Erowid/PsychonautWiki/Reddit' }),
+                ],
+              })],
+            }),
+            defineField({
+              name: 'useCases',
+              title: 'Use Cases / Contexts',
+              type: 'array',
+              of: [defineArrayMember({
+                type: 'object',
+                name: 'useCase',
+                fields: [
+                  defineField({ name: 'context', title: 'Context', type: 'string', description: 'e.g. Music festival, Club, Therapy session, Solo introspection' }),
+                  defineField({ name: 'description', title: 'What to expect', type: 'text', rows: 2 }),
+                ],
+              })],
+            }),
+            defineField({
+              name: 'streetQuotes',
+              title: 'Sourced Quotes / Patterns',
+              type: 'array',
+              of: [defineArrayMember({
+                type: 'object',
+                name: 'quote',
+                fields: [
+                  defineField({ name: 'source', title: 'Source', type: 'string', options: { list: [{ title: 'Erowid', value: 'Erowid' }, { title: 'PsychonautWiki', value: 'PsychonautWiki' }, { title: 'Reddit', value: 'Reddit' }, { title: 'Bluelight', value: 'Bluelight' }] } }),
+                  defineField({ name: 'text', title: 'Quote / Pattern Text', type: 'text', rows: 2 }),
+                ],
+              })],
+            }),
+          ],
+        }),
+        defineField({
+          name: 'source',
+          title: 'Data Source',
+          type: 'string',
+          description: 'e.g. PsychonautWiki, Erowid, Custom',
+        }),
+      ],
+    }),
+
     defineField({
       name: 'description',
       title: 'Description',

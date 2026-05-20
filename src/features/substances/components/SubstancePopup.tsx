@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, Suspense, lazy } from 'react'
 import Image from 'next/image'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
 import RadarChart from '@/components/RadarChart'
 import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
+
+const SubjectiveEffectsModal = lazy(() => import('@/components/SubjectiveEffectsModal'))
 
 const FAVORITES_KEY = 'tripdex_favorites'
 
@@ -37,9 +39,21 @@ type Tab = 'overview' | 'risks' | 'dosage' | 'interactions'
 
 export default function SubstancePopup({ substance, comboMatrix, onClose, onNavigate, allSubstances }: SubstancePopupProps) {
   const [tab, setTab] = useState<Tab>('overview')
+  const [effectsModalOpen, setEffectsModalOpen] = useState(false)
   const overlayRef = useRef<HTMLDivElement>(null)
   const onCloseRef = useRef(onClose)
   const [isFav, setIsFav] = useState(() => getFavorites().includes(substance.name))
+  const catColor = CATEGORY_COLORS[substance.category]
+  const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
+  const sanityImageUrl = substance.chemicalStructure?.asset?.url || null
+  const structureAlt = substance.chemicalStructure?.alt || `${substance.name} chemical structure`
+  const hasEffects = substance.subjectiveEffects && (
+    substance.subjectiveEffects.allEffects.length > 0 ||
+    substance.subjectiveEffects.mostLoved.length > 0 ||
+    substance.subjectiveEffects.riskyEffects.length > 0 ||
+    substance.subjectiveEffects.timeline.length > 0 ||
+    substance.subjectiveEffects.whyUsersLikeIt?.summary
+  )
 
   useEffect(() => {
     onCloseRef.current = onClose
@@ -56,12 +70,6 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     toggleFavorite(substance.name)
     setIsFav(getFavorites().includes(substance.name))
   }
-
-  const catColor = CATEGORY_COLORS[substance.category]
-  const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
-
-  const sanityImageUrl = substance.chemicalStructure?.asset?.url || null
-  const structureAlt = substance.chemicalStructure?.alt || `${substance.name} chemical structure`
 
   const getComboLevel = (cat: Category): ComboLevel => {
     return comboMatrix[`${substance.category}+${cat}`] || comboMatrix[`${cat}+${substance.category}`] || 'caution'
@@ -117,10 +125,32 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
                   {a}
                 </span>
               ))}
+              {substance.brandNames.map(b => (
+                <span key={b} className="text-[11px] lg:text-xs px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-300 font-mono border border-blue-500/20">🏥 {b}</span>
+              ))}
+              {substance.streetNames.map(s => (
+                <span key={s} className="text-[11px] lg:text-xs px-2 py-0.5 rounded-md bg-[rgba(255,255,255,0.03)] text-[var(--text4)] font-mono border border-[var(--border)]">⚡ {s}</span>
+              ))}
             </div>
           )}
         </div>
           <div className="flex items-center gap-1">
+            {hasEffects && (
+              <button
+                onClick={() => setEffectsModalOpen(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-display font-semibold transition-all"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15))',
+                  color: '#a78bfa',
+                  border: '1px solid rgba(139,92,246,0.25)',
+                }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                Effects
+              </button>
+            )}
             <button
               onClick={handleFavorite}
               className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors flex-shrink-0"
@@ -261,6 +291,16 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
             </div>
           )}
         </div>
+
+        {effectsModalOpen && (
+          <Suspense fallback={null}>
+            <SubjectiveEffectsModal
+              substance={substance}
+              isOpen={effectsModalOpen}
+              onClose={() => setEffectsModalOpen(false)}
+            />
+          </Suspense>
+        )}
       </div>
     </div>
   )

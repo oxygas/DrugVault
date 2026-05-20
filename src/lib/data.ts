@@ -1,12 +1,13 @@
 import rawData from '@/data/all-data.json'
 import rawEffects from '@/data/subjective-effects.json'
-import type { Substance, Category, ComboRule, ComboLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration, SubjectiveEffect } from '@/lib/types'
+import mdmaEffectsJson from '@/data/mdma-effects.json'
+import type { Substance, Category, ComboRule, ComboLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration, SubjectiveEffects } from '@/lib/types'
 import { CATEGORY_REGISTRY, COMBO_LEVEL_REGISTRY } from '@/lib/registry'
 import { CATEGORIES, CATEGORY_COLORS, COMBO_DESCRIPTIONS } from '@/lib/types'
 
 // Compact key types matching all-data.json
 interface RawSubstance {
-  n: string; a: string[]; c: string; hl: string; hs: number; as: number
+  n: string; a: string[]; bn: string[]; st: string[]; c: string; hl: string; hs: number; as: number
   o: string; d: string; od: number; ws: number; id: number; dl: number
   r: string[]; od2: string[]; s: string[]; i: string[]
   w?: string[]; rc?: string[]; sm: string; bm?: string; nm?: string
@@ -25,7 +26,10 @@ const data = rawData as RawData
 // Expand compact JSON to full types
 function expandSubstance(r: RawSubstance): Substance {
   return {
-    name: r.n, aliases: r.a, category: r.c as Category,
+    name: r.n, aliases: r.a,
+    brandNames: r.bn || [],
+    streetNames: r.st || [],
+    category: r.c as Category,
     harmLevel: r.hl, harmScore: r.hs, addictionScore: r.as,
     onset: r.o, duration: r.d, odRisk: r.od,
     withdrawalSeverity: r.ws, interactionDanger: r.id, dependenceLiability: r.dl,
@@ -42,12 +46,29 @@ function expandSubstance(r: RawSubstance): Substance {
   }
 }
 
-const effectsData = rawEffects as Record<string, SubjectiveEffect>
+const mdmaEffectsData = mdmaEffectsJson as SubjectiveEffects
+const effectsData = rawEffects as Record<string, unknown>
 const substances: Substance[] = data.s.map(s => {
   const sub = expandSubstance(s)
   const nameKey = s.n.toLowerCase()
-  if (effectsData[nameKey]) {
-    sub.subjectiveEffects = effectsData[nameKey]
+
+  if (nameKey === 'mdma') {
+    sub.subjectiveEffects = mdmaEffectsData
+  } else if (effectsData[nameKey]) {
+    const raw = effectsData[nameKey] as { positives?: string[]; negatives?: string[]; why?: string }
+    if (raw.positives || raw.negatives) {
+      sub.subjectiveEffects = {
+        allEffects: [
+          ...(raw.positives || []).map((name: string) => ({ name, category: 'positive' })),
+          ...(raw.negatives || []).map((name: string) => ({ name, category: 'negative' })),
+        ],
+        mostLoved: raw.positives || [],
+        riskyEffects: raw.negatives || [],
+        timeline: [],
+        whyUsersLikeIt: { summary: raw.why || '', reasons: [], useCases: [], streetQuotes: [] },
+        source: 'PsychonautWiki',
+      }
+    }
   }
   return sub
 })
@@ -87,6 +108,8 @@ function buildSearchIndex() {
     const tokens = [
       s.name,
       ...s.aliases,
+      ...s.brandNames,
+      ...s.streetNames,
       s.category,
     ].map(t => t.toLowerCase())
 

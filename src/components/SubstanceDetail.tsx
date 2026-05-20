@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -10,6 +10,12 @@ import { slugify } from '@/lib/data'
 import RadarChart from '@/components/RadarChart'
 import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
+import dynamic from 'next/dynamic'
+
+const SubjectiveEffectsModal = dynamic(
+  () => import('@/components/SubjectiveEffectsModal'),
+  { ssr: false, loading: () => null }
+)
 
 interface SubstanceDetailProps {
   substance: Substance
@@ -22,11 +28,19 @@ type Tab = 'overview' | 'risks' | 'dosage' | 'interactions'
 
 export default function SubstanceDetail({ substance, comboMatrix, relatedSubstances, allSubstances }: SubstanceDetailProps) {
   const [tab, setTab] = useState<Tab>('overview')
+  const [effectsModalOpen, setEffectsModalOpen] = useState(false)
   const router = useRouter()
   const catColor = CATEGORY_COLORS[substance.category]
   const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
   const sanityImageUrl = substance.chemicalStructure?.asset?.url || null
   const structureAlt = substance.chemicalStructure?.alt || `${substance.name} chemical structure`
+  const hasEffects = substance.subjectiveEffects && (
+    substance.subjectiveEffects.allEffects.length > 0 ||
+    substance.subjectiveEffects.mostLoved.length > 0 ||
+    substance.subjectiveEffects.riskyEffects.length > 0 ||
+    substance.subjectiveEffects.timeline.length > 0 ||
+    substance.subjectiveEffects.whyUsersLikeIt?.summary
+  )
 
   const getComboLevel = (cat: Category): ComboLevel => {
     return comboMatrix[`${substance.category}+${cat}`] || comboMatrix[`${cat}+${substance.category}`] || 'caution'
@@ -60,6 +74,32 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
+          {(substance.brandNames.length > 0 || substance.streetNames.length > 0) && (
+            <div className="flex flex-wrap gap-1 ml-auto flex-shrink-0">
+              {substance.brandNames.slice(0, 2).map(b => (
+                <span key={b} className="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 font-mono">🏥 {b}</span>
+              ))}
+              {substance.streetNames.slice(0, 3).map(s => (
+                <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-[rgba(255,255,255,0.04)] text-[var(--text4)] border border-[var(--border)] font-mono">⚡ {s}</span>
+              ))}
+            </div>
+          )}
+          {hasEffects && (
+            <button
+              onClick={() => setEffectsModalOpen(true)}
+              className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-display font-semibold transition-all flex-shrink-0"
+              style={{
+                background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15))',
+                color: '#a78bfa',
+                border: '1px solid rgba(139,92,246,0.25)',
+              }}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              Effects
+            </button>
+          )}
           <div className="min-w-0 flex-1">
             <h1 className="text-lg font-display font-bold text-white truncate">{substance.name}</h1>
             <div className="flex items-center gap-2 text-xs text-[var(--text4)] font-mono">
@@ -135,45 +175,29 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
                   </div>
                 </div>
               </div>
-              {substance.subjectiveEffects && (substance.subjectiveEffects.positives.length > 0 || substance.subjectiveEffects.negatives.length > 0 || substance.subjectiveEffects.why) && (
-          <div className="info-card" style={{ '--info-c': catColor } as React.CSSProperties}>
-            <h4 className="text-sm font-semibold mb-3 font-display text-[var(--text2)]">Subjective Effects</h4>
-            {substance.subjectiveEffects.why && (
-              <p className="text-sm text-[var(--text3)] leading-relaxed mb-4">{substance.subjectiveEffects.why}</p>
-            )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {substance.subjectiveEffects.positives.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span className="text-xs font-semibold text-emerald-400 font-display uppercase tracking-wider">Positive</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {substance.subjectiveEffects.positives.map(e => (
-                      <span key={e} className="text-xs px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/15 font-mono">{e}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {substance.subjectiveEffects.negatives.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                    <span className="text-xs font-semibold text-red-400 font-display uppercase tracking-wider">Negative</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {substance.subjectiveEffects.negatives.map(e => (
-                      <span key={e} className="text-xs px-2 py-1 rounded-md bg-red-500/10 text-red-300 border border-red-500/15 font-mono">{e}</span>
-                    ))}
+              {hasEffects && (
+                <div className="info-card" style={{ '--info-c': catColor } as React.CSSProperties}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2 font-display text-[var(--text2)]">Subjective Effects</h4>
+                      <p className="text-xs text-[var(--text4)] leading-relaxed">
+                        {substance.subjectiveEffects?.allEffects.length ?? 0} effects documented · Includes &quot;Why Users Like It&quot; · Duration timeline
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setEffectsModalOpen(true)}
+                      className="px-3 py-2 rounded-lg text-xs font-display font-semibold transition-all flex-shrink-0"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.2))',
+                        color: '#a78bfa',
+                        border: '1px solid rgba(139,92,246,0.3)',
+                      }}
+                    >
+                      Open Effects
+                    </button>
                   </div>
                 </div>
               )}
-            </div>
-            <div className="mt-3 pt-3 border-t border-[var(--border)]">
-              <p className="text-xs text-[var(--text4)] font-mono">Source: PsychonautWiki</p>
-            </div>
-          </div>
-        )}
         {substance.pwSummary && (
                 <div className="info-card" style={{ '--info-c': catColor } as React.CSSProperties}>
                   <h4 className="text-sm font-semibold mb-2 font-display text-[var(--text2)]">Summary</h4>
@@ -257,6 +281,16 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
           )}
         </div>
       </main>
+
+      {effectsModalOpen && (
+        <Suspense fallback={null}>
+          <SubjectiveEffectsModal
+            substance={substance}
+            isOpen={effectsModalOpen}
+            onClose={() => setEffectsModalOpen(false)}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }
