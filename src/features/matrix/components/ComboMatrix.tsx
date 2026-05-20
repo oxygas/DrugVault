@@ -46,62 +46,62 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
 
   if (showListView && view === 'list') {
     return (
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-3 w-full max-w-[100vw] overflow-hidden px-2">
         <div className="flex items-center gap-2 w-full">
           <h3 className="text-xs font-display font-semibold text-[var(--text2)]">Interactions</h3>
-          <span className="text-[10px] text-[var(--text4)] font-mono">{N} categories</span>
+          <span className="text-[10px] font-mono text-[var(--text4)]">{N}</span>
           <button
             onClick={() => setView('grid')}
-            className="ml-auto text-[10px] px-2 py-1 rounded-md border border-[var(--border)] text-[var(--text3)] hover:text-white transition-colors"
+            className="ml-auto text-[10px] px-2 py-1 rounded border border-[var(--border)] text-[var(--text3)]"
           >
             Grid
           </button>
         </div>
 
-        <div className="w-full space-y-1.5">
-          {categories.map(cat => (
-            <div key={cat} className="rounded-lg border overflow-hidden"
-              style={{ borderColor: activeRow === cat ? CATEGORY_COLORS[cat] + '40' : 'var(--border)' }}>
-              <button
-                onClick={() => setActiveRow(activeRow === cat ? null : cat)}
-                className="w-full flex items-center gap-2 p-2.5"
-              >
-                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[cat] }} />
-                <span className="text-xs font-display font-semibold text-white flex-1 text-left">{cat}</span>
-                <span className="text-[10px] font-mono text-[var(--text4)]">{(subMap.get(cat) ?? []).length} drugs</span>
-                <svg className={`w-3.5 h-3.5 text-[var(--text4)] transition-transform ${activeRow === cat ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
+        <div className="w-full space-y-2">
+          {categories.map(cat => {
+            const rowDrugs = subMap.get(cat) ?? []
+            const isOpen = activeRow === cat
+            return (
+              <div key={cat} className="rounded-lg border overflow-hidden"
+                style={{ borderColor: isOpen ? CATEGORY_COLORS[cat] + '50' : 'var(--border)' }}>
+                <button
+                  onClick={() => setActiveRow(isOpen ? null : cat)}
+                  className="w-full flex items-center gap-2 p-2.5"
+                >
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[cat] }} />
+                  <span className="text-xs font-display font-semibold text-white truncate">{cat}</span>
+                  <span className="text-[10px] font-mono text-[var(--text4)] ml-1">{rowDrugs.length}</span>
+                  <svg className={`w-3.5 h-3.5 text-[var(--text4)] ml-auto flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
 
-              {activeRow === cat && (
-                <div className="px-3 pb-3 space-y-1">
-                  {categories.filter(c => c !== cat).map(other => {
-                    const level = getLevel(cat, other)
-                    const color = COMBO_LEVEL_COLORS[level]
-                    const drugs = subMap.get(other) ?? []
-                    return (
-                      <div key={other} className="flex items-center gap-2 p-2 rounded-md"
-                        style={{ background: `${color}08` }}>
-                        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[other] }} />
-                        <span className="text-[11px] font-display text-[var(--text2)] flex-1 truncate">{other}</span>
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold uppercase"
-                          style={{ background: `${color}15`, color, border: `1px solid ${color}20` }}>
-                          {COMBO_LEVEL_LABELS[level]}
-                        </span>
-                      </div>
-                    )
-                  })}
-                  <p className="text-[10px] text-[var(--text4)] px-1 mt-2 leading-relaxed">
-                    Tap a category above to see its interactions with all other categories
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
+                {isOpen && (
+                  <div className="px-2 pb-2 space-y-0.5">
+                    {categories.filter(c => c !== cat).map(other => {
+                      const level = getLevel(cat, other)
+                      const color = COMBO_LEVEL_COLORS[level]
+                      return (
+                        <div key={other} className="flex items-center gap-1.5 py-1.5 px-2 rounded text-[10px]"
+                          style={{ background: `${color}06` }}>
+                          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[other] }} />
+                          <span className="font-display text-[var(--text2)] truncate flex-1">{other}</span>
+                          <span className="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold uppercase flex-shrink-0"
+                            style={{ background: `${color}18`, color, border: `1px solid ${color}25` }}>
+                            {COMBO_LEVEL_LABELS[level]}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
 
-        <div className="flex flex-wrap gap-2 justify-center pt-1">
+        <div className="flex flex-wrap gap-2 justify-center">
           {(Object.entries(COMBO_LEVEL_COLORS) as [ComboLevel, string][]).map(([level, color]) => (
             <div key={level} className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-sm border" style={{ background: `${color}18`, borderColor: `${color}35` }} />
@@ -113,25 +113,25 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
     )
   }
 
-  const cellSize = touchDevice ? 26 : 36
-  const labelSize = touchDevice ? 54 : 80
+  const cellSize = touchDevice ? 24 : 36
+  const labelSize = touchDevice ? 48 : 80
 
   return (
-    <div className="flex flex-col items-center gap-3 sm:gap-4">
-      <div className="flex items-center gap-2 sm:gap-3">
-        <h3 className="text-xs sm:text-sm lg:text-base font-display font-semibold text-[var(--text2)]">Drug Combinations</h3>
+    <div className="flex flex-col items-center gap-3 sm:gap-4 w-full max-w-[100vw] overflow-hidden px-2">
+      <div className="flex items-center gap-2 sm:gap-3 w-full">
+        <h3 className="text-xs sm:text-sm lg:text-base font-display font-semibold text-[var(--text2)]">Combos</h3>
         <span className="text-[10px] sm:text-[11px] text-[var(--text4)] font-mono">{N}</span>
         {showListView && (
           <button
             onClick={() => setView('list')}
-            className="text-[10px] px-2 py-1 rounded-md border border-[var(--border)] text-[var(--text3)] hover:text-white transition-colors"
+            className="ml-auto text-[10px] px-2 py-1 rounded border border-[var(--border)] text-[var(--text3)]"
           >
             List
           </button>
         )}
       </div>
 
-      <div className="overflow-x-auto w-full flex justify-start pb-2">
+      <div className="overflow-x-auto w-full pb-2">
         <div
           className="glass rounded-xl p-1 sm:p-2 border border-[var(--border)]"
           style={{
@@ -145,7 +145,7 @@ export default function ComboMatrix({ substances, comboRules, onSelectSubstance 
 
           {categories.map((cat, ci) => (
             <div key={cat}
-              className="flex items-center justify-center text-[8px] sm:text-[9px] font-display font-medium px-0.5 truncate"
+              className="flex items-center justify-center text-[7px] sm:text-[9px] font-display font-medium px-0.5 truncate"
               style={{ gridColumn: ci + 2, gridRow: 1, color: CATEGORY_COLORS[cat], minHeight: cellSize }}
               title={cat}>{cat}</div>
           ))}
