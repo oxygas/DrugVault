@@ -61,6 +61,7 @@ const substance = defineType({
           { title: 'Cannabinoids', value: 'Cannabinoids' },
           { title: 'Inhalants', value: 'Inhalants' },
           { title: 'Deliriants', value: 'Deliriants' },
+          { title: 'Gabapentionoids', value: 'Gabapentionoids' },
         ],
       },
       validation: (Rule) => Rule.required(),
@@ -307,7 +308,7 @@ const comboRule = defineType({
       title: 'Category A',
       type: 'string',
       options: {
-        list: ['Depressants', 'Stimulants', 'Opioids', 'Psychedelics', 'Dissociatives', 'Entactogens', 'Cannabinoids', 'Inhalants', 'Deliriants'],
+        list: ['Depressants', 'Stimulants', 'Opioids', 'Psychedelics', 'Dissociatives', 'Entactogens', 'Cannabinoids', 'Inhalants', 'Deliriants', 'Gabapentionoids'],
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -316,7 +317,7 @@ const comboRule = defineType({
       title: 'Category B',
       type: 'string',
       options: {
-        list: ['Depressants', 'Stimulants', 'Opioids', 'Psychedelics', 'Dissociatives', 'Entactogens', 'Cannabinoids', 'Inhalants', 'Deliriants'],
+        list: ['Depressants', 'Stimulants', 'Opioids', 'Psychedelics', 'Dissociatives', 'Entactogens', 'Cannabinoids', 'Inhalants', 'Deliriants', 'Gabapentionoids'],
       },
       validation: (Rule) => Rule.required(),
     }),

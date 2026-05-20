@@ -29,6 +29,7 @@ export const CATEGORY_REGISTRY: CategoryConfig[] = [
   { name: 'Cannabinoids', color: '#22c55e' },
   { name: 'Inhalants', color: '#eab308' },
   { name: 'Deliriants', color: '#7f1d1d' },
+  { name: 'Gabapentionoids', color: '#0d9488' },
   { name: 'Nootropics', color: '#14b8a6' },
   { name: 'Antidepressants', color: '#6366f1' },
   { name: 'Supplements', color: '#84cc16' },

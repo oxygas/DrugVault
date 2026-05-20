@@ -1,6 +1,6 @@
 import { CATEGORY_REGISTRY, COMBO_LEVEL_REGISTRY, HARM_LEVEL_REGISTRY } from './registry'
 
-export type Category = 'Depressants' | 'Stimulants' | 'Opioids' | 'Psychedelics' | 'Dissociatives' | 'Entactogens' | 'Cannabinoids' | 'Inhalants' | 'Deliriants' | string
+export type Category = 'Depressants' | 'Stimulants' | 'Opioids' | 'Psychedelics' | 'Dissociatives' | 'Entactogens' | 'Cannabinoids' | 'Inhalants' | 'Deliriants' | 'Gabapentionoids' | string
 
 export type HarmLevel = 'low' | 'moderate' | 'high' | 'extreme' | string
 
