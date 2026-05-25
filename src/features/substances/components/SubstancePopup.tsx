@@ -10,7 +10,7 @@ import DosageTable from '@/components/DosageTable'
 
 const SubjectiveEffectsModal = lazy(() => import('@/components/SubjectiveEffectsModal'))
 
-const FAVORITES_KEY = 'tripdex_favorites'
+const FAVORITES_KEY = 'tripgem_favorites'
 
 function getFavorites(): string[] {
   if (typeof window === 'undefined') return []

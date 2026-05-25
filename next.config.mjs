@@ -30,7 +30,7 @@ export default withSentryConfig(nextConfig, {
 
   org: "copecord-a6",
 
-  project: "tripdex",
+  project: "tripgem",
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,

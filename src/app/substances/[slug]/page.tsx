@@ -17,14 +17,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const substance = getSubstanceBySlug(slug)
-  if (!substance) return { title: 'Substance Not Found | Tripdex' }
+  if (!substance) return { title: 'Substance Not Found | Tripgem' }
 
   return {
-    title: `${substance.name} — ${substance.category} | Tripdex Harm Reduction`,
+    title: `${substance.name} — ${substance.category} | Tripgem Harm Reduction`,
     description: `${substance.name} harm profile: ${substance.harmLevel} risk, harm score ${substance.harmScore}/100. ${substance.onset} onset, ${substance.duration} duration. Evidence-based drug information.`,
     keywords: [substance.name, substance.category, 'harm reduction', 'drug interactions', 'dosage guide', ...substance.aliases],
     openGraph: {
-      title: `${substance.name} — Tripdex`,
+      title: `${substance.name} — Tripgem`,
       description: `${substance.category} · ${substance.harmLevel} harm level · Score: ${substance.harmScore}/100`,
       type: 'article',
     },

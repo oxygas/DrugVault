@@ -24,10 +24,10 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://tripdex.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://tripgem.vercel.app'),
   title: {
-    default: 'TripDex — Evidence-Based Harm Reduction Database',
-    template: '%s | TripDex Harm Reduction',
+    default: 'TripGem — Evidence-Based Harm Reduction Database',
+    template: '%s | TripGem Harm Reduction',
   },
   description: 'Comprehensive harm reduction resource with 540+ substances. Check drug interactions, view combination risk matrix, dosage guides, and evidence-based safety information.',
   keywords: [
@@ -44,9 +44,9 @@ export const metadata: Metadata = {
     'harm reduction database',
     'interaction checker',
   ],
-  authors: [{ name: 'TripDex' }],
-  creator: 'TripDex',
-  publisher: 'TripDex',
+  authors: [{ name: 'TripGem' }],
+  creator: 'TripGem',
+  publisher: 'TripGem',
   robots: {
     index: true,
     follow: true,
@@ -61,22 +61,22 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://tripdex.vercel.app',
-    siteName: 'TripDex',
-    title: 'TripDex — Evidence-Based Harm Reduction Database',
+    url: 'https://tripgem.vercel.app',
+    siteName: 'TripGem',
+    title: 'TripGem — Evidence-Based Harm Reduction Database',
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'TripDex — Evidence-Based Harm Reduction',
+        alt: 'TripGem — Evidence-Based Harm Reduction',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tripdex — Evidence-Based Harm Reduction Database',
+    title: 'Tripgem — Evidence-Based Harm Reduction Database',
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
     images: ['/og-image.png'],
   },
@@ -99,14 +99,14 @@ export default async function RootLayout({
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Tripdex',
+    name: 'Tripgem',
     description: 'Evidence-based harm reduction database and drug interaction checker',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://tripdex.vercel.app',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://tripgem.vercel.app',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://tripdex.vercel.app'}?q={search_term_string}`,
+        urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://tripgem.vercel.app'}?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },

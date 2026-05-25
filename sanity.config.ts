@@ -7,8 +7,8 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || ''
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 
 export default defineConfig({
-  name: 'tripdex',
-  title: 'Tripdex',
+  name: 'tripgem',
+  title: 'Tripgem',
   projectId,
   dataset,
   plugins: [structureTool(), visionTool()],

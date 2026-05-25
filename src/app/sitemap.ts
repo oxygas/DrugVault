@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 export default async function sitemap() {
   const substances = getAllSubstances()
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tripdex.vercel.app'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tripgem.vercel.app'
 
   const substanceUrls = substances.map(s => ({
     url: `${baseUrl}/substances/${slugify(s.name)}`,

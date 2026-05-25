@@ -5,7 +5,7 @@ import type { Substance, Category } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
 import { searchSubstances } from '@/lib/data'
 
-const RECENT_SEARCHES_KEY = 'tripdex_recent_searches'
+const RECENT_SEARCHES_KEY = 'tripgem_recent_searches'
 const MAX_RECENT = 8
 
 function getRecentSearches(): Substance['name'][] {
