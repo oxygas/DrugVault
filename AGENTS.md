@@ -40,6 +40,22 @@
 - **`src/proxy.ts`** — Next.js middleware pattern for 403 AI crawler blocking (not wired as active middleware; starting point if middleware is needed).
 - **`vercel.json`**: security headers (`X-Content-Type-Options`, `X-Frame-Options`, `X-XSS-Protection`, `Referrer-Policy`). Region `iad1`.
 
+## Next-Gen Lab Preview (`/lab`)
+- **Route**: `src/app/lab/page.tsx` + `lab-client.tsx` — 5 tabs: Overview, Combo Checker, Dosage Calculator, Effect Timeline, Trip Journal
+- **Safety**: `SafetyOverlay` component with dismissible red alerts per section (default, combos, dosage) at `src/components/safety-overlay.tsx`
+- **Zustand stores**: `src/stores/bookmarks.ts` (localStorage persist), `journal.ts` (CRUD + export/import), `ui.ts` (sidebar, dismissed overlays)
+- **TanStack Query**: Provider at `src/providers/query-provider.tsx`, wired in root layout
+- **shadcn/ui**: Components at `src/components/ui/` — Slider uses `@base-ui/react/slider` (not Radix). TooltipProvider wraps app in layout
+- **Sonner**: `Toaster` in root layout for all toast notifications
+- **Framer Motion**: Micro-interactions on cards (hover scale, staggered entrance), timeline bars (animated width), modal transitions
+- **Mock data**: `src/data/mock-substances.ts` — 15 substances with full schema (effects, interactions, ROA dosages, legal status, citations)
+- **Combo Checker** (`src/components/combo-checker.tsx`): 15 substance pairs with 6 risk levels (safe→deadly), safer alternative suggestions
+- **Dosage Calculator** (`src/components/dosage-calculator.tsx`): MDMA/LSD/Ketamine, 3 ROAs each, tolerance slider, heavy-dose red flags
+- **Effect Timeline** (`src/components/effect-timeline.tsx`): Phase-based intensity bars for MDMA/LSD/Ketamine with onset/duration/after-effects
+- **SubstanceCardEnhanced** (`src/components/substance-card-enhanced.tsx`): Animated card with harm bar, category gradient, ROA tags, bookmark button
+- **Bookmark Button** (`src/components/bookmark-button.tsx`): Toggle with Framer Motion scale animation, persists to localStorage
+- **Trip Journal** (`src/components/trip-journal.tsx`): CRUD entries, mood rating, export/import JSON, all localStorage via Zustand persist
+
 ## Environment & Setup
 - **Required**: `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` in `.env.local` (Sanity Studio crashes without them).
 - **Sentry**: configured via `withSentryConfig` in `next.config.mjs`. Tunnel route `/monitoring`. Requires `.env.sentry-build-plugin` for source maps in production builds.

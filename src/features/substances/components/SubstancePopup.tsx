@@ -343,6 +343,7 @@ function ChemicalStructureImage({
   const [loading, setLoading] = useState(!sanityUrl)
   const [error, setError] = useState(false)
   const fetchedRef = useRef<string>('')
+  const imgLoadRef = useRef(0)
 
   useEffect(() => {
     if (sanityUrl) {
@@ -411,10 +412,13 @@ function ChemicalStructureImage({
       alt={alt}
       className="chemical-structure-image max-h-40 sm:max-h-48 w-auto"
       loading="lazy"
+      onLoad={() => setLoading(false)}
       onError={() => {
-        if (source === 'pubchem' && smiles) {
+        if (source === 'pubchem' && smiles && imgLoadRef.current < 1) {
+          imgLoadRef.current += 1
           setImageUrl(`https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(smiles)}/image`)
           setSource('cactus')
+          setLoading(true)
         } else {
           setError(true)
         }

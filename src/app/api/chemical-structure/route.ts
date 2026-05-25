@@ -1,27 +1,19 @@
 import * as Sentry from '@sentry/nextjs'
 import { NextResponse } from 'next/server'
+import rawData from '@/data/all-data.json'
 
 const PUBCHEM_CID_CACHE = new Map<string, number>()
 
-const NAME_ALTERNATIVES: Record<string, string[]> = {
-  'THCP': ['Tetrahydrocannabiphorol', '3-Heptyl-delta-1-tetrahydrocannabinol'],
-  'HHCP': ['Hexahydrocannabiphorol'],
-  'HHC': ['Hexahydrocannabinol'],
-  'THCP-O': ['THCP acetate'],
-  'THC-A': ['THC-A', 'Tetrahydrocannabinolic acid'],
-  'THC-B': ['THC-B'],
-  'THC-V': ['THCV', 'Tetrahydrocannabivarin'],
-  'Delta-10-THC': ['delta-10-tetrahydrocannabinol'],
-  'Delta-8-THC': ['delta-8-tetrahydrocannabinol'],
-  'Delta-9-THC': ['delta-9-tetrahydrocannabinol'],
-  '1B-LSD': ['1B-LSD'],
-  '1cP-AL-LAD': ['1cP-AL-LAD'],
-  '1cP-LSD': ['1cP-LSD'],
-  '1P-ETH-LAD': ['1P-ETH-LAD'],
-  '1P-LSD': ['1P-LSD'],
-  '1V-LSD': ['1V-LSD'],
-  '25T-2-NBOMe': ['25T2NBOMe'],
-  '25T-4-NBOMe': ['25T4NBOMe'],
+interface RawSubstance {
+  n: string; a: string[]; sm: string
+}
+interface RawData { s: RawSubstance[] }
+const data = rawData as RawData
+
+const ALIAS_MAP = new Map<string, string[]>()
+for (const s of data.s) {
+  const names: string[] = [s.n, ...(s.a || [])]
+  ALIAS_MAP.set(s.n, names)
 }
 
 const CID_ALIASES: Record<string, number> = {
@@ -32,10 +24,17 @@ const CID_ALIASES: Record<string, number> = {
   'Delta-9-THC': 6694,
 }
 
+function isValidSmiles(s: string): boolean {
+  if (!s || s.length < 1) return false
+  const hasCarbon = /C(?![a-z])/.test(s) || /c/.test(s)
+  if (!hasCarbon) return false
+  return true
+}
+
 async function lookupPubChemCID(name: string): Promise<number | null> {
   if (PUBCHEM_CID_CACHE.has(name)) return PUBCHEM_CID_CACHE.get(name)!
 
-  const lookupNames = [name, ...(NAME_ALTERNATIVES[name] || [])]
+  const lookupNames = ALIAS_MAP.get(name) ?? [name]
 
   for (const lookupName of lookupNames) {
     try {
@@ -50,12 +49,36 @@ async function lookupPubChemCID(name: string): Promise<number | null> {
           PUBCHEM_CID_CACHE.set(name, cid)
           return cid
         }
+      } else if (res.status === 404) {
+        continue
       }
     } catch (e) {
-      console.error(`[chemical-structure] PubChem lookup failed for "${lookupName}":`, e)
+      console.error(`[chemical-structure] PubChem name lookup failed for "${lookupName}":`, e)
     }
   }
+  return null
+}
 
+async function lookupPubChemCIDBySmiles(smiles: string): Promise<number | null> {
+  const cacheKey = `smiles:${smiles}`
+  if (PUBCHEM_CID_CACHE.has(cacheKey)) return PUBCHEM_CID_CACHE.get(cacheKey)!
+
+  try {
+    const res = await fetch(
+      `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(smiles)}/cids/JSON`,
+      { signal: AbortSignal.timeout(5000) }
+    )
+    if (res.ok) {
+      const data = await res.json()
+      const cid = data?.IdentifierList?.CID?.[0]
+      if (cid) {
+        PUBCHEM_CID_CACHE.set(cacheKey, cid)
+        return cid
+      }
+    }
+  } catch (e) {
+    console.error(`[chemical-structure] PubChem SMILES lookup failed:`, e)
+  }
   return null
 }
 
@@ -77,6 +100,10 @@ export async function GET(request: Request) {
       cid = await lookupPubChemCID(name)
     }
 
+    if (!cid && smiles && isValidSmiles(smiles)) {
+      cid = await lookupPubChemCIDBySmiles(smiles)
+    }
+
     if (cid) {
       return NextResponse.json({
         source: 'pubchem',
@@ -88,7 +115,7 @@ export async function GET(request: Request) {
       })
     }
 
-    if (smiles) {
+    if (smiles && isValidSmiles(smiles)) {
       const encodedSmiles = encodeURIComponent(smiles)
       return NextResponse.json({
         source: 'cactus',

@@ -1,7 +1,13 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { Inter, JetBrains_Mono, Geist } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
+import { cn } from "@/lib/utils"
+import { QueryProvider } from '@/providers/query-provider'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { Toaster } from 'sonner'
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   subsets: ['latin'],
@@ -117,7 +123,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${inter.variable} ${mono.variable} dark`}>
+    <html lang="en" className={cn("dark", inter.variable, mono.variable, "font-sans", geist.variable)}>
       <head>
         <Script
           id="json-ld"
@@ -126,14 +132,29 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-          <div className="orb orb-1" />
-          <div className="orb orb-2" />
-          <div className="orb orb-3" />
-          <div className="orb orb-4" />
-        </div>
-        <div className="grid-noise" />
-        <div className="relative z-10 min-h-screen flex flex-col">{children}</div>
+        <QueryProvider>
+          <TooltipProvider>
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+              <div className="orb orb-1" />
+              <div className="orb orb-2" />
+              <div className="orb orb-3" />
+              <div className="orb orb-4" />
+            </div>
+            <div className="grid-noise" />
+            <div className="relative z-10 min-h-screen flex flex-col">{children}</div>
+            <Toaster
+              position="bottom-center"
+              toastOptions={{
+                style: {
+                  background: '#18181b',
+                  border: '1px solid #27272a',
+                  color: '#e4e4e7',
+                  fontSize: '13px',
+                },
+              }}
+            />
+          </TooltipProvider>
+        </QueryProvider>
       </body>
     </html>
   )
