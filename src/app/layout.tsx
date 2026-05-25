@@ -30,6 +30,10 @@ export const metadata: Metadata = {
     template: '%s | TripGem Harm Reduction',
   },
   description: 'Comprehensive harm reduction resource with 540+ substances. Check drug interactions, view combination risk matrix, dosage guides, and evidence-based safety information.',
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+  },
   keywords: [
     'harm reduction',
     'drug interactions',
@@ -65,20 +69,11 @@ export const metadata: Metadata = {
     siteName: 'TripGem',
     title: 'TripGem — Evidence-Based Harm Reduction Database',
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'TripGem — Evidence-Based Harm Reduction',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Tripgem — Evidence-Based Harm Reduction Database',
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
-    images: ['/og-image.png'],
   },
   alternates: {
     canonical: '/',

@@ -187,14 +187,9 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       >
         <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2.5 group">
-            <div className="relative w-8 h-8 rounded-lg overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
-              <div className="absolute inset-[1px] rounded-[7px] bg-[var(--bg)] flex items-center justify-center">
-                <span className="text-sm font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
-              </div>
-            </div>
+            <img src="/logo.svg" alt="TripGem" className="w-8 h-8 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
             <span className="font-display font-bold text-base sm:text-lg tracking-tight">
-              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Dex</span>
+              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Gem</span>
             </span>
           </a>
           <div className="flex gap-1 p-1 rounded-full bg-[rgba(255,255,255,0.03)] border border-[var(--border)]">
@@ -224,14 +219,9 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       >
         <div className="w-full px-4 h-14 flex items-center justify-center">
           <a href="#" className="flex items-center gap-2">
-            <div className="relative w-7 h-7 rounded-lg overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
-              <div className="absolute inset-[1px] rounded-[6px] bg-[var(--bg)] flex items-center justify-center">
-                <span className="text-xs font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
-              </div>
-            </div>
+            <img src="/logo.svg" alt="TripGem" className="w-7 h-7 drop-shadow-[0_0_6px_rgba(168,85,247,0.5)]" />
             <span className="font-display font-bold text-base tracking-tight">
-              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Dex</span>
+              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Gem</span>
             </span>
           </a>
         </div>
@@ -309,14 +299,9 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         <div className="absolute top-0 left-[20%] right-[20%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.2)] to-transparent" />
         <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.15)] to-transparent" />
         <div className="flex items-center justify-center gap-2.5 mb-4">
-          <div className="relative w-6 h-6 rounded-md overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
-            <div className="absolute inset-[1px] rounded-[3px] bg-[var(--bg)] flex items-center justify-center">
-              <span className="text-[9px] font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
-            </div>
-          </div>
+          <img src="/logo.svg" alt="TripGem" className="w-6 h-6 opacity-70" />
           <span className="font-display font-semibold text-sm text-[var(--text2)]">
-            Trip<span className="text-[var(--accent2)]">Dex</span>
+            Trip<span className="text-[var(--accent2)]">Gem</span>
           </span>
         </div>
         <p className="text-xs text-[var(--text3)] max-w-md mx-auto leading-relaxed">
