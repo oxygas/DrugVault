@@ -22,6 +22,13 @@
 - Mobile breakpoints at `globals.css:1028+`; iOS zoom prevention on `.search-input` (`font-size: 16px`).
 - `.vaporwave-scanlines`: fixed `z-index: 9999` CRT overlay with `mix-blend-mode: overlay`. Killed by `prefers-reduced-motion: reduce`.
 
+## Substance Popup Fixes
+- **Mobile sizing**: Use `max-h-[92dvh]` instead of `max-h-[92vh]` (dvh = dynamic viewport height, accounts for mobile browser UI)
+- **Content scrolling**: Add `min-h-0` to flex children to prevent overflow in flex containers
+- **Neon theme**: Radial gradient backdrop (`rgba(168,85,247,0.08) → rgba(236,72,153,0.04) → rgba(0,0,0,0.65)`), animated glow on popup (`box-shadow: 0 0 0px #fff → 0 0 30px rgba(168,85,247,0.6) → 0 0 0px #fff` via keyframes)
+- **Tab buttons**: Gradient text (`bg-clip-text, text-transparent, bg-gradient-to-r from-pink-400 to-purple-500`), enhanced active state glow
+- **Header accent**: Animated gradient line (`@keyframes gradientShift { 0% { left: 0; } 100% { left: 100%; } }`)
+
 ## Architecture
 - **Pages**: `/` (server component → `HomeClient`), `/substances/[slug]` (SSG, 571 paths), `/combo` (ISR 60s revalidate).
 - **API routes** under `src/app/api/`: `substances`, `search`, `combo-matrix`, `interaction-check`, `chemical-structure`, `psychonautwiki`, `ip-geolocation`. Each wraps Sentry error capture.

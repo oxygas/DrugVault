@@ -102,16 +102,16 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center backdrop-blur-sm"
+      style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.08) 0%, rgba(236,72,153,0.04) 30%, rgba(0,0,0,0.65) 70%)', animation: 'fadeIn 0.2s ease-out', touchAction: 'none' } as React.CSSProperties}
       onClick={e => { if (e.target === overlayRef.current) onClose() }}
       onTouchStart={e => { if (e.target === overlayRef.current) onClose() }}
       role="dialog"
       aria-modal="true"
       aria-label={`${substance.name} details`}
-      style={{ animation: 'fadeIn 0.2s ease-out', touchAction: 'none' }}
     >
       <div
-        className="glass-strong w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92vh] sm:max-h-[85vh] sm:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col"
+        className="glass-strong neon-popup-glow w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92dvh] sm:max-h-[85dvh] sm:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col"
         style={{ animation: 'slideUp 0.3s cubic-bezier(0.16,1,0.3,1)', overscrollBehavior: 'contain' }}
       >
     <div className="popup-header sticky top-0 z-10 p-4 sm:p-5 lg:p-6">
@@ -202,7 +202,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 lg:p-8 space-y-5 lg:space-y-6">
+        <div className="flex-1 overflow-y-auto overscroll-contain min-h-0 substance-popup-scroll p-4 sm:p-6 lg:p-8 space-y-5 lg:space-y-6">
           {tab === 'overview' && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">

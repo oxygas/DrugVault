@@ -661,10 +661,46 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
   background: rgba(255,255,255,0.04);
 }
 .tab-btn.active {
-  color: var(--accent2);
-  background: rgba(168, 85, 247, 0.10);
-  border-color: rgba(168, 85, 247, 0.20);
-  box-shadow: 0 0 16px rgba(168, 85, 247, 0.06);
+  color: #fff;
+  background: linear-gradient(135deg, rgba(168,85,247,0.18), rgba(236,72,153,0.18));
+  border-color: rgba(236,72,153,0.3);
+  box-shadow: 0 0 20px rgba(168,85,247,0.12), 0 0 40px rgba(236,72,153,0.06);
+  text-shadow: 0 0 20px rgba(168,85,247,0.3);
+}
+
+/* ── Neon popup glow ── */
+.neon-popup-glow {
+  box-shadow:
+    0 0 30px rgba(168,85,247,0.08),
+    0 0 60px rgba(236,72,153,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  animation: neonPulse 4s ease-in-out infinite;
+}
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 30px rgba(168,85,247,0.08), 0 0 60px rgba(236,72,153,0.05), inset 0 1px 0 rgba(255,255,255,0.08); }
+  50% { box-shadow: 0 0 40px rgba(6,182,212,0.08), 0 0 70px rgba(168,85,247,0.06), inset 0 1px 0 rgba(255,255,255,0.1); }
+}
+
+/* ── Neon scrollbar for popup ── */
+.substance-popup-scroll::-webkit-scrollbar { width: 4px; }
+.substance-popup-scroll::-webkit-scrollbar-track { background: transparent; }
+.substance-popup-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(168,85,247,0.4), rgba(236,72,153,0.3));
+  border-radius: 2px;
+}
+.substance-popup-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(168,85,247,0.6), rgba(236,72,153,0.5));
+}
+
+/* ── Animated header glow line ── */
+.popup-header::after {
+  background: linear-gradient(90deg, transparent, rgba(168,85,247,0.2), rgba(236,72,153,0.2), rgba(6,182,212,0.2), transparent);
+  background-size: 200% 100%;
+  animation: headerGlow 6s ease-in-out infinite;
+}
+@keyframes headerGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .cta-btn {
