@@ -1,4 +1,4 @@
-# DrugVault
+# TripGem
 
 Evidence-based harm reduction database and interaction checker. Browse 540+ substances, check drug combinations, compare profiles, and view dosage guides.
 
