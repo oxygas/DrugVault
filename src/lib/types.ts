@@ -1,10 +1,10 @@
 import { CATEGORY_REGISTRY, COMBO_LEVEL_REGISTRY, HARM_LEVEL_REGISTRY } from './registry'
 
-export type Category = 'Depressants' | 'Stimulants' | 'Opioids' | 'Psychedelics' | 'Dissociatives' | 'Entactogens' | 'Cannabinoids' | 'Inhalants' | 'Deliriants' | 'Gabapentionoids' | string
+export type Category = 'Depressants' | 'Stimulants' | 'Opioids' | 'Psychedelics' | 'Dissociatives' | 'Entactogens' | 'Cannabinoids' | 'Inhalants' | 'Deliriants' | 'Gabapentionoids' | 'Nootropics' | 'Antidepressants' | 'Supplements'
 
-export type HarmLevel = 'low' | 'moderate' | 'high' | 'extreme' | string
+export type HarmLevel = 'low' | 'moderate' | 'high' | 'extreme'
 
-export type ComboLevel = 'safe' | 'low_risk' | 'caution' | 'unsafe' | 'dangerous' | 'deadly' | string
+export type ComboLevel = 'safe' | 'low_risk' | 'caution' | 'unsafe' | 'dangerous' | 'deadly'
 
 export interface RoaDose {
   t: number | string

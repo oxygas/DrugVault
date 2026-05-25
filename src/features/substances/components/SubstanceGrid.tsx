@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo } from 'react'
 import type { Substance } from '@/lib/types'
 import SubstanceCard from './SubstanceCard'
 
@@ -9,53 +8,7 @@ interface SubstanceGridProps {
   onSubstanceClick: (substance: Substance) => void
 }
 
-const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
-
 export default function SubstanceGrid({ substances, onSubstanceClick }: SubstanceGridProps) {
-  const batchSize = isTouchDevice ? 48 : 12
-  const [visible, setVisible] = useState<Set<string>>(() => new Set(substances.slice(0, batchSize).map(s => s.name)))
-  const observerRef = useRef<IntersectionObserver | null>(null)
-  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
-
-  const rootMargin = useMemo(
-    () => isTouchDevice ? '20px' : '40px',
-    []
-  )
-
-  // Reset visible set when substances list changes (e.g., category filter)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisible(prev => {
-        return new Set(substances.slice(0, batchSize).map(s => s.name))
-      })
-    }, 0)
-    return () => clearTimeout(timer)
-  }, [substances, batchSize])
-
-  useEffect(() => {
-    if (observerRef.current) observerRef.current.disconnect()
-
-    observerRef.current = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          const key = entry.target.getAttribute('data-key')
-          if (key && entry.isIntersecting) {
-            setVisible(prev => {
-              if (prev.has(key)) return prev
-              const next = new Set(prev)
-              next.add(key)
-              return next
-            })
-          }
-        })
-      },
-      { threshold: 0.01, rootMargin }
-    )
-
-    cardRefs.current.forEach(el => observerRef.current?.observe(el))
-    return () => observerRef.current?.disconnect()
-  }, [substances, rootMargin])
-
   if (substances.length === 0) {
     return (
       <div className="text-center py-16 sm:py-24">
@@ -71,27 +24,14 @@ export default function SubstanceGrid({ substances, onSubstanceClick }: Substanc
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 justify-items-center">
-      {substances.map((substance, i) => {
-        const delay = isTouchDevice ? (i % 8) * 25 : (i % 12) * 40
-        return (
-          <div
-            key={substance.name}
-            ref={el => { if (el) cardRefs.current.set(substance.name, el) }}
-            data-key={substance.name}
-            className={`transition-all duration-500 ease-out ${
-              visible.has(substance.name)
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-6'
-            }`}
-            style={{
-              transitionDelay: `${delay}ms`,
-            }}
-          >
-            <SubstanceCard substance={substance} onClick={onSubstanceClick} />
-          </div>
-        )
-      })}
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 justify-items-center vaporwave-grid">
+      {substances.map(substance => (
+        <SubstanceCard
+          key={substance.name}
+          substance={substance}
+          onClick={onSubstanceClick}
+        />
+      ))}
     </div>
   )
 }

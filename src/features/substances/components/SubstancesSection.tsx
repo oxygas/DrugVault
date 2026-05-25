@@ -1,7 +1,7 @@
 'use client'
 
 import { memo, useMemo } from 'react'
-import type { Substance, Category, ComboLevel } from '@/lib/types'
+import type { Substance, Category } from '@/lib/types'
 import SearchBar from '@/components/SearchBar'
 import SubstanceGrid from './SubstanceGrid'
 
@@ -28,7 +28,7 @@ function SubstancesSectionInner({
   }, [substances, selectedCategories])
 
   return (
-    <div className="space-y-6">
+    <section className="space-y-6">
       <SearchBar
         substances={substances}
         onSelect={onSubstanceClick}
@@ -37,18 +37,21 @@ function SubstancesSectionInner({
         onCategoryClear={onCategoryClear}
         externalInputRef={searchInputRef}
       />
-      <div className="flex items-center justify-center">
-        <span className="text-xs lg:text-sm text-[var(--text3)] font-mono">
+      <div className="section-header max-w-2xl mx-auto" aria-live="polite" role="status">
+        <span className="bracket">╔══</span>
+        <span className="count">
           {selectedCategories.length > 0
             ? `${filtered.length} in ${selectedCategories.join(', ')}`
             : `${substances.length} substances`}
         </span>
+        <span className="bracket">══╗</span>
       </div>
       <SubstanceGrid
         substances={filtered}
         onSubstanceClick={onSubstanceClick}
       />
-    </div>
+      <div className="vaporwave-scanlines" aria-hidden="true" />
+    </section>
   )
 }
 

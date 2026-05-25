@@ -1,41 +1,41 @@
 'use client'
 
-import { useRef, useEffect, memo, useCallback } from 'react'
+import { useRef, useEffect, memo } from 'react'
 import type { Substance } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
 
 interface RadarChartProps {
   substance: Substance
-  size?: number
 }
 
-function drawRadarChart(canvas: HTMLCanvasElement, substance: Substance) {
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
+const AXES = [
+  { label: 'Harm', key: 'harmScore' as const },
+  { label: 'Addict', key: 'addictionScore' as const },
+  { label: 'OD Risk', key: 'odRisk' as const },
+  { label: 'Withdrawal', key: 'withdrawalSeverity' as const },
+  { label: 'Interaction', key: 'interactionDanger' as const },
+  { label: 'Dependence', key: 'dependenceLiability' as const },
+]
+
+function drawChart(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  values: number[],
+  catColor: string,
+) {
   const dpr = window.devicePixelRatio || 1
-  const rect = canvas.getBoundingClientRect()
-  const size = rect.width
-  if (size === 0) return
-  canvas.width = size * dpr
-  canvas.height = size * dpr
+  ctx.clearRect(0, 0, width, height)
+  ctx.save()
   ctx.scale(dpr, dpr)
 
+  const size = width / dpr
   const cx = size / 2
   const cy = size / 2
   const r = size * 0.33
-  const catColor = CATEGORY_COLORS[substance.category] || '#a855f7'
-  const axes = [
-    { label: 'Harm', value: substance.harmScore },
-    { label: 'Addict', value: substance.addictionScore },
-    { label: 'OD Risk', value: substance.odRisk },
-    { label: 'Withdrawal', value: substance.withdrawalSeverity },
-    { label: 'Interaction', value: substance.interactionDanger },
-    { label: 'Dependence', value: substance.dependenceLiability },
-  ]
-  const n = axes.length
+  const n = values.length
   const angleStep = (Math.PI * 2) / n
 
-  ctx.clearRect(0, 0, size, size)
   ctx.beginPath()
   ctx.arc(cx, cy, r + size * 0.07, 0, Math.PI * 2)
   ctx.fillStyle = 'rgba(255,255,255,0.02)'
@@ -70,7 +70,7 @@ function drawRadarChart(canvas: HTMLCanvasElement, substance: Substance) {
   for (let i = 0; i <= n; i++) {
     const idx = i % n
     const angle = idx * angleStep - Math.PI / 2
-    const val = axes[idx].value / 100
+    const val = values[idx] / 100
     const x = cx + r * val * Math.cos(angle)
     const y = cy + r * val * Math.sin(angle)
     i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
@@ -93,7 +93,7 @@ function drawRadarChart(canvas: HTMLCanvasElement, substance: Substance) {
 
   for (let i = 0; i < n; i++) {
     const angle = i * angleStep - Math.PI / 2
-    const val = axes[i].value / 100
+    const val = values[i] / 100
     const x = cx + r * val * Math.cos(angle)
     const y = cy + r * val * Math.sin(angle)
     ctx.beginPath()
@@ -119,32 +119,59 @@ function drawRadarChart(canvas: HTMLCanvasElement, substance: Substance) {
     const x = cx + labelR * Math.cos(angle)
     const y = cy + labelR * Math.sin(angle)
     ctx.fillStyle = 'rgba(255,255,255,0.4)'
-    ctx.fillText(axes[i].label, x, y)
+    ctx.fillText(AXES[i].label, x, y)
     ctx.font = `600 ${fontSize * 0.85}px 'JetBrains Mono', monospace`
     ctx.fillStyle = `${catColor}cc`
-    ctx.fillText(String(axes[i].value), x, y + fontSize + 3)
+    ctx.fillText(String(values[i]), x, y + fontSize + 3)
     ctx.font = `500 ${fontSize}px Inter, system-ui, sans-serif`
   }
+
+  ctx.restore()
 }
 
-export default memo(function RadarChart({ substance, size: propSize }: RadarChartProps) {
+export default memo(function RadarChart({ substance }: RadarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const valuesRef = useRef<number[]>([])
+  const catColorRef = useRef('#a855f7')
 
-  const redraw = useCallback(() => {
-    if (canvasRef.current) drawRadarChart(canvasRef.current, substance)
-  }, [substance])
+  const currentValues = AXES.map(a => substance[a.key])
+  const catColor = CATEGORY_COLORS[substance.category]
 
-  useEffect(() => {
-    redraw()
-  }, [substance, propSize, redraw])
+  const needsRedraw =
+    catColorRef.current !== catColor ||
+    currentValues.some((v, i) => v !== valuesRef.current[i])
+
+  if (needsRedraw) {
+    valuesRef.current = currentValues
+    catColorRef.current = catColor
+  }
+
+  function redraw() {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const dpr = window.devicePixelRatio || 1
+    const rect = canvas.getBoundingClientRect()
+    const size = rect.width
+    if (size === 0) return
+    canvas.width = size * dpr
+    canvas.height = size * dpr
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    drawChart(ctx, canvas.width, canvas.height, valuesRef.current, catColorRef.current)
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const resizeObserver = new ResizeObserver(redraw)
-    resizeObserver.observe(canvas)
-    return () => resizeObserver.disconnect()
-  }, [redraw])
+    const ro = new ResizeObserver(redraw)
+    ro.observe(canvas)
+    setTimeout(redraw, 0)
+    return () => ro.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (needsRedraw) redraw()
+  })
 
   return (
     <div className="w-full flex justify-center">

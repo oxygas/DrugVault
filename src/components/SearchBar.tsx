@@ -3,39 +3,10 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import type { Substance, Category } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
+import { searchSubstances } from '@/lib/data'
 
 const RECENT_SEARCHES_KEY = 'tripdex_recent_searches'
 const MAX_RECENT = 8
-
-function scoreMatch(substance: Substance, query: string): number {
-  const q = query.toLowerCase()
-  const name = substance.name.toLowerCase()
-  const aliases = substance.aliases.map(a => a.toLowerCase())
-
-  if (name === q) return 100
-  if (name.startsWith(q)) return 80
-  for (const alias of aliases) {
-    if (alias === q) return 75
-    if (alias.startsWith(q)) return 65
-  }
-  let best = 0
-  if (name.includes(q)) best = Math.max(best, 50)
-  for (const alias of aliases) {
-    if (alias.includes(q)) best = Math.max(best, 40)
-  }
-  return best
-}
-
-function fuzzySearch(substances: Substance[], query: string, limit = 10): Substance[] {
-  if (!query.trim()) return []
-  const scored = substances
-    .map(s => ({ s, score: scoreMatch(s, query) }))
-    .filter(({ score }) => score > 0)
-    .sort((a, b) => b.score - a.score || a.s.name.localeCompare(b.s.name))
-    .slice(0, limit)
-    .map(({ s }) => s)
-  return scored
-}
 
 function getRecentSearches(): Substance['name'][] {
   if (typeof window === 'undefined') return []
@@ -86,9 +57,8 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
   const search = useCallback((q: string) => {
     setQuery(q)
     if (q.length < 2) { setResults([]); return }
-    const matched = fuzzySearch(substances, q)
-    setResults(matched)
-  }, [substances])
+    setResults(searchSubstances(q, 10))
+  }, [])
 
   const handleSelect = useCallback((substance: Substance) => {
     onSelect(substance)
@@ -118,30 +88,45 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
   return (
     <div className="w-full max-w-2xl mx-auto space-y-3">
       <div className="relative search-input">
-        <div className="relative flex items-center">
-          <svg className="absolute left-3.5 sm:left-4 w-4 h-4 sm:w-5 sm:h-5 text-[var(--text4)] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center gap-2 sm:gap-2.5 px-2 sm:px-3">
+          <button
+            onClick={onCategoryClear}
+            className={`cat-pill-inline shrink-0 ${selectedCategories.length === 0 ? 'active' : ''}`}
+            style={{ '--pill-c': 'var(--accent)' } as React.CSSProperties}
+            aria-label="Show all categories"
+          >
+            All
+          </button>
+
+          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--text4)] shrink-0 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
           </svg>
+
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={e => search(e.target.value)}
             onFocus={() => setFocused(true)}
-            placeholder="Search substances... (press /)"
-            className="w-full pl-10 sm:pl-12 pr-10 py-3 sm:py-3.5 lg:py-4 rounded-[var(--radius-lg)] lg:rounded-[var(--radius-xl)] bg-transparent border-0 text-white placeholder:text-[var(--text4)] text-sm sm:text-base lg:text-[15px] focus:outline-none text-center"
+            placeholder="Search substances..."
+            className="flex-1 min-w-0 py-3 sm:py-3.5 lg:py-4 bg-transparent border-0 text-white placeholder:text-[var(--text4)] text-sm sm:text-base lg:text-[15px] focus:outline-none"
             aria-label="Search substances"
           />
-          {query && (
+
+          {query ? (
             <button
               onClick={() => { setQuery(''); setResults([]); inputRef.current?.focus() }}
-              className="absolute right-3 sm:right-4 text-[var(--text4)] hover:text-white transition-colors p-1 rounded-md hover:bg-[rgba(255,255,255,0.06)]"
+              className="shrink-0 text-[var(--text4)] hover:text-white transition-colors"
               aria-label="Clear search"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
+          ) : (
+            <kbd className="hidden sm:inline shrink-0 text-[11px] font-mono text-[var(--text5)] border border-[var(--border)] rounded px-1.5 py-0.5 leading-none">
+              /
+            </kbd>
           )}
         </div>
 
@@ -229,13 +214,6 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
       </div>
 
       <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
-        <button
-          onClick={onCategoryClear}
-          className={`cat-pill ${selectedCategories.length === 0 ? 'active' : ''}`}
-          style={{ '--pill-c': 'var(--accent)' } as React.CSSProperties}
-        >
-          All
-        </button>
         {categories.map(([cat, color]) => (
           <button
             key={cat}

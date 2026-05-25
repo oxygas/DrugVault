@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, useRef } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import type { Substance, ComboLevel } from '@/lib/types'
 import {
   CATEGORY_COLORS,
@@ -26,7 +26,13 @@ export default function ComboMatrixPC({ substances, comboRules, onSelectSubstanc
   const [clickedCell, setClickedCell] = useState<string | null>(null)
   const [hoveredCell, setHoveredCell] = useState<string | null>(null)
   const [popoverPos, setPopoverPos] = useState<React.CSSProperties>({})
-  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const showTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => {
+    if (showTimer.current) clearTimeout(showTimer.current)
+    if (hideTimer.current) clearTimeout(hideTimer.current)
+  }, [])
 
   const categories = useMemo(() => [...new Set(substances.map(s => s.category))].sort(), [substances])
   const N = categories.length
@@ -79,8 +85,9 @@ export default function ComboMatrixPC({ substances, comboRules, onSelectSubstanc
   }, [clickedCell, getLevel, subMap])
 
   const handleHover = (e: React.MouseEvent, key: string) => {
-    if (hoverTimer.current) clearTimeout(hoverTimer.current)
-    hoverTimer.current = setTimeout(() => {
+    if (showTimer.current) clearTimeout(showTimer.current)
+    if (hideTimer.current) clearTimeout(hideTimer.current)
+    showTimer.current = setTimeout(() => {
       const rect = e.currentTarget.getBoundingClientRect()
       setPopoverPos({
         position: 'fixed' as const,
@@ -93,8 +100,9 @@ export default function ComboMatrixPC({ substances, comboRules, onSelectSubstanc
   }
 
   const handleHoverOut = () => {
-    if (hoverTimer.current) clearTimeout(hoverTimer.current)
-    hoverTimer.current = setTimeout(() => setHoveredCell(null), 80)
+    if (showTimer.current) clearTimeout(showTimer.current)
+    if (hideTimer.current) clearTimeout(hideTimer.current)
+    hideTimer.current = setTimeout(() => setHoveredCell(null), 80)
   }
 
   return (

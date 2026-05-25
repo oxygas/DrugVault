@@ -1,7 +1,7 @@
 import rawData from '@/data/all-data.json'
 import rawEffects from '@/data/subjective-effects.json'
 import mdmaEffectsJson from '@/data/mdma-effects.json'
-import type { Substance, Category, ComboRule, ComboLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration, SubjectiveEffects } from '@/lib/types'
+import type { Substance, Category, ComboRule, ComboLevel, HarmLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration, SubjectiveEffects } from '@/lib/types'
 import { CATEGORY_REGISTRY, COMBO_LEVEL_REGISTRY } from '@/lib/registry'
 import { CATEGORIES, CATEGORY_COLORS, COMBO_DESCRIPTIONS } from '@/lib/types'
 
@@ -30,7 +30,7 @@ function expandSubstance(r: RawSubstance): Substance {
     brandNames: r.bn || [],
     streetNames: r.st || [],
     category: r.c as Category,
-    harmLevel: r.hl, harmScore: r.hs, addictionScore: r.as,
+    harmLevel: r.hl as HarmLevel, harmScore: r.hs, addictionScore: r.as,
     onset: r.o, duration: r.d, odRisk: r.od,
     withdrawalSeverity: r.ws, interactionDanger: r.id, dependenceLiability: r.dl,
     risks: r.r, overdose: r.od2, safety: r.s, interactions: r.i,
@@ -164,30 +164,38 @@ export function getSubstancesByCategory(category: Category): Substance[] {
   return byCategory.get(category) ?? []
 }
 
-export function searchSubstances(query: string): Substance[] {
+export function searchSubstances(query: string, limit = 20): Substance[] {
   const q = query.toLowerCase().trim()
-  if (!q) return substances
+  if (!q) return substances.slice(0, limit)
 
   if (q.length < 2) {
-    return substances.filter(s =>
-      s.name.toLowerCase().startsWith(q) ||
-      s.aliases.some(a => a.toLowerCase().startsWith(q))
-    )
+    const results: Substance[] = []
+    for (const s of substances) {
+      if (s.name.toLowerCase().startsWith(q) || s.aliases.some(a => a.toLowerCase().startsWith(q))) {
+        results.push(s)
+        if (results.length >= limit) break
+      }
+    }
+    return results
   }
 
   buildSearchIndex()
-  if (!searchIndex) return substances
+  if (!searchIndex) return substances.slice(0, limit)
 
   const scores = new Map<Substance, number>()
 
   const tokens = q.split(/\s+/)
   for (const token of tokens) {
+    const visited = new Set<Substance>()
     for (let i = 0; i <= token.length - 2; i++) {
       const bigram = token.slice(i, i + 2)
       const matches = searchIndex.get(bigram)
       if (matches) {
         for (const s of matches) {
-          scores.set(s, (scores.get(s) ?? 0) + 1)
+          if (!visited.has(s)) {
+            visited.add(s)
+            scores.set(s, (scores.get(s) ?? 0) + 1)
+          }
         }
       }
     }
@@ -198,13 +206,15 @@ export function searchSubstances(query: string): Substance[] {
     scores.set(exactMatch, (scores.get(exactMatch) ?? 0) + 1000)
   }
 
-  const nameStartsWith = substances.filter(s => s.name.toLowerCase().startsWith(q))
-  for (const s of nameStartsWith) {
-    scores.set(s, (scores.get(s) ?? 0) + 500)
+  for (const s of substances) {
+    if (s.name.toLowerCase().startsWith(q)) {
+      scores.set(s, (scores.get(s) ?? 0) + 500)
+    }
   }
 
   return Array.from(scores.entries())
     .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
     .map(([s]) => s)
 }
 
