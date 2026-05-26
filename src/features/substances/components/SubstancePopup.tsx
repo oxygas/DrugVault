@@ -41,6 +41,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
   const [tab, setTab] = useState<Tab>('overview')
   const [effectsModalOpen, setEffectsModalOpen] = useState(false)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const popupRef = useRef<HTMLDivElement>(null)
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const onCloseRef = useRef(onClose)
   const [isFav, setIsFav] = useState(() => getFavorites().includes(substance.name))
@@ -66,6 +67,33 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     document.addEventListener('keydown', handler)
     document.body.style.overflow = 'hidden'
     return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = '' }
+  }, [])
+
+  useEffect(() => {
+    const prev = document.activeElement as HTMLElement | null
+    const popup = popupRef.current
+    if (popup) {
+      const first = popup.querySelector<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      first?.focus()
+    }
+    return () => {
+      if (prev?.focus) prev.focus()
+    }
+  }, [])
+
+  useEffect(() => {
+    const popup = popupRef.current
+    if (!popup) return
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return
+      const focusable = popup.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus() }
+    }
+    document.addEventListener('keydown', handleTab)
+    return () => document.removeEventListener('keydown', handleTab)
   }, [])
 
   const handleTabTouchStart = (e: React.TouchEvent) => setTouchStartX(e.touches[0].clientX)
@@ -111,6 +139,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
       aria-label={`${substance.name} details`}
     >
       <div
+        ref={popupRef}
         className="glass-strong neon-popup-glow w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92dvh] sm:max-h-[85dvh] sm:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col"
         style={{ animation: 'slideUp 0.3s cubic-bezier(0.16,1,0.3,1)', overscrollBehavior: 'contain' }}
       >
@@ -186,6 +215,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
         </div>
 
           <div
+            role="tablist"
             onTouchStart={handleTabTouchStart}
             onTouchEnd={handleTabTouchEnd}
             className="flex gap-1 mt-3 -mx-1 px-1 overflow-x-auto"
@@ -193,6 +223,8 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
             {tabKeys.map(key => (
               <button
                 key={key}
+                role="tab"
+                aria-selected={tab === key}
                 onClick={() => setTab(key)}
                 className={`tab-btn flex-shrink-0 ${tab === key ? 'active' : ''}`}
               >

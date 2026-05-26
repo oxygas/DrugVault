@@ -1,13 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, JetBrains_Mono, Geist } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 import { cn } from "@/lib/utils"
 import { QueryProvider } from '@/providers/query-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from 'sonner'
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   subsets: ['latin'],
@@ -123,7 +121,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={cn("dark", inter.variable, mono.variable, "font-sans", geist.variable)}>
+    <html lang="en" className={cn("dark", inter.variable, mono.variable)}>
       <head>
         <Script
           id="json-ld"

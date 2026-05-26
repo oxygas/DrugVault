@@ -98,7 +98,7 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
             All
           </button>
 
-          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--text4)] shrink-0 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--text4)] shrink-0 pointer-events-none" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
           </svg>
 
@@ -111,6 +111,10 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
             placeholder="Search substances..."
             className="flex-1 min-w-0 py-3 sm:py-3.5 lg:py-4 bg-transparent border-0 text-white placeholder:text-[var(--text4)] text-sm sm:text-base lg:text-[15px] focus:outline-none"
             aria-label="Search substances"
+            role="combobox"
+            aria-expanded={focused && (results.length > 0 || recentSearches.length > 0)}
+            aria-controls="search-results"
+            aria-autocomplete="list"
           />
 
           {query ? (
@@ -133,6 +137,8 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
         {focused && (
           <div
             ref={dropdownRef}
+            id="search-results"
+            role="listbox"
             className="absolute z-50 w-full mt-2 glass-strong rounded-xl overflow-hidden shadow-xl max-h-[60vh] overflow-y-auto border border-[var(--border2)]"
           >
             {query.length >= 2 && results.length > 0 && (
@@ -141,8 +147,11 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
                   Results
                 </div>
                 {results.map((s, i) => (
-                  <button
+                    <button
                     key={s.name}
+                    id={`search-result-${i}`}
+                    role="option"
+                    aria-selected={false}
                     onClick={() => handleSelect(s)}
                     className="w-full px-4 py-3 lg:py-4 flex items-center gap-3 hover:bg-[rgba(255,255,255,0.05)] transition-colors text-left border-b border-[var(--border)] last:border-0"
                     style={{ animation: `fadeInUp 0.2s ease-out ${i * 25}ms both` }}

@@ -4,6 +4,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ══════════════════════════════════
+   SECTIONS
+   1. Design Tokens     (:root vars)
+   2. Utility Classes    (.glass, .orb, .neon-*, etc.)
+   3. Layout             (header, nav, grid)
+   4. Popup              (SubstancePopup, slides, tabs)
+   5. Animations         (keyframes)
+   6. Harm Dots          (.harm-dot)
+   7. Vaporwave Cards    (.vaporwave-card)
+   8. Combo Matrix       (.combo-matrix, heatmap)
+   9. Tools              (DrugChecker, search)
+   10. Mobile            (@media < 640px overrides)
+   11. Reduced Motion    (prefers-reduced-motion)
+   ══════════════════════════════════ */
+
 :root {
   --bg: #04040c;
   --bg2: #0a0a1a;
@@ -90,6 +105,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* ══ Base & Reset ══ */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
@@ -128,12 +144,22 @@ body {
 
 .font-mono { font-family: var(--font-mono); }
 .font-display { font-family: var(--font-display); }
+.skeleton-shimmer {
+  background: linear-gradient(110deg, rgba(255,255,255,0.04) 30%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 70%);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.25); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(168, 85, 247, 0.45); }
 
+/* ══ Glass UI & Utility Classes ══ */
 .glass {
   background: var(--surface);
   backdrop-filter: blur(28px) saturate(1.7);
@@ -622,6 +648,7 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
 }
 .substance-card:active { transform: translateY(-2px) scale(0.98); }
 
+/* ══ Substance Popup ══ */
 .popup-header {
   background: rgba(8, 8, 20, 0.92);
   backdrop-filter: blur(24px);
@@ -915,6 +942,8 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
 
 /* Vaporwave card — compact replacement for .substance-card */
 .vaporwave-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 80px;
   display: block;
   padding: 12px 14px;
   max-width: 100%;

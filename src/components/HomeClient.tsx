@@ -280,11 +280,12 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
             <button
               key={feature.key}
               onClick={() => setActiveSection(feature.key as Section)}
-              className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors relative ${
                 activeSection === feature.key
                   ? 'text-[var(--accent2)]'
                   : 'text-[var(--text3)]'
               }`}
+              aria-current={activeSection === feature.key ? 'page' as const : undefined}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d={feature.icon} />
