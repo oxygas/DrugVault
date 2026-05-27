@@ -22,6 +22,8 @@ const CID_ALIASES: Record<string, number> = {
   'HHC': 16050328,
   'Delta-8-THC': 638026,
   'Delta-9-THC': 6694,
+  'MGM-15': 42629165,
+  'MGM-16': 168277847,
 }
 
 function isValidSmiles(s: string): boolean {
