@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useSettingsStore } from '@/stores/settings'
 import type { UserLevel } from '@/lib/types'
 
@@ -33,6 +34,12 @@ export default function UserSettings() {
     setSettingsOpen,
     setOnboarded,
   } = useSettingsStore()
+
+  const [weightInput, setWeightInput] = useState(String(bodyWeight))
+
+  useEffect(() => {
+    setWeightInput(String(bodyWeight))
+  }, [bodyWeight])
 
   if (!settingsOpen) return null
 
@@ -84,16 +91,19 @@ export default function UserSettings() {
             </label>
             <div className="flex gap-2">
               <input
-                type="number"
-                value={bodyWeight}
+                type="text"
+                inputMode="decimal"
+                value={weightInput}
                 onChange={(e) => {
-                  const v = parseFloat(e.target.value)
-                  if (v > 0 && v <= 500) setBodyWeight(v)
+                  const raw = e.target.value
+                  if (raw === '' || /^\d*\.?\d*$/.test(raw)) {
+                    setWeightInput(raw)
+                    const v = parseFloat(raw)
+                    if (!isNaN(v) && v > 0 && v <= 500) setBodyWeight(v)
+                  }
                 }}
                 className="flex-1 px-4 py-3 rounded-xl text-white placeholder:text-[var(--text4)] bg-[rgba(10,10,30,0.5)] border border-[var(--border2)] focus:outline-none focus:border-blue-500/50 text-base"
-                min={1}
-                max={500}
-                step={0.1}
+                placeholder="70"
               />
               <div className="flex rounded-xl overflow-hidden border border-[var(--border2)] bg-[rgba(10,10,30,0.5)]">
                 <button
