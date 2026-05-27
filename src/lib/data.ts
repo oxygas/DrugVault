@@ -56,7 +56,7 @@ const substances: Substance[] = data.s.map(s => {
     sub.subjectiveEffects = mdmaEffectsData
   } else if (effectsData[nameKey]) {
     const raw = effectsData[nameKey] as { positives?: string[]; negatives?: string[]; why?: string }
-    if (raw.positives || raw.negatives) {
+    if (raw.positives || raw.negatives || raw.why) {
       sub.subjectiveEffects = {
         allEffects: [
           ...(raw.positives || []).map((name: string) => ({ name, category: 'positive' })),

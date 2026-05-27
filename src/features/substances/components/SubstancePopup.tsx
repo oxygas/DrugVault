@@ -8,6 +8,7 @@ import RadarChart from '@/components/RadarChart'
 import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
 import ToleranceSection from '@/components/ToleranceSection'
+import EffectsTabContent from '@/components/EffectsTabContent'
 
 const SubjectiveEffectsModal = lazy(() => import('@/components/SubjectiveEffectsModal'))
 
@@ -36,7 +37,7 @@ interface SubstancePopupProps {
   allSubstances: Substance[]
 }
 
-type Tab = 'overview' | 'risks' | 'dosage' | 'tolerance' | 'interactions'
+type Tab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interactions'
 
 export default function SubstancePopup({ substance, comboMatrix, onClose, onNavigate, allSubstances }: SubstancePopupProps) {
   const [tab, setTab] = useState<Tab>('overview')
@@ -57,7 +58,9 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     substance.subjectiveEffects.timeline.length > 0 ||
     substance.subjectiveEffects.whyUsersLikeIt?.summary
   )
-  const tabKeys: Tab[] = ['overview', 'risks', 'dosage', 'tolerance', 'interactions']
+  const tabKeys: Tab[] = hasEffects
+    ? ['overview', 'effects', 'risks', 'dosage', 'tolerance', 'interactions']
+    : ['overview', 'risks', 'dosage', 'tolerance', 'interactions']
 
   useEffect(() => {
     onCloseRef.current = onClose
@@ -181,7 +184,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
           <div className="flex items-center gap-1">
             {hasEffects && (
               <button
-                onClick={() => setEffectsModalOpen(true)}
+                onClick={() => setTab('effects')}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-display font-semibold transition-all"
                 style={{
                   background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15))',
@@ -291,6 +294,14 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
               <InfoList title="Withdrawal Symptoms" items={substance.withdrawal || []} color="var(--yellow)" icon="M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941" />
               <InfoList title="Recovery Options" items={substance.recovery || []} color="var(--cyan)" icon="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
             </div>
+          )}
+
+          {tab === 'effects' && (
+            <EffectsTabContent
+              substance={substance}
+              catColor={catColor}
+              onOpenFullReport={() => setEffectsModalOpen(true)}
+            />
           )}
 
           {tab === 'dosage' && (

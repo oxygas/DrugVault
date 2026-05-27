@@ -11,6 +11,7 @@ import RadarChart from '@/components/RadarChart'
 import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
 import ToleranceSection from '@/components/ToleranceSection'
+import EffectsTabContent from '@/components/EffectsTabContent'
 import dynamic from 'next/dynamic'
 
 const SubjectiveEffectsModal = dynamic(
@@ -25,7 +26,7 @@ interface SubstanceDetailProps {
   allSubstances: Substance[]
 }
 
-type Tab = 'overview' | 'risks' | 'dosage' | 'tolerance' | 'interactions'
+type Tab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interactions'
 
 export default function SubstanceDetail({ substance, comboMatrix, relatedSubstances, allSubstances }: SubstanceDetailProps) {
   const [tab, setTab] = useState<Tab>('overview')
@@ -47,13 +48,15 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
     return comboMatrix[`${substance.category}+${cat}`] || comboMatrix[`${cat}+${substance.category}`] || 'caution'
   }
 
-  const tabs: { key: Tab; label: string; icon: string }[] = [
+  const tabConfigs: { key: Tab; label: string; icon: string }[] = [
     { key: 'overview', label: 'Overview', icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+    { key: 'effects', label: 'Effects', icon: 'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423l-1.183-.394 1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z' },
     { key: 'risks', label: 'Risks', icon: 'M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z' },
     { key: 'dosage', label: 'Dosage', icon: 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625g1.125 1.125 0 011.125 1.125v1.5a3.375 3.375 0 01-3.375 3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125h1.5c.621 0 1.125-.504 1.125-1.125V3.375c0-.621-.504-1.125-1.125-1.125z' },
     { key: 'tolerance', label: 'Tolerance', icon: 'M4.5 12a7.5 7.5 0 1115 0 7.5 7.5 0 01-15 0zM12 9v3.75m-.75-1.5h1.5M9.75 17.25h4.5' },
     { key: 'interactions', label: 'Interactions', icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' },
   ]
+  const tabs = hasEffects ? tabConfigs : tabConfigs.filter(t => t.key !== 'effects')
 
   return (
     <div className="flex-1 min-h-0 w-full mx-auto max-w-[1800px]">
@@ -177,30 +180,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
                   </div>
                 </div>
               </div>
-              {hasEffects && (
-                <div className="info-card" style={{ '--info-c': catColor } as React.CSSProperties}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h4 className="text-sm font-semibold mb-2 font-display text-[var(--text2)]">Subjective Effects</h4>
-                      <p className="text-xs text-[var(--text4)] leading-relaxed">
-                        {substance.subjectiveEffects?.allEffects.length ?? 0} effects documented · Includes &quot;Why Users Like It&quot; · Duration timeline
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setEffectsModalOpen(true)}
-                      className="px-3 py-2 rounded-lg text-xs font-display font-semibold transition-all flex-shrink-0"
-                      style={{
-                        background: 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.2))',
-                        color: '#a78bfa',
-                        border: '1px solid rgba(139,92,246,0.3)',
-                      }}
-                    >
-                      Open Effects
-                    </button>
-                  </div>
-                </div>
-              )}
-        {substance.pwSummary && (
+              {substance.pwSummary && (
                 <div className="info-card" style={{ '--info-c': catColor } as React.CSSProperties}>
                   <h4 className="text-sm font-semibold mb-2 font-display text-[var(--text2)]">Summary</h4>
                   <p className="text-sm text-[var(--text3)] leading-relaxed">{substance.pwSummary}</p>
@@ -233,6 +213,14 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
               <InfoList title="Withdrawal Symptoms" items={substance.withdrawal || []} color="var(--yellow)" icon="M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941" />
               <InfoList title="Recovery Options" items={substance.recovery || []} color="var(--cyan)" icon="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
             </div>
+          )}
+
+          {tab === 'effects' && (
+            <EffectsTabContent
+              substance={substance}
+              catColor={catColor}
+              onOpenFullReport={() => setEffectsModalOpen(true)}
+            />
           )}
 
           {tab === 'dosage' && <DosageTable substance={substance} />}
