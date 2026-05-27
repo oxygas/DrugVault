@@ -76,11 +76,9 @@ export default function OnboardingModal() {
                 value={weightInput}
                 onChange={(e) => {
                   const raw = e.target.value
-                  if (raw === '' || /^\d*\.?\d*$/.test(raw)) {
-                    setWeightInput(raw)
-                    const v = parseFloat(raw)
-                    if (!isNaN(v) && v > 0 && v <= 500) setBodyWeight(v)
-                  }
+                  setWeightInput(raw)
+                  const v = parseFloat(raw)
+                  if (!isNaN(v) && v > 0 && v <= 500) setBodyWeight(v)
                 }}
                 className="flex-1 px-4 py-3 rounded-xl text-white placeholder:text-[var(--text4)] bg-[rgba(10,10,30,0.5)] border border-[var(--border2)] focus:outline-none focus:border-blue-500/50 text-base"
                 placeholder="70"
