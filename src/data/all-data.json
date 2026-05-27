@@ -45385,6 +45385,424 @@
       ],
       "bn": [],
       "st": []
+    },
+    {
+      "n": "7-Hydroxymitragynine",
+      "a": [
+        "7-OH",
+        "7-HMG",
+        "7-OH-MIT",
+        "7-Hydroxy"
+      ],
+      "c": "Opioids",
+      "hl": "extreme",
+      "hs": 50,
+      "as": 55,
+      "o": "30-60min (oral)",
+      "d": "3-6h",
+      "od": 35,
+      "ws": 50,
+      "id": 100,
+      "dl": 40,
+      "r": [
+        "Extremely potent opioid effects",
+        "Respiratory depression at high doses",
+        "High abuse potential",
+        "Severe withdrawal syndrome",
+        "Unregulated market \u2014 variable potency"
+      ],
+      "od2": [
+        "Respiratory depression",
+        "Sedation/coma",
+        "Nausea and vomiting",
+        "Hypotension",
+        "Constricted pupils"
+      ],
+      "s": [
+        "Extreme caution \u2014 potency far exceeds kratom",
+        "Never mix with other depressants",
+        "Start with minimal effective dose",
+        "Avoid daily use \u2014 rapid tolerance develops",
+        "Keep naloxone available"
+      ],
+      "i": [
+        "DEADLY: Other opioids \u2014 additive respiratory depression",
+        "DEADLY: Benzodiazepines \u2014 compounding sedation and respiratory depression",
+        "DEADLY: Alcohol \u2014 respiratory depression",
+        "DANGEROUS: Gabapentinoids \u2014 enhanced CNS depression",
+        "Caution: Stimulants \u2014 cardiovascular strain"
+      ],
+      "w": [
+        "Severe anxiety",
+        "Muscle aches and cramps",
+        "Insomnia",
+        "Diarrhea",
+        "Sweating and chills"
+      ],
+      "rc": [
+        "Medical detox supervision recommended",
+        "Gradual dose tapering",
+        "Alpha-2 agonists for withdrawal symptoms",
+        "Therapy and support groups"
+      ],
+      "sm": "CC[C@@H]1CN2CC[C@@]3(O)C(=Nc4cccc(OC)c34)[C@@H]2C[C@@H]1\\C(=C/OC)C(=O)OC",
+      "bm": "Psychedelics",
+      "nm": "Depressants",
+      "pw": "A semi-synthetic alkaloid derived from kratom (Mitragyna speciosa). 7-Hydroxymitragynine is a highly potent mu-opioid receptor partial agonist, estimated to be 10-40x more potent than morphine. It produces opioid-like effects including pain relief, euphoria, and sedation. Concentrated 7-OH products have become widely sold in smoke shops and online since 2024. The FDA recommended scheduling in 2025.",
+      "pr": [
+        {
+          "n": "oral",
+          "d": {
+            "t": 1,
+            "l": "2-6",
+            "c": "7-14",
+            "s": "15-25",
+            "h": "30+",
+            "u": "mg"
+          },
+          "dur": {
+            "o": "30-60minutes",
+            "p": "1-2hours",
+            "t": "3-6hours"
+          }
+        },
+        {
+          "n": "sublingual",
+          "d": {
+            "t": 1,
+            "l": "1-3",
+            "c": "3-10",
+            "s": "10-20",
+            "h": "25+",
+            "u": "mg"
+          },
+          "dur": {
+            "o": "10-20minutes",
+            "p": "30-60minutes",
+            "t": "3-5hours"
+          }
+        }
+      ]
+    },
+    {
+      "n": "MGM-15",
+      "a": [
+        "Dihydro-7-hydroxymitragynine",
+        "DH-7OH-MIT",
+        "MGM15"
+      ],
+      "c": "Opioids",
+      "hl": "extreme",
+      "hs": 55,
+      "as": 60,
+      "o": "30-90min (oral)",
+      "d": "4-8h",
+      "od": 40,
+      "ws": 55,
+      "id": 101,
+      "dl": 45,
+      "r": [
+        "Higher opioid potency than 7-OH (greater mu and delta affinity)",
+        "No human safety data available",
+        "Sold as unregulated research chemical",
+        "Respiratory depression risk",
+        "Unknown long-term effects"
+      ],
+      "od2": [
+        "Severe respiratory depression",
+        "Coma",
+        "Miosis",
+        "Hypotension",
+        "Risk of death"
+      ],
+      "s": [
+        "DO NOT USE \u2014 no human safety data",
+        "Extremely potent semi-synthetic opioid",
+        "Keep naloxone available",
+        "Never mix with any other CNS depressants",
+        "This is a research chemical with unknown toxicity"
+      ],
+      "i": [
+        "DEADLY: Other opioids \u2014 additive respiratory depression",
+        "DEADLY: Benzodiazepines \u2014 severe CNS depression",
+        "DEADLY: Alcohol \u2014 respiratory failure risk",
+        "DANGEROUS: Gabapentinoids \u2014 enhanced sedation",
+        "Caution: Stimulants \u2014 cardiovascular strain"
+      ],
+      "w": [
+        "Severe opioid withdrawal symptoms",
+        "Anxiety and dysphoria",
+        "Muscle pain",
+        "Insomnia",
+        "Autonomic instability"
+      ],
+      "rc": [
+        "Medical detox is essential",
+        "Gradual tapering under supervision",
+        "Consider maintenance therapy",
+        "Professional support"
+      ],
+      "sm": "CC[C@@H]1CN2CC[C@]3([C@@H](/C(=C\\OC)/C(=O)OC)NC4=C3C(=CC=C4)OC)O",
+      "bm": "Psychedelics",
+      "nm": "Depressants",
+      "pw": "A semi-synthetic derivative of 7-Hydroxymitragynine, also known as dihydro-7-hydroxymitragynine. MGM-15 is a mu/delta opioid receptor dual agonist with higher binding affinity than 7-OH due to stereospecific saturation of the imine N(1)-C(2) double bond. It first appeared in the US market in early 2025 and is sold as an unregulated research chemical tablet. The 9-fluoro derivative, MGM-16, is even more potent.",
+      "pr": [
+        {
+          "n": "oral",
+          "d": {
+            "t": 1,
+            "l": "2-4",
+            "c": "5-15",
+            "s": "15-30",
+            "h": "40+",
+            "u": "mg"
+          },
+          "dur": {
+            "o": "30-90minutes",
+            "p": "1-3hours",
+            "t": "4-8hours"
+          }
+        }
+      ]
+    },
+    {
+      "n": "MGM-16",
+      "a": [
+        "9-Fluoro-MGM-15",
+        "Fluoro-dihydro-7-hydroxymitragynine"
+      ],
+      "c": "Opioids",
+      "hl": "extreme",
+      "hs": 65,
+      "as": 65,
+      "o": "45-120min (oral)",
+      "d": "6-12h",
+      "od": 45,
+      "ws": 60,
+      "id": 102,
+      "dl": 50,
+      "r": [
+        "Approximately 240x the potency of morphine in animal studies",
+        "Extremely potent mu/delta opioid dual agonist",
+        "No human safety data whatsoever",
+        "Risk of fatal respiratory depression at tiny doses",
+        "Unregulated synthetic research chemical"
+      ],
+      "od2": [
+        "Fatal respiratory depression",
+        "Coma",
+        "Respiratory arrest",
+        "Needle-point miosis",
+        "Death"
+      ],
+      "s": [
+        "EXTREME DANGER \u2014 one of the most potent opioid compounds known",
+        "No safe human dose has been established",
+        "Microgram-level potency \u2014 standard milligram scales cannot measure safely",
+        "Keep multiple doses of naloxone available",
+        "Never use alone \u2014 ensure someone can administer rescue breathing"
+      ],
+      "i": [
+        "DEADLY: All other opioids \u2014 potentiation may be fatal",
+        "DEADLY: Benzodiazepines \u2014 severe respiratory depression",
+        "DEADLY: Alcohol \u2014 respiratory failure",
+        "DEADLY: Gabapentinoids \u2014 enhanced CNS depression",
+        "DEADLY: Any CNS depressant \u2014 unpredictable interactions"
+      ],
+      "w": [
+        "Extremely severe withdrawal",
+        "Profound dysphoria",
+        "Severe muscle and bone pain",
+        "GI distress",
+        "Medical emergency likely"
+      ],
+      "rc": [
+        "Inpatient medical detox required",
+        "Methadone or buprenorphine induction may be needed",
+        "Long-term treatment planning",
+        "24/7 medical supervision during withdrawal"
+      ],
+      "sm": "CC[C@@H]1CN2CC[C@]3([C@@H](/C(=C\\OC)/C(=O)OC)NC4=C3C(=CC(=C4)F)OC)O",
+      "bm": "Psychedelics",
+      "nm": "Depressants",
+      "pw": "The 9-fluoro derivative of MGM-15, also known as 9-fluoro-dihydro-7-hydroxymitragynine. MGM-16 is an exceptionally potent mu/delta opioid agonist \u2014 approximately 240 times the potency of morphine in animal models. It was first synthesized in 2014 as a research tool for studying opioid receptors. No human safety data exists and it should be considered extremely dangerous.",
+      "pr": [
+        {
+          "n": "oral",
+          "d": {
+            "t": 10,
+            "l": "25-75",
+            "c": "100-250",
+            "s": "250-500",
+            "h": "750+",
+            "u": "\u00b5g"
+          },
+          "dur": {
+            "o": "45-120minutes",
+            "p": "2-4hours",
+            "t": "6-12hours"
+          }
+        }
+      ]
+    },
+    {
+      "n": "Mitragynine Pseudoindoxyl",
+      "a": [
+        "MP",
+        "Pseudoindoxyl mitragynine"
+      ],
+      "c": "Opioids",
+      "hl": "extreme",
+      "hs": 55,
+      "as": 55,
+      "o": "30-60min (oral)",
+      "d": "4-8h",
+      "od": 40,
+      "ws": 50,
+      "id": 103,
+      "dl": 42,
+      "r": [
+        "Highly selective mu-opioid receptor agonist",
+        "Not present in fresh kratom leaves \u2014 synthetic product",
+        "Sold in combination with 7-OH in unregulated products",
+        "No clinical safety data",
+        "Increased potency compared to natural kratom alkaloids"
+      ],
+      "od2": [
+        "Respiratory depression",
+        "Sedation/coma",
+        "Hypotension",
+        "Nausea and vomiting",
+        "Potential for fatal overdose"
+      ],
+      "s": [
+        "Semi-synthetic opioid \u2014 treat with same precautions as potent opioids",
+        "Unknown purity in unregulated products",
+        "Never mix with other depressants",
+        "Keep naloxone available",
+        "Avoid \u2014 no safety data"
+      ],
+      "i": [
+        "DEADLY: Other opioids \u2014 additive respiratory depression",
+        "DEADLY: Benzodiazepines \u2014 compounding CNS depression",
+        "DEADLY: Alcohol \u2014 respiratory depression",
+        "DANGEROUS: Gabapentinoids \u2014 enhanced sedation",
+        "Caution: Stimulants \u2014 cardiovascular strain"
+      ],
+      "w": [
+        "Opioid withdrawal syndrome",
+        "Anxiety",
+        "Myalgia",
+        "Insomnia",
+        "GI disturbances"
+      ],
+      "rc": [
+        "Medical supervision for detox",
+        "Gradual dose reduction",
+        "Supportive care for symptoms",
+        "Long-term recovery support"
+      ],
+      "sm": "C[C@@H]1CN2CC[C@]3(c4ccccc4N([C@@H]3[C@H]2C1)C(=O)C5=CC=CC=C5)[O]",
+      "bm": "Psychedelics",
+      "nm": "Depressants",
+      "pw": "A semi-synthetic opioid compound derived from mitragynine, the primary alkaloid of kratom. Mitragynine pseudoindoxyl is a highly selective mu-opioid receptor agonist that is not naturally present in fresh kratom leaves. Since 2024, MP has been sold online and in smoke shops, often in combination with 7-hydroxymitragynine. Products containing MP are misleadingly marketed as 'kratom' despite being synthetic isolates with no safety data.",
+      "pr": [
+        {
+          "n": "oral",
+          "d": {
+            "t": 0.5,
+            "l": "1-3",
+            "c": "3-10",
+            "s": "10-20",
+            "h": "25+",
+            "u": "mg"
+          },
+          "dur": {
+            "o": "30-60minutes",
+            "p": "1-2hours",
+            "t": "4-8hours"
+          }
+        }
+      ]
+    },
+    {
+      "n": "7-Acetoxymitragynine",
+      "a": [
+        "7-Ac-MIT",
+        "Acetyl-7-hydroxymitragynine"
+      ],
+      "c": "Opioids",
+      "hl": "high",
+      "hs": 45,
+      "as": 50,
+      "o": "30-60min (oral)",
+      "d": "3-5h",
+      "od": 30,
+      "ws": 45,
+      "id": 104,
+      "dl": 38,
+      "r": [
+        "Semi-synthetic prodrug of 7-hydroxymitragynine",
+        "Potent opioid effects",
+        "No human safety data",
+        "Unknown metabolic profile",
+        "Unregulated research chemical"
+      ],
+      "od2": [
+        "Respiratory depression",
+        "Sedation",
+        "Miosis",
+        "Nausea",
+        "Hypotension"
+      ],
+      "s": [
+        "Treat with caution \u2014 potent opioid effects",
+        "No established safety profile",
+        "Never mix with other CNS depressants",
+        "Keep naloxone available",
+        "Research chemical \u2014 not for human consumption"
+      ],
+      "i": [
+        "DEADLY: Other opioids \u2014 additive respiratory depression",
+        "DEADLY: Benzodiazepines \u2014 severe CNS depression",
+        "DANGEROUS: Alcohol \u2014 respiratory depression",
+        "Caution: Stimulants \u2014 cardiovascular strain",
+        "Caution: MAOIs \u2014 unknown interaction potential"
+      ],
+      "w": [
+        "Opioid withdrawal-like symptoms",
+        "Anxiety",
+        "Muscle discomfort",
+        "Sleep disturbances",
+        "GI upset"
+      ],
+      "rc": [
+        "Medical supervision for cessation",
+        "Supportive symptom management",
+        "Therapy and support groups"
+      ],
+      "sm": "CC(=O)O[C@@]1(C2=C(CCN3[C@H]2C[C@@H]([C@@H]3C1)/C(=C\\OC)/C(=O)OC)C4=C(C=CC=C4)OC)O",
+      "bm": "Psychedelics",
+      "nm": "Depressants",
+      "pw": "A semi-synthetic acetylated derivative of 7-hydroxymitragynine. As a prodrug, 7-acetoxymitragynine is converted to 7-hydroxymitragynine in the body. It is part of a growing class of semisynthetic kratom alkaloid derivatives being sold as research chemicals. Very limited pharmacological data exists for this compound.",
+      "pr": [
+        {
+          "n": "oral",
+          "d": {
+            "t": 2,
+            "l": "5-10",
+            "c": "10-25",
+            "s": "25-50",
+            "h": "60+",
+            "u": "mg"
+          },
+          "dur": {
+            "o": "30-60minutes",
+            "p": "1-2hours",
+            "t": "3-5hours"
+          }
+        }
+      ]
     }
   ],
   "c": [
