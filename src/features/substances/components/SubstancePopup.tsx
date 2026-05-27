@@ -9,6 +9,7 @@ import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
 import ToleranceSection from '@/components/ToleranceSection'
 import EffectsTabContent from '@/components/EffectsTabContent'
+import LegalStatusTabContent from '@/components/LegalStatusTabContent'
 
 const SubjectiveEffectsModal = lazy(() => import('@/components/SubjectiveEffectsModal'))
 
@@ -37,7 +38,7 @@ interface SubstancePopupProps {
   allSubstances: Substance[]
 }
 
-type Tab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interactions'
+type Tab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interactions' | 'legal'
 
 export default function SubstancePopup({ substance, comboMatrix, onClose, onNavigate, allSubstances }: SubstancePopupProps) {
   const [tab, setTab] = useState<Tab>('overview')
@@ -59,8 +60,8 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     substance.subjectiveEffects.whyUsersLikeIt?.summary
   )
   const tabKeys: Tab[] = hasEffects
-    ? ['overview', 'effects', 'risks', 'dosage', 'tolerance', 'interactions']
-    : ['overview', 'risks', 'dosage', 'tolerance', 'interactions']
+    ? ['overview', 'effects', 'risks', 'dosage', 'tolerance', 'interactions', 'legal']
+    : ['overview', 'risks', 'dosage', 'tolerance', 'interactions', 'legal']
 
   useEffect(() => {
     onCloseRef.current = onClose
@@ -310,6 +311,10 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
 
           {tab === 'tolerance' && (
             <ToleranceSection substance={substance} />
+          )}
+
+          {tab === 'legal' && (
+            <LegalStatusTabContent substance={substance} catColor={catColor} />
           )}
 
           {tab === 'interactions' && (

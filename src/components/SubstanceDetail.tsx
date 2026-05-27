@@ -12,6 +12,7 @@ import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
 import ToleranceSection from '@/components/ToleranceSection'
 import EffectsTabContent from '@/components/EffectsTabContent'
+import LegalStatusTabContent from '@/components/LegalStatusTabContent'
 import dynamic from 'next/dynamic'
 
 const SubjectiveEffectsModal = dynamic(
@@ -26,7 +27,7 @@ interface SubstanceDetailProps {
   allSubstances: Substance[]
 }
 
-type Tab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interactions'
+type Tab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interactions' | 'legal'
 
 export default function SubstanceDetail({ substance, comboMatrix, relatedSubstances, allSubstances }: SubstanceDetailProps) {
   const [tab, setTab] = useState<Tab>('overview')
@@ -55,6 +56,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
     { key: 'dosage', label: 'Dosage', icon: 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625g1.125 1.125 0 011.125 1.125v1.5a3.375 3.375 0 01-3.375 3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125h1.5c.621 0 1.125-.504 1.125-1.125V3.375c0-.621-.504-1.125-1.125-1.125z' },
     { key: 'tolerance', label: 'Tolerance', icon: 'M4.5 12a7.5 7.5 0 1115 0 7.5 7.5 0 01-15 0zM12 9v3.75m-.75-1.5h1.5M9.75 17.25h4.5' },
     { key: 'interactions', label: 'Interactions', icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' },
+    { key: 'legal', label: 'Legal', icon: 'M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.75h-.152c-3.196 0-6.1-1.248-8.25-3.285z' },
   ]
   const tabs = hasEffects ? tabConfigs : tabConfigs.filter(t => t.key !== 'effects')
 
@@ -226,6 +228,10 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
           {tab === 'dosage' && <DosageTable substance={substance} />}
 
           {tab === 'tolerance' && <ToleranceSection substance={substance} />}
+
+          {tab === 'legal' && (
+            <LegalStatusTabContent substance={substance} catColor={catColor} />
+          )}
 
           {tab === 'interactions' && (
             <div className="space-y-4">
