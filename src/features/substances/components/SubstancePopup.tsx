@@ -7,6 +7,7 @@ import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LAB
 import RadarChart from '@/components/RadarChart'
 import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
+import ToleranceSection from '@/components/ToleranceSection'
 
 const SubjectiveEffectsModal = lazy(() => import('@/components/SubjectiveEffectsModal'))
 
@@ -35,7 +36,7 @@ interface SubstancePopupProps {
   allSubstances: Substance[]
 }
 
-type Tab = 'overview' | 'risks' | 'dosage' | 'interactions'
+type Tab = 'overview' | 'risks' | 'dosage' | 'tolerance' | 'interactions'
 
 export default function SubstancePopup({ substance, comboMatrix, onClose, onNavigate, allSubstances }: SubstancePopupProps) {
   const [tab, setTab] = useState<Tab>('overview')
@@ -56,7 +57,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     substance.subjectiveEffects.timeline.length > 0 ||
     substance.subjectiveEffects.whyUsersLikeIt?.summary
   )
-  const tabKeys: Tab[] = ['overview', 'risks', 'dosage', 'interactions']
+  const tabKeys: Tab[] = ['overview', 'risks', 'dosage', 'tolerance', 'interactions']
 
   useEffect(() => {
     onCloseRef.current = onClose
@@ -120,6 +121,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     { key: 'overview', label: 'Overview' },
     { key: 'risks', label: 'Risks' },
     { key: 'dosage', label: 'Dosage' },
+    { key: 'tolerance', label: 'Tolerance' },
     { key: 'interactions', label: 'Interactions' },
   ]
 
@@ -158,7 +160,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
             >
               {substance.harmLevel}
             </span>
-            <span className="text-xs lg:text-sm text-[var(--text4)] font-mono">{substance.onset} onset · {substance.duration}</span>
+            <span className="text-xs lg:text-sm text-[var(--text4)] font-mono">{substance.onset} onset · {substance.duration}{substance.ld50 ? ` · LD50: ${substance.ld50}` : ''}</span>
           </div>
           {substance.aliases.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2 ml-4">
@@ -293,6 +295,10 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
 
           {tab === 'dosage' && (
             <DosageTable substance={substance} />
+          )}
+
+          {tab === 'tolerance' && (
+            <ToleranceSection substance={substance} />
           )}
 
           {tab === 'interactions' && (

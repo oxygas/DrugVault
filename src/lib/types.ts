@@ -83,6 +83,8 @@ export interface SubjectiveEffects {
   source: string
 }
 
+export type UserLevel = 'new' | 'common' | 'heavy'
+
 export interface Substance {
   name: string
   aliases: string[]
@@ -92,6 +94,7 @@ export interface Substance {
   harmLevel: HarmLevel
   harmScore: number
   addictionScore: number
+  ld50?: string
   onset: string
   duration: string
   odRisk: number

@@ -10,6 +10,7 @@ import { slugify } from '@/lib/data'
 import RadarChart from '@/components/RadarChart'
 import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
+import ToleranceSection from '@/components/ToleranceSection'
 import dynamic from 'next/dynamic'
 
 const SubjectiveEffectsModal = dynamic(
@@ -24,7 +25,7 @@ interface SubstanceDetailProps {
   allSubstances: Substance[]
 }
 
-type Tab = 'overview' | 'risks' | 'dosage' | 'interactions'
+type Tab = 'overview' | 'risks' | 'dosage' | 'tolerance' | 'interactions'
 
 export default function SubstanceDetail({ substance, comboMatrix, relatedSubstances, allSubstances }: SubstanceDetailProps) {
   const [tab, setTab] = useState<Tab>('overview')
@@ -50,6 +51,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
     { key: 'overview', label: 'Overview', icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
     { key: 'risks', label: 'Risks', icon: 'M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z' },
     { key: 'dosage', label: 'Dosage', icon: 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625g1.125 1.125 0 011.125 1.125v1.5a3.375 3.375 0 01-3.375 3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125h1.5c.621 0 1.125-.504 1.125-1.125V3.375c0-.621-.504-1.125-1.125-1.125z' },
+    { key: 'tolerance', label: 'Tolerance', icon: 'M4.5 12a7.5 7.5 0 1115 0 7.5 7.5 0 01-15 0zM12 9v3.75m-.75-1.5h1.5M9.75 17.25h4.5' },
     { key: 'interactions', label: 'Interactions', icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' },
   ]
 
@@ -123,7 +125,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
               >
                 {substance.harmLevel}
               </span>
-              <span className="text-[var(--text4)] font-mono hidden xs:inline">Harm: {substance.harmScore} · Add: {substance.addictionScore}</span>
+              <span className="text-[var(--text4)] font-mono hidden xs:inline">Harm: {substance.harmScore} · Add: {substance.addictionScore}{substance.ld50 ? ` · LD50: ${substance.ld50}` : ''}</span>
             </div>
           </div>
         </div>
@@ -234,6 +236,8 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
           )}
 
           {tab === 'dosage' && <DosageTable substance={substance} />}
+
+          {tab === 'tolerance' && <ToleranceSection substance={substance} />}
 
           {tab === 'interactions' && (
             <div className="space-y-4">

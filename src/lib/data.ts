@@ -11,7 +11,7 @@ interface RawSubstance {
   o: string; d: string; od: number; ws: number; id: number; dl: number
   r: string[]; od2: string[]; s: string[]; i: string[]
   w?: string[]; rc?: string[]; sm: string; bm?: string; nm?: string
-  pw: string | null; pr: RawRoa[] | null
+  pw: string | null; pr: RawRoa[] | null; ld?: string
 }
 interface RawRoa { n: string; d: RawDose | null; dur: RawDur | null }
 interface RawDose { t: number | string; l: string; c: string; s: string; h: string | number; u: string }
@@ -36,7 +36,7 @@ function expandSubstance(r: RawSubstance): Substance {
     risks: r.r, overdose: r.od2, safety: r.s, interactions: r.i,
     withdrawal: r.w && r.w.length ? r.w : undefined,
     recovery: r.rc && r.rc.length ? r.rc : undefined,
-    smiles: r.sm, chemicalStructure: null,
+    smiles: r.sm, chemicalStructure: null, ld50: r.ld || undefined,
     bestMix: r.bm || undefined, neverMix: r.nm || undefined,
     pwSummary: r.pw, pwRoas: r.pr ? r.pr.map((p: RawRoa) => ({
       n: p.n,
