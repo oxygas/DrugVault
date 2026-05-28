@@ -7,8 +7,10 @@ import { FEATURES, type FeatureConfig } from '@/features/registry'
 import StatsBar from '@/components/StatsBar'
 import KeyboardShortcutsModal from '@/components/KeyboardShortcutsModal'
 import UserSettings from '@/components/UserSettings'
+import ThemeSelector from '@/components/ThemeSelector'
 import OnboardingModal from '@/components/OnboardingModal'
 import { useSettingsStore } from '@/stores/settings'
+import { useThemeStore } from '@/stores/theme'
 
 const SubstancePopup = dynamic(() => import('@/features/substances/components/SubstancePopup'), {
   loading: () => (
@@ -41,6 +43,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [prevActiveSection, setPrevActiveSection] = useState<Section>('substances')
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const { bodyWeight, weightUnit, userLevel, onboarded, toggleSettings, setSettingsOpen } = useSettingsStore()
+  const { toggleTheme } = useThemeStore()
 
   const userLevelLabel = userLevel === 'new' ? 'New' : userLevel === 'common' ? 'Common' : 'Heavy'
   const isMobile = isTouch
@@ -48,6 +51,10 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsTouch('ontouchstart' in window)
+    if (typeof document !== 'undefined') {
+      const stored = localStorage.getItem('tripgem-theme')
+      if (stored) document.documentElement.setAttribute('data-theme', stored)
+    }
     requestAnimationFrame(() => setMounted(true))
   }, [])
 
@@ -243,6 +250,16 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
             ))}
           </div>
           <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-xl hover:bg-[rgba(255,255,255,0.06)] transition-all text-[var(--text4)] hover:text-[var(--accent2)]"
+            aria-label="Theme"
+            title="Theme"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+            </svg>
+          </button>
+          <button
             onClick={toggleSettings}
             className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl hover:bg-[rgba(255,255,255,0.06)] transition-all text-[var(--text4)] hover:text-[var(--accent2)] group"
             aria-label="User settings"
@@ -260,7 +277,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </button>
-        </div>
+          </div>
       </nav>
 
       {/* Mobile Top Bar (simplified) */}
@@ -358,6 +375,16 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
             </button>
           ))}
           <button
+            onClick={toggleTheme}
+            className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors text-[var(--text3)]"
+            aria-label="Theme"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+            </svg>
+            <span className="text-xs font-medium">Theme</span>
+          </button>
+          <button
             onClick={toggleSettings}
             className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors text-[var(--text3)]"
             aria-label="Settings"
@@ -395,6 +422,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       <OnboardingModal />
 
       <UserSettings />
+
+      <ThemeSelector />
 
       {popupSubstance && (
         <SubstancePopup
