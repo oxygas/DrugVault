@@ -32,6 +32,8 @@ export const CATEGORY_REGISTRY: CategoryConfig[] = [
   { name: 'Gabapentionoids', color: '#0d9488' },
   { name: 'Nootropics', color: '#14b8a6' },
   { name: 'Antidepressants', color: '#6366f1' },
+  { name: 'Antipsychotics', color: '#d946ef' },
+  { name: 'Dopaminergics', color: '#0ea5e9' },
   { name: 'Supplements', color: '#84cc16' },
 ]
 

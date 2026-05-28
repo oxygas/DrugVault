@@ -66,6 +66,14 @@ const CATEGORY_CROSS_TOLERANCE: Record<string, { categories: string[]; note: str
     categories: ['Depressants'],
     note: 'Benzodiazepines share cross-tolerance with other GABAergic depressants including alcohol and barbiturates.',
   },
+  Antipsychotics: {
+    categories: ['Antipsychotics'],
+    note: 'Cross-tolerance between antipsychotics is primarily due to shared dopamine D2 receptor blockade. Switching may require dose adjustment.',
+  },
+  Dopaminergics: {
+    categories: ['Dopaminergics'],
+    note: 'Parkinsonian medications show limited cross-tolerance. Dopamine agonists and levodopa have distinct profiles.',
+  },
   Cannabinoids: {
     categories: ['Cannabinoids'],
     note: 'Reverse tolerance is occasionally reported with cannabinoids. Regular use leads to cannabinoid receptor downregulation.',
