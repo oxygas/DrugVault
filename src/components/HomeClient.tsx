@@ -37,6 +37,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [isTouch, setIsTouch] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
+  const [sectionTransition, setSectionTransition] = useState<'entering' | 'exiting' | 'idle'>('idle')
+  const [prevActiveSection, setPrevActiveSection] = useState<Section>('substances')
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const { bodyWeight, weightUnit, userLevel, onboarded, toggleSettings, setSettingsOpen } = useSettingsStore()
 
@@ -69,6 +71,29 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
     requestAnimationFrame(() => setMounted(true))
   }, [])
 
+  // Section transition animation
+  useEffect(() => {
+    if (activeSection === prevActiveSection) return
+    const exitTimer = setTimeout(() => {
+      setPrevActiveSection(activeSection)
+      setSectionTransition('entering')
+    }, 50)
+    const enterTimer = setTimeout(() => {
+      setSectionTransition('idle')
+    }, 450)
+    return () => {
+      clearTimeout(exitTimer)
+      clearTimeout(enterTimer)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection])
+
+  const handleSectionChange = useCallback((section: Section) => {
+    if (section === activeSection) return
+    setSectionTransition('exiting')
+    setActiveSection(section)
+  }, [activeSection])
+
   // Keyboard shortcuts for desktop
   useEffect(() => {
     if (isMobile) return
@@ -77,15 +102,15 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       // Alt+1/2/3 for section switching
       if (e.altKey && e.key === '1') {
         e.preventDefault()
-        setActiveSection('substances')
+        handleSectionChange('substances')
       }
       if (e.altKey && e.key === '2') {
         e.preventDefault()
-        setActiveSection('matrix')
+        handleSectionChange('matrix')
       }
       if (e.altKey && e.key === '3') {
         e.preventDefault()
-        setActiveSection('tools')
+        handleSectionChange('tools')
       }
       // Escape to close popup or shortcuts modal
       if (e.key === 'Escape' && popupSubstance) {
@@ -124,7 +149,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isMobile, popupSubstance, showShortcuts, toggleSettings])
+  }, [isMobile, popupSubstance, showShortcuts, toggleSettings, handleSectionChange])
 
   const toggleCategory = useCallback((cat: Category) => {
     setSelectedCategories(prev =>
@@ -198,16 +223,16 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       >
         <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2.5 group">
-            <img src="/logo.svg" alt="TripGem" className="w-8 h-8 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
+            <img src="/logo.svg" alt="TripGem" className="w-8 h-8 drop-shadow-[0_0_10px_rgba(207,10,110,0.6)]" />
             <span className="font-display font-bold text-base sm:text-lg tracking-tight">
-              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Gem</span>
+              <span className="text-[var(--neon-magenta)]">Trip</span><span className="text-white">Gem</span>
             </span>
           </a>
           <div className="flex gap-1 p-1 rounded-full bg-[rgba(255,255,255,0.03)] border border-[var(--border)]">
             {FEATURES.map(feature => (
               <button
                 key={feature.key}
-                onClick={() => setActiveSection(feature.key as Section)}
+                onClick={() => handleSectionChange(feature.key as Section)}
                 className={`nav-tab flex items-center gap-1.5 ${activeSection === feature.key ? 'active' : ''}`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -248,9 +273,9 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       >
         <div className="w-full px-4 h-14 flex items-center justify-center">
           <a href="#" className="flex items-center gap-2">
-            <img src="/logo.svg" alt="TripGem" className="w-7 h-7 drop-shadow-[0_0_6px_rgba(168,85,247,0.5)]" />
+            <img src="/logo.svg" alt="TripGem" className="w-7 h-7 drop-shadow-[0_0_8px_rgba(207,10,110,0.5)]" />
             <span className="font-display font-bold text-base tracking-tight">
-              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Gem</span>
+              <span className="text-[var(--neon-magenta)]">Trip</span><span className="text-white">Gem</span>
             </span>
           </a>
         </div>
@@ -266,10 +291,12 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           <h1 className="text-4xl sm:text-7xl lg:text-8xl font-display font-extrabold leading-[1.05] tracking-tight gradient-text">
             Evidence-Based<br />Harm Reduction
           </h1>
-          <p className="text-base sm:text-xl text-[var(--text3)] max-w-xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-xl text-[var(--text3)] max-w-xl mx-auto leading-relaxed"
+             style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' }}>
             Comprehensive database with interaction checking, combination risk matrix, and dosage guides.
           </p>
-          <div className="disclaimer-box max-w-lg mx-auto mt-3">
+          <div className="disclaimer-box max-w-lg mx-auto mt-3"
+               style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both' }}>
             Educational resource only. Not medical advice. Always consult healthcare professionals.
           </div>
         </header>
@@ -278,10 +305,18 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           <StatsBar stats={stats} categories={categories} />
         </section>
 
-        <section key={activeSection} className="section-card" style={{
-          animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both',
-          ...(activeSection === 'matrix' ? { contain: 'none' } : {}),
-        }}>
+        <section
+          key={activeSection}
+          className="section-card"
+          style={{
+            animation: sectionTransition === 'entering'
+              ? 'scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both'
+              : sectionTransition === 'exiting'
+              ? 'fadeOut 0.2s ease both'
+              : 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both',
+            ...(activeSection === 'matrix' ? { contain: 'none' } : {}),
+          }}
+        >
           {FEATURES.map(feature => {
             if (feature.key !== activeSection) return null
             const FeatureComponent = feature.component
@@ -309,9 +344,9 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
             <button
               key={feature.key}
               onClick={() => setActiveSection(feature.key as Section)}
-              className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors relative ${
+              className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 relative ${
                 activeSection === feature.key
-                  ? 'text-[var(--accent2)]'
+                  ? 'text-[var(--neon-magenta)] [text-shadow:0_0_12px_var(--neon-magenta)]'
                   : 'text-[var(--text3)]'
               }`}
               aria-current={activeSection === feature.key ? 'page' as const : undefined}
@@ -342,7 +377,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         <div className="flex items-center justify-center gap-2.5 mb-4">
           <img src="/logo.svg" alt="TripGem" className="w-6 h-6 opacity-70" />
           <span className="font-display font-semibold text-sm text-[var(--text2)]">
-            Trip<span className="text-[var(--accent2)]">Gem</span>
+            Trip<span className="text-[var(--neon-magenta)]">Gem</span>
           </span>
         </div>
         <p className="text-xs text-[var(--text3)] max-w-md mx-auto leading-relaxed">
