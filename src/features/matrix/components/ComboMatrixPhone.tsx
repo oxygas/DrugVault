@@ -64,7 +64,7 @@ export default function ComboMatrixPhone({ substances, comboRules, onSelectSubst
       counts[level] = (counts[level] || 0) + 1
     }
     return counts
-  }, [interactions])
+  }, [interactions, selectedCat])
 
   return (
     <div className="flex flex-col gap-3 w-full">

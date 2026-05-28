@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSettingsStore } from '@/stores/settings'
 import type { UserLevel } from '@/lib/types'
 
@@ -24,10 +24,6 @@ export default function OnboardingModal() {
   } = useSettingsStore()
 
   const [weightInput, setWeightInput] = useState(String(bodyWeight))
-
-  useEffect(() => {
-    setWeightInput(String(bodyWeight))
-  }, [bodyWeight])
 
   if (onboarded) return null
 

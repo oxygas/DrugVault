@@ -40,19 +40,10 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
   const [query, setQuery] = useState('')
   const [focused, setFocused] = useState(false)
   const [results, setResults] = useState<Substance[]>([])
-  const [recentSearches, setRecentSearches] = useState<Substance['name'][]>([])
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [recentSearches, setRecentSearches] = useState<Substance['name'][]>(() => getRecentSearches())
+  const localRef = useRef<HTMLInputElement>(null)
+  const inputRef = externalInputRef ?? localRef
   const dropdownRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    setRecentSearches(getRecentSearches())
-  }, [])
-
-  useEffect(() => {
-    if (externalInputRef) {
-      (externalInputRef as React.MutableRefObject<HTMLInputElement | null>).current = inputRef.current
-    }
-  }, [externalInputRef])
 
   const search = useCallback((q: string) => {
     setQuery(q)
@@ -81,7 +72,7 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
     document.addEventListener('mousedown', handleClick)
     document.addEventListener('touchstart', handleClick)
     return () => { document.removeEventListener('mousedown', handleClick); document.removeEventListener('touchstart', handleClick) }
-  }, [])
+  }, [inputRef, dropdownRef])
 
   const categories = Object.entries(CATEGORY_COLORS) as [Category, string][]
 
@@ -209,7 +200,7 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
 
             {query.length >= 2 && results.length === 0 && (
               <div className="px-4 py-8 text-center">
-                <p className="text-sm text-[var(--text4)]">No substances found for "{query}"</p>
+                <p className="text-sm text-[var(--text4)]">No substances found for &ldquo;{query}&rdquo;</p>
               </div>
             )}
 
