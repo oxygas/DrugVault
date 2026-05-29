@@ -77,10 +77,10 @@ export const metadata: Metadata = {
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
     images: [
       {
-        url: '/og-image.gif',
-        width: 480,
-        height: 480,
-        type: 'image/gif',
+        url: '/og-image.png',
+        width: 396,
+        height: 372,
+        type: 'image/png',
       },
     ],
   },
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'TripGem — Evidence-Based Harm Reduction Database',
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
-    images: ['/og-image.gif'],
+    images: ['/og-image.png'],
   },
   alternates: {
     canonical: '/',
