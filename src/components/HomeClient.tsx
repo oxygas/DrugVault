@@ -84,6 +84,10 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
   const handleSectionChange = useCallback((section: Section) => {
     if (section === activeSection || sectionTransition !== 'idle') return
+    if (isMobile) {
+      setActiveSection(section)
+      return
+    }
     setPrevSection(activeSection)
     setActiveSection(section)
     setSectionTransition('entering')
@@ -91,7 +95,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       setSectionTransition('idle')
       setPrevSection(null)
     }, 220)
-  }, [activeSection, sectionTransition])
+  }, [activeSection, sectionTransition, isMobile])
 
   // Keyboard shortcuts for desktop
   useEffect(() => {
@@ -310,7 +314,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           </header>
         </div>
 
-        <section className="section-card" style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both' }}>
+        <section className="section-card" style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both', contain: 'none' }}>
           <StatsBar stats={stats} categories={categories} />
         </section>
 

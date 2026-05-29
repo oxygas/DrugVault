@@ -31,9 +31,13 @@ export default function DigitalRain() {
 
     let charPool: string[] = []
 
+    function getVpHeight() {
+      return window.visualViewport?.height ?? window.innerHeight
+    }
+
     function resize() {
       w = canvas!.width = window.innerWidth
-      h = canvas!.height = window.innerHeight
+      h = canvas!.height = getVpHeight()
       const cols = Math.floor(w / 28)
       drops = Array.from({ length: cols }, (_, i) => ({
         x: i * 28,
@@ -58,6 +62,7 @@ export default function DigitalRain() {
 
     document.addEventListener('visibilitychange', handleVisibility)
     window.addEventListener('resize', resize)
+    window.visualViewport?.addEventListener('resize', resize)
 
     function draw(now: number) {
       animId = requestAnimationFrame(draw)
@@ -115,6 +120,7 @@ export default function DigitalRain() {
       cancelAnimationFrame(animId)
       document.removeEventListener('visibilitychange', handleVisibility)
       window.removeEventListener('resize', resize)
+      window.visualViewport?.removeEventListener('resize', resize)
     }
   }, [])
 

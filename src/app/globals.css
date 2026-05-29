@@ -1997,6 +1997,26 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
     transform: none;
     box-shadow: 0 0 60px rgba(207, 10, 110, 0.04), inset 0 1px 0 rgba(255,255,255,0.05);
   }
+
+  .vaporwave-card:hover {
+    border-color: var(--border) !important;
+    box-shadow: 0 0 40px rgba(207, 10, 110, 0.04) !important;
+  }
+
+  .vaporwave-card:hover .card-name {
+    animation: none !important;
+  }
+
+  .vaporwave-card:hover .neon-stripe {
+    animation: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Kill expensive compositing layers on touch */
+  .chromatic-overlay { display: none; }
+  .vaporwave-scanlines { display: none; }
+  .mouse-glow { display: none; }
+  .particles { display: none; }
 }
 
 @theme inline {
