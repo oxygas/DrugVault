@@ -30,15 +30,15 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://tripgem.vercel.app'),
+  metadataBase: new URL('https://tripgem.space'),
   title: {
     default: 'TripGem — Evidence-Based Harm Reduction Database',
     template: '%s | TripGem Harm Reduction',
   },
   description: 'Comprehensive harm reduction resource with 540+ substances. Check drug interactions, view combination risk matrix, dosage guides, and evidence-based safety information.',
   icons: {
-    icon: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFkdHQzaHphODF6Y3Rlb2JnMTYybzlsaHVibG8zZXNpYjAybWc4NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Wt0zLr2PkDbDkfQOSo/giphy.gif',
-    shortcut: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFkdHQzaHphODF6Y3Rlb2JnMTYybzlsaHVibG8zZXNpYjAybWc4NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Wt0zLr2PkDbDkfQOSo/giphy.gif',
+    icon: '/og-image.gif',
+    shortcut: '/og-image.gif',
   },
   keywords: [
     'harm reduction',
@@ -71,15 +71,24 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://tripgem.vercel.app',
+    url: 'https://tripgem.space',
     siteName: 'TripGem',
     title: 'TripGem — Evidence-Based Harm Reduction Database',
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
+    images: [
+      {
+        url: '/og-image.gif',
+        width: 480,
+        height: 480,
+        type: 'image/gif',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'TripGem — Evidence-Based Harm Reduction Database',
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
+    images: ['/og-image.gif'],
   },
   alternates: {
     canonical: '/',
@@ -102,12 +111,12 @@ export default async function RootLayout({
     '@type': 'WebSite',
     name: 'TripGem',
     description: 'Evidence-based harm reduction database and drug interaction checker',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://tripgem.vercel.app',
+    url: 'https://tripgem.space',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://tripgem.vercel.app'}?q={search_term_string}`,
+        urlTemplate: 'https://tripgem.space/?q={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },
