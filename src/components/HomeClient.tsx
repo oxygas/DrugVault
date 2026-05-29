@@ -35,12 +35,12 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [popupSubstance, setPopupSubstance] = useState<Substance | null>(null)
   const [activeSection, setActiveSection] = useState<Section>('substances')
   const [mounted, setMounted] = useState(false)
-  const [navOpacity, setNavOpacity] = useState(0)
+  const [scrolled, setScrolled] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [isTouch, setIsTouch] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [sectionTransition, setSectionTransition] = useState<'entering' | 'exiting' | 'idle'>('idle')
-  const [prevActiveSection, setPrevActiveSection] = useState<Section>('substances')
+  const [prevSection, setPrevSection] = useState<Section | null>(null)
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const { bodyWeight, weightUnit, userLevel, onboarded, toggleSettings, setSettingsOpen } = useSettingsStore()
   const { toggleTheme } = useThemeStore()
@@ -51,20 +51,26 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsTouch('ontouchstart' in window)
-    if (typeof document !== 'undefined') {
-      const stored = localStorage.getItem('tripgem-theme')
-      if (stored) document.documentElement.setAttribute('data-theme', stored)
-    }
     requestAnimationFrame(() => setMounted(true))
   }, [])
 
   useEffect(() => {
     let ticking = false
+    let lastScrolled = false
+    let lastBackToTop = false
     const onScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          setNavOpacity(Math.min(window.scrollY / 200, 1))
-          setShowBackToTop(window.scrollY > 500)
+          const nowScrolled = window.scrollY > 50
+          const nowBackToTop = window.scrollY > 500
+          if (nowScrolled !== lastScrolled) {
+            lastScrolled = nowScrolled
+            setScrolled(nowScrolled)
+          }
+          if (nowBackToTop !== lastBackToTop) {
+            lastBackToTop = nowBackToTop
+            setShowBackToTop(nowBackToTop)
+          }
           ticking = false
         })
         ticking = true
@@ -74,32 +80,16 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  useEffect(() => {
-    requestAnimationFrame(() => setMounted(true))
-  }, [])
-
-  // Section transition animation
-  useEffect(() => {
-    if (activeSection === prevActiveSection) return
-    const exitTimer = setTimeout(() => {
-      setPrevActiveSection(activeSection)
-      setSectionTransition('entering')
-    }, 50)
-    const enterTimer = setTimeout(() => {
-      setSectionTransition('idle')
-    }, 450)
-    return () => {
-      clearTimeout(exitTimer)
-      clearTimeout(enterTimer)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSection])
-
   const handleSectionChange = useCallback((section: Section) => {
-    if (section === activeSection) return
-    setSectionTransition('exiting')
+    if (section === activeSection || sectionTransition !== 'idle') return
+    setPrevSection(activeSection)
     setActiveSection(section)
-  }, [activeSection])
+    setSectionTransition('entering')
+    setTimeout(() => {
+      setSectionTransition('idle')
+      setPrevSection(null)
+    }, 220)
+  }, [activeSection, sectionTransition])
 
   // Keyboard shortcuts for desktop
   useEffect(() => {
@@ -221,21 +211,20 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
     <div className={`transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'} flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px] ${isMobile ? 'pb-16' : ''}`}>
       {/* Desktop/Tablet Top Nav */}
       <nav
-        className="sticky top-0 z-50 border-b border-[var(--border)] hidden sm:flex"
+        className={`sticky top-0 z-50 border-b border-[var(--border)] hidden sm:flex nav-bar-desktop ${scrolled ? 'scrolled' : ''}`}
         style={{
-          background: `rgba(4, 4, 12, ${0.75 + navOpacity * 0.2})`,
           backdropFilter: isTouch ? 'blur(12px)' : 'blur(24px) saturate(1.6)',
           WebkitBackdropFilter: isTouch ? 'blur(12px)' : 'blur(24px) saturate(1.6)',
         }}
       >
-        <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center justify-between">
-          <a href="#" className="flex items-center gap-2.5 group">
+        <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center justify-between gap-3 sm:gap-4">
+          <a href="#" className="flex items-center gap-2.5 group shrink-0">
             <img src="/logo.svg" alt="TripGem" className="w-8 h-8 drop-shadow-[0_0_10px_rgba(207,10,110,0.6)]" />
             <span className="font-display font-bold text-base sm:text-lg tracking-tight">
               <span className="text-[var(--neon-magenta)]">Trip</span><span className="text-white">Gem</span>
             </span>
           </a>
-          <div className="flex gap-1 p-1 rounded-full bg-[rgba(255,255,255,0.03)] border border-[var(--border)]">
+          <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-full bg-[rgba(255,255,255,0.03)] border border-[var(--border)]">
             {FEATURES.map(feature => (
               <button
                 key={feature.key}
@@ -248,17 +237,17 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
                 <span className="hidden sm:inline">{feature.label}</span>
               </button>
             ))}
+            <div className="w-px h-5 bg-[var(--border)] mx-1 sm:mx-2" />
+            <button
+              onClick={toggleTheme}
+              className="theme-btn p-2.5 rounded-xl"
+              aria-label="Theme"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+              </svg>
+            </button>
           </div>
-          <button
-            onClick={toggleTheme}
-            className="p-2.5 rounded-xl hover:bg-[rgba(255,255,255,0.06)] transition-all text-[var(--text4)] hover:text-[var(--accent2)]"
-            aria-label="Theme"
-            title="Theme"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
-            </svg>
-          </button>
           <button
             onClick={toggleSettings}
             className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl hover:bg-[rgba(255,255,255,0.06)] transition-all text-[var(--text4)] hover:text-[var(--accent2)] group"
@@ -281,9 +270,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       </nav>
 
       {/* Mobile Top Bar (simplified) */}
-      <nav className="sticky top-0 z-50 border-b border-[var(--border)] sm:hidden"
+      <nav className={`sticky top-0 z-50 border-b border-[var(--border)] sm:hidden nav-bar-mobile ${scrolled ? 'scrolled' : ''}`}
         style={{
-          background: `rgba(4, 4, 12, ${0.85 + navOpacity * 0.15})`,
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
         }}
@@ -298,53 +286,74 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         </div>
       </nav>
 
-      <main className="w-full px-4 sm:px-8 py-6 sm:py-10 space-y-6 sm:space-y-10 flex-1">
-        <header className="text-center py-2 sm:py-3 lg:py-4 relative">
-          <div className="hero-glow" />
-          <div className="hero-badge mx-auto">
-            <span className="dot" />
-            {stats.total} substances indexed
-          </div>
-          <h1 className="text-4xl sm:text-7xl lg:text-8xl font-display font-extrabold leading-[1.05] tracking-tight gradient-text">
-            Evidence-Based<br />Harm Reduction
-          </h1>
-          <p className="text-base sm:text-xl text-[var(--text3)] max-w-xl mx-auto leading-relaxed"
-             style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' }}>
-            Comprehensive database with interaction checking, combination risk matrix, and dosage guides.
-          </p>
-          <div className="disclaimer-box max-w-lg mx-auto mt-3"
-               style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both' }}>
-            Educational resource only. Not medical advice. Always consult healthcare professionals.
-          </div>
-        </header>
+      <main className="w-full px-4 sm:px-8 py-0 sm:py-0 space-y-6 sm:space-y-10 flex-1">
+        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 bg-[rgba(10,6,22,0.65)] border-b border-[var(--border)]">
+          <header className="text-center py-8 sm:py-14 lg:py-18 relative">
+            <div className="hero-glow" />
+            <div className="hero-badge mx-auto">
+              <span className="dot" />
+              {stats.total} substances indexed
+            </div>
+            <h1 className="text-4xl sm:text-7xl lg:text-8xl font-display font-extrabold leading-[1.05] tracking-tight gradient-text">
+              Evidence-Based<br />Harm Reduction
+            </h1>
+            <p className="text-base sm:text-xl text-[var(--text3)] max-w-xl mx-auto leading-relaxed"
+               style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' }}>
+              Comprehensive database with interaction checking, combination risk matrix, and dosage guides.
+            </p>
+            <div className="disclaimer-box max-w-lg mx-auto mt-3"
+                 style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both' }}>
+              Educational resource only. Not medical advice. Always consult healthcare professionals.
+            </div>
+          </header>
+        </div>
 
         <section className="section-card" style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both' }}>
           <StatsBar stats={stats} categories={categories} />
         </section>
 
-        <section
-          key={activeSection}
-          className="section-card"
-          style={{
-            animation: sectionTransition === 'entering'
-              ? 'scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both'
-              : sectionTransition === 'exiting'
-              ? 'fadeOut 0.2s ease both'
-              : 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both',
-            ...(activeSection === 'matrix' ? { contain: 'none' } : {}),
-          }}
-        >
-          {FEATURES.map(feature => {
-            if (feature.key !== activeSection) return null
-            const FeatureComponent = feature.component
-            return (
-              <FeatureComponent
-                key={feature.key}
-                {...(sectionProps[feature.key as Section] ?? {})}
-              />
-            )
-          })}
-        </section>
+        <div style={{ display: 'grid' }}>
+          {prevSection && sectionTransition !== 'idle' && (
+            <section
+              key={prevSection}
+              className="section-card"
+              style={{ gridRow: 1, gridColumn: 1, animation: 'fadeOut 0.1s cubic-bezier(0.4, 0, 0.2, 1) both', contain: 'none' }}
+            >
+              {FEATURES.map(feature => {
+                if (feature.key !== prevSection) return null
+                const FeatureComponent = feature.component
+                return (
+                  <FeatureComponent
+                    key={feature.key}
+                    {...(sectionProps[feature.key as Section] ?? {})}
+                  />
+                )
+              })}
+            </section>
+          )}
+          <section
+            key={activeSection}
+            className="section-card"
+            style={{
+              gridRow: 1, gridColumn: 1,
+              animation: sectionTransition === 'entering'
+                ? 'fadeIn 0.12s cubic-bezier(0.16, 1, 0.3, 1) both'
+                : 'none',
+              contain: 'none',
+            }}
+          >
+            {FEATURES.map(feature => {
+              if (feature.key !== activeSection) return null
+              const FeatureComponent = feature.component
+              return (
+                <FeatureComponent
+                  key={feature.key}
+                  {...(sectionProps[feature.key as Section] ?? {})}
+                />
+              )
+            })}
+          </section>
+        </div>
       </main>
 
       {/* Mobile Bottom Navigation */}
@@ -360,7 +369,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           {FEATURES.map(feature => (
             <button
               key={feature.key}
-              onClick={() => setActiveSection(feature.key as Section)}
+              onClick={() => handleSectionChange(feature.key as Section)}
               className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 relative ${
                 activeSection === feature.key
                   ? 'text-[var(--neon-magenta)] [text-shadow:0_0_12px_var(--neon-magenta)]'
@@ -376,17 +385,17 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           ))}
           <button
             onClick={toggleTheme}
-            className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors text-[var(--text3)]"
+            className="theme-btn flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg"
             aria-label="Theme"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
             </svg>
-            <span className="text-xs font-medium">Theme</span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.12em]">Theme</span>
           </button>
           <button
             onClick={toggleSettings}
-            className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors text-[var(--text3)]"
+            className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 text-[var(--text3)] hover:text-[var(--accent2)]"
             aria-label="Settings"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -411,7 +420,13 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           Open-source harm reduction resource for educational purposes.
         </p>
         <p className="text-[10px] text-[var(--text4)] mt-3 font-mono">
-          Data: PsychonautWiki · TripSit · Erowid · WHO
+          Data: <a href="https://psychonautwiki.org" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text2)] transition-colors">PsychonautWiki</a>
+          {' · '}<a href="https://tripsit.me" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text2)] transition-colors">TripSit</a>
+          {' · '}Erowid · WHO
+        </p>
+        <p className="text-[10px] text-[var(--text5)] mt-2 font-mono">
+          <a href="https://github.com/oxygas/DrugVault" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text3)] transition-colors">Source</a>
+          {' · '}© {new Date().getFullYear()} · MIT
         </p>
       </footer>
 

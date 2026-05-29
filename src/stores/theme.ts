@@ -18,6 +18,15 @@ function saveTheme(id: string) {
   } catch {}
 }
 
+function lockScroll(lock: boolean) {
+  if (typeof document === 'undefined') return
+  if (lock) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+}
+
 interface ThemeState {
   themeId: string
   themeOpen: boolean
@@ -26,8 +35,16 @@ interface ThemeState {
   toggleTheme: () => void
 }
 
+function initThemeAttribute(): string {
+  const id = loadTheme()
+  if (typeof document !== 'undefined') {
+    document.documentElement.setAttribute('data-theme', id)
+  }
+  return id
+}
+
 export const useThemeStore = create<ThemeState>()((set) => ({
-  themeId: loadTheme(),
+  themeId: initThemeAttribute(),
   themeOpen: false,
   setTheme: (id) => {
     set({ themeId: id })
@@ -36,6 +53,13 @@ export const useThemeStore = create<ThemeState>()((set) => ({
       document.documentElement.setAttribute('data-theme', id)
     }
   },
-  setThemeOpen: (o) => set({ themeOpen: o }),
-  toggleTheme: () => set((s) => ({ themeOpen: !s.themeOpen })),
+  setThemeOpen: (o) => {
+    set({ themeOpen: o })
+    lockScroll(o)
+  },
+  toggleTheme: () => set((s) => {
+    const next = !s.themeOpen
+    lockScroll(next)
+    return { themeOpen: next }
+  }),
 }))

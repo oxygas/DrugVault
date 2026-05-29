@@ -9,9 +9,10 @@ import { slugify } from '@/lib/data'
 interface SubstanceCardProps {
   substance: Substance
   onClick: (substance: Substance) => void
+  style?: React.CSSProperties
 }
 
-function SubstanceCardInner({ substance, onClick }: SubstanceCardProps) {
+function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
   const catColor = CATEGORY_COLORS[substance.category]
   const slug = slugify(substance.name)
 
@@ -28,7 +29,7 @@ function SubstanceCardInner({ substance, onClick }: SubstanceCardProps) {
       href={`/substances/${slug}`}
       onClick={(e) => { e.preventDefault(); onClick(substance) }}
       className="vaporwave-card w-full"
-      style={{ '--tube-c': catColor } as React.CSSProperties}
+      style={{ '--tube-c': catColor, ...style } as React.CSSProperties}
       aria-label={`View ${substance.name}`}
     >
       <div className="neon-stripe" style={{ background: catColor }} />
@@ -61,12 +62,13 @@ function SubstanceCardInner({ substance, onClick }: SubstanceCardProps) {
       )}
 
       <div className="flex items-center gap-2 text-[11px] font-mono text-[var(--text4)] leading-[18px]">
-        <span className="shrink-0">
-          <span className="text-[var(--green2)]">╱</span>
-          <span className="text-[var(--yellow)]">╲</span>
-          <span className="text-[var(--orange2)]">╱</span>
-        </span>
-        <span className="truncate">{substance.onset} · {substance.duration}</span>
+        <svg className="w-3 h-3 shrink-0" viewBox="0 0 12 12" fill="none">
+          <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
+          <circle cx="6" cy="6" r="2" fill="currentColor" opacity="0.15" />
+        </svg>
+        <span className="truncate">{substance.onset}</span>
+        <span className="text-[var(--border2)] shrink-0">·</span>
+        <span className="truncate">{substance.duration}</span>
         {effects.length > 0 && hasAliases && (
           <span className="truncate text-[var(--text5)] ml-auto">{aliases}{aliasOverflow ? ` ${aliasOverflow}` : ''}</span>
         )}

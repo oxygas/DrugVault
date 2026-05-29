@@ -48,6 +48,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const onCloseRef = useRef(onClose)
   const [isFav, setIsFav] = useState(() => getFavorites().includes(substance.name))
+  const [favPulse, setFavPulse] = useState(0)
   const catColor = CATEGORY_COLORS[substance.category]
   const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
   const sanityImageUrl = substance.chemicalStructure?.asset?.url || null
@@ -70,8 +71,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onCloseRef.current() }
     document.addEventListener('keydown', handler)
-    document.body.style.overflow = 'hidden'
-    return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = '' }
+    return () => document.removeEventListener('keydown', handler)
   }, [])
 
   useEffect(() => {
@@ -115,6 +115,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
   const handleFavorite = () => {
     toggleFavorite(substance.name)
     setIsFav(getFavorites().includes(substance.name))
+    setFavPulse(v => v + 1)
   }
 
   const getComboLevel = (cat: Category): ComboLevel => {
@@ -137,7 +138,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     <div
       ref={overlayRef}
       className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center backdrop-blur-sm"
-      style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.08) 0%, rgba(236,72,153,0.04) 30%, rgba(0,0,0,0.65) 70%)', animation: 'fadeIn 0.2s ease-out', touchAction: 'none' } as React.CSSProperties}
+      style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.08) 0%, rgba(236,72,153,0.04) 30%, rgba(0,0,0,0.65) 70%)', touchAction: 'none' } as React.CSSProperties}
       onClick={e => { if (e.target === overlayRef.current) onClose() }}
       onTouchStart={e => { if (e.target === overlayRef.current) onClose() }}
       role="dialog"
@@ -164,7 +165,14 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
             >
               {substance.harmLevel}
             </span>
-            <span className="text-xs lg:text-sm text-[var(--text4)] font-mono">{substance.onset} onset · {substance.duration}{substance.ld50 ? ` · LD50: ${substance.ld50}` : ''}</span>
+            <span className="text-xs lg:text-sm text-[var(--text4)] font-mono">
+              <span className="text-[var(--text3)]">{substance.onset}</span>
+              <span className="mx-1 text-[var(--border2)]">/</span>
+              <span className="text-[var(--text3)]">{substance.duration}</span>
+              {substance.ld50 && (
+                <><span className="mx-1 text-[var(--border2)]">·</span><span className="text-amber-400/70">LD50: {substance.ld50}</span></>
+              )}
+            </span>
           </div>
           {substance.aliases.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2 ml-4">
@@ -204,7 +212,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
               className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors flex-shrink-0"
               aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
             >
-              <svg className="w-5 h-5" fill={isFav ? 'var(--red)' : 'none'} stroke={isFav ? 'var(--red)' : 'currentColor'} viewBox="0 0 24 24">
+              <svg key={favPulse} className="w-5 h-5 heart-svg" fill={isFav ? 'var(--red)' : 'none'} stroke={isFav ? 'var(--red)' : 'currentColor'} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </button>
@@ -240,7 +248,8 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain min-h-0 substance-popup-scroll p-4 sm:p-6 lg:p-8 space-y-5 lg:space-y-6">
+        <div key={tab} className="flex-1 overflow-y-auto overscroll-contain min-h-0 substance-popup-scroll p-4 sm:p-6 lg:p-8 space-y-5 lg:space-y-6"
+          style={{ animation: 'fadeIn 0.15s ease-out' }}>
           {tab === 'overview' && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">

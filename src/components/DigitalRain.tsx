@@ -25,29 +25,54 @@ export default function DigitalRain() {
     let drops: Drop[] = []
     let w = 0
     let h = 0
+    let lastFrame = 0
+    const FPS = 20
+    const frameInterval = 1000 / FPS
+
+    let charPool: string[] = []
 
     function resize() {
       w = canvas!.width = window.innerWidth
       h = canvas!.height = window.innerHeight
-      const cols = Math.floor(w / 22)
+      const cols = Math.floor(w / 28)
       drops = Array.from({ length: cols }, (_, i) => ({
-        x: i * 22,
+        x: i * 28,
         y: -(Math.random() * h),
-        speed: 0.5 + Math.random() * 1.8,
-        length: 10 + Math.floor(Math.random() * 18),
-        delay: Math.random() * 80,
+        speed: 0.4 + Math.random() * 0.8,
+        length: 6 + Math.floor(Math.random() * 10),
+        delay: Math.random() * 120,
       }))
+      charPool = Array.from({ length: cols * 18 }, () => chars[Math.floor(Math.random() * chars.length)])
     }
 
     resize()
+
+    function handleVisibility() {
+      if (document.hidden) {
+        cancelAnimationFrame(animId)
+      } else {
+        lastFrame = performance.now()
+        animId = requestAnimationFrame(draw)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility)
     window.addEventListener('resize', resize)
 
-    function draw() {
+    function draw(now: number) {
+      animId = requestAnimationFrame(draw)
+      if (document.hidden) return
+      const elapsed = now - lastFrame
+      if (elapsed < frameInterval) return
+      lastFrame = now - (elapsed % frameInterval)
+
       ctx!.clearRect(0, 0, w, h)
 
+      let ci = 0
       for (const drop of drops) {
         if (drop.delay > 0) {
-          drop.delay -= 0.3
+          drop.delay -= 0.15
+          ci += drop.length
           continue
         }
 
@@ -55,15 +80,16 @@ export default function DigitalRain() {
 
         if (drop.y - drop.length * 14 > h) {
           drop.y = -(drop.length * 14)
-          drop.speed = 0.5 + Math.random() * 1.8
-          drop.length = 10 + Math.floor(Math.random() * 18)
+          drop.speed = 0.4 + Math.random() * 0.8
+          drop.length = 6 + Math.floor(Math.random() * 10)
         }
 
         for (let i = 0; i < drop.length; i++) {
           const y = drop.y - i * 14
-          if (y < 0 || y > h) continue
+          if (y < 0 || y > h) { ci++; continue }
 
-          const char = chars[Math.floor(Math.random() * chars.length)]
+          const char = charPool[ci % charPool.length]
+          ci++
           const isHead = i === 0
 
           if (isHead) {
@@ -81,14 +107,13 @@ export default function DigitalRain() {
           }
         }
       }
-
-      animId = requestAnimationFrame(draw)
     }
 
     animId = requestAnimationFrame(draw)
 
     return () => {
       cancelAnimationFrame(animId)
+      document.removeEventListener('visibilitychange', handleVisibility)
       window.removeEventListener('resize', resize)
     }
   }, [])

@@ -35,8 +35,8 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
   const [activeTool, setActiveTool] = useState<ToolTab>('checker')
 
   return (
-    <div className="-mx-8 sm:-mx-10 lg:-mx-12 space-y-10 sm:space-y-14">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+    <div className="-mx-4 sm:-mx-10 lg:-mx-12 space-y-6 sm:space-y-10 lg:space-y-14">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
         {TOOLS.map(t => {
           const active = activeTool === t.key
           const col = t.color.startsWith('var') ? t.color : t.color
@@ -44,7 +44,7 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
             <button
               key={t.key}
               onClick={() => setActiveTool(t.key)}
-              className="relative w-full text-left rounded-2xl border-2 transition-all duration-300 group"
+              className="relative w-full text-left rounded-xl sm:rounded-2xl border-2 transition-all duration-300 group"
               style={{
                 borderColor: active ? col : 'var(--border)',
                 background: active
@@ -54,20 +54,20 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
             >
               {active && (
                 <div
-                  className="absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl"
+                  className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl sm:rounded-t-2xl"
                   style={{ background: `linear-gradient(90deg, ${col}, ${col}66, transparent)` }}
                 />
               )}
-              <div className="px-8 py-8 sm:px-10 sm:py-10 flex items-center gap-6 sm:gap-8">
+              <div className="px-5 sm:px-10 py-5 sm:py-10 flex items-center gap-4 sm:gap-8">
                 <div
-                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300"
+                  className="w-12 h-12 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300"
                   style={{
                     background: active ? `color-mix(in srgb, ${col} 12%, transparent)` : 'rgba(255,255,255,0.02)',
                     border: `2px solid ${active ? `color-mix(in srgb, ${col} 25%, transparent)` : 'var(--border2)'}`,
                   }}
                 >
                   <svg
-                    className={`w-8 h-8 sm:w-10 sm:h-10 transition-all duration-300 ${active ? '' : 'text-[var(--text4)]'}`}
+                    className={`w-6 h-6 sm:w-10 sm:h-10 transition-all duration-300 ${active ? '' : 'text-[var(--text4)]'}`}
                     style={{ color: active ? col : undefined }}
                     fill="none"
                     stroke="currentColor"
@@ -79,12 +79,12 @@ function ToolsSectionInner({ substances, comboRules, substanceCombos }: ToolsSec
                 </div>
                 <div className="min-w-0 flex-1">
                   <div
-                    className="text-xl sm:text-2xl lg:text-3xl font-display font-bold truncate transition-colors duration-300"
+                    className="text-base sm:text-2xl lg:text-3xl font-display font-bold truncate transition-colors duration-300"
                     style={{ color: active ? col : 'var(--text2)' }}
                   >
                     {t.label}
                   </div>
-                  <div className="text-base sm:text-lg text-[var(--text4)] mt-2 leading-relaxed">{t.desc}</div>
+                  <div className="text-sm sm:text-lg text-[var(--text4)] mt-1 sm:mt-2 leading-relaxed">{t.desc}</div>
                 </div>
               </div>
             </button>

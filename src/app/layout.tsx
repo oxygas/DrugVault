@@ -78,7 +78,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tripgem — Evidence-Based Harm Reduction Database',
+    title: 'TripGem — Evidence-Based Harm Reduction Database',
     description: '540+ substances with interaction checking, combination risk matrix, and dosage guides.',
   },
   alternates: {
@@ -100,7 +100,7 @@ export default async function RootLayout({
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Tripgem',
+    name: 'TripGem',
     description: 'Evidence-based harm reduction database and drug interaction checker',
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://tripgem.vercel.app',
     potentialAction: {
@@ -145,9 +145,8 @@ export default async function RootLayout({
             <div className="vaporwave-horizon" aria-hidden="true" />
             <DigitalRain />
             <div className="chromatic-overlay" aria-hidden="true" />
-            <div className="glitch-overlay" aria-hidden="true" />
             <div className="particles" aria-hidden="true">
-              {Array.from({ length: 50 }).map((_, i) => {
+              {Array.from({ length: 25 }).map((_, i) => {
                 const seed = i * 137.5
                 const frac = (s: number) => Math.abs(Math.sin(seed * (s + 1)))
                 const isSparkle = i >= 40
@@ -196,9 +195,15 @@ export default async function RootLayout({
             <script
               dangerouslySetInnerHTML={{
                 __html: `
+                  let mxTick = false
                   document.addEventListener('mousemove', function(e) {
-                    document.documentElement.style.setProperty('--mx', e.clientX + 'px')
-                    document.documentElement.style.setProperty('--my', e.clientY + 'px')
+                    if (mxTick) return
+                    mxTick = true
+                    requestAnimationFrame(function() {
+                      document.documentElement.style.setProperty('--mx', e.clientX + 'px')
+                      document.documentElement.style.setProperty('--my', e.clientY + 'px')
+                      mxTick = false
+                    })
                   })
                 `,
               }}

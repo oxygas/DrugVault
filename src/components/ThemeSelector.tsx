@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useThemeStore } from '@/stores/theme'
 import { THEMES } from '@/themes/config'
 
@@ -14,6 +14,15 @@ export default function ThemeSelector() {
     const active = themeId === t.id
     return { t, active }
   }), [themeId])
+
+  useEffect(() => {
+    if (!themeOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setThemeOpen(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [themeOpen, setThemeOpen])
 
   if (!themeOpen) return null
 

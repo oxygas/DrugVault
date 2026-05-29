@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import { getSubstanceBySlug, getAllSubstances, getComboMatrix } from '@/lib/data'
 import { slugify } from '@/lib/data'
 import SubstanceDetail from '@/components/SubstanceDetail'
-import type { ComboLevel } from '@/lib/types'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -17,14 +16,17 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const substance = getSubstanceBySlug(slug)
-  if (!substance) return { title: 'Substance Not Found | Tripgem' }
+  if (!substance) return { title: 'Substance Not Found' }
 
   return {
-    title: `${substance.name} — ${substance.category} | Tripgem Harm Reduction`,
+    title: `${substance.name} — ${substance.category}`,
     description: `${substance.name} harm profile: ${substance.harmLevel} risk, harm score ${substance.harmScore}/100. ${substance.onset} onset, ${substance.duration} duration. Evidence-based drug information.`,
     keywords: [substance.name, substance.category, 'harm reduction', 'drug interactions', 'dosage guide', ...substance.aliases],
+    alternates: {
+      canonical: `/substances/${slug}`,
+    },
     openGraph: {
-      title: `${substance.name} — Tripgem`,
+      title: `${substance.name} — ${substance.category} — TripGem`,
       description: `${substance.category} · ${substance.harmLevel} harm level · Score: ${substance.harmScore}/100`,
       type: 'article',
     },

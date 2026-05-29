@@ -25,11 +25,12 @@ export default function SubstanceGrid({ substances, onSubstanceClick }: Substanc
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 justify-items-center vaporwave-grid">
-      {substances.map(substance => (
+      {substances.map((substance, i) => (
         <SubstanceCard
           key={substance.name}
           substance={substance}
           onClick={onSubstanceClick}
+          style={{ '--i': i } as React.CSSProperties}
         />
       ))}
     </div>

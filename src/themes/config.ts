@@ -9,8 +9,8 @@ export const THEMES: ThemeDefinition[] = [
   {
     id: 'plasma',
     name: 'Plasma',
-    description: 'Violet-red dominant, magenta-hot neon',
-    preview: ['#0c0820', '#ff00aa', '#cf0a6e', '#e5004b', '#00f0ff'],
+    description: 'Vibrant purple, violet-magenta neon',
+    preview: ['#0a0418', '#c084fc', '#8b5cf6', '#4c1d95', '#22d3ee'],
   },
   {
     id: 'synthwave',

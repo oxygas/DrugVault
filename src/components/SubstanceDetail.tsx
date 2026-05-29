@@ -32,7 +32,14 @@ type Tab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interact
 export default function SubstanceDetail({ substance, comboMatrix, relatedSubstances, allSubstances }: SubstanceDetailProps) {
   const [tab, setTab] = useState<Tab>('overview')
   const [effectsModalOpen, setEffectsModalOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
   const catColor = CATEGORY_COLORS[substance.category]
   const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
   const sanityImageUrl = substance.chemicalStructure?.asset?.url || null
@@ -61,9 +68,9 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
   const tabs = hasEffects ? tabConfigs : tabConfigs.filter(t => t.key !== 'effects')
 
   return (
-    <div className="flex-1 min-h-0 w-full mx-auto max-w-[1800px]">
-      <nav className="sticky top-0 z-50 border-b border-[var(--border)]" style={{ background: 'rgba(4, 4, 12, 0.95)', backdropFilter: 'blur(24px) saturate(1.6)' }}>
-        <div className="w-full px-4 sm:px-6 h-16 flex items-center gap-2 sm:gap-3">
+    <div className="flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px]">
+      <nav className={`nav-bar-desktop sticky top-0 z-50 border-b border-[var(--border)] ${scrolled ? 'scrolled' : ''}`}>
+        <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center gap-2 sm:gap-3">
           <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
             <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
@@ -118,7 +125,8 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
         </div>
       </nav>
 
-      <main className="w-full px-4 sm:px-6 py-5 sm:py-8 space-y-5 sm:space-y-6">
+      <main className="w-full px-4 sm:px-8 py-0 space-y-6 sm:space-y-10 flex-1">
+        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 sm:py-5 bg-[rgba(10,6,22,0.65)] border-b border-[var(--border)]">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-1.5 h-7 sm:h-8 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
           <div>
@@ -145,6 +153,8 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
           </div>
         )}
 
+        </div>
+
         <div className="flex gap-1 overflow-x-auto pb-1">
           {tabs.map(t => (
             <button
@@ -160,7 +170,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
           ))}
         </div>
 
-        <div className="space-y-5 sm:space-y-6">
+        <div className="space-y-6 sm:space-y-8">
           {tab === 'overview' && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -279,6 +289,29 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
           )}
         </div>
       </main>
+
+      <footer className="w-full text-center py-12 sm:py-24 border-t border-[var(--border)] relative mt-8 mb-16 sm:mb-0">
+        <div className="absolute top-0 left-[20%] right-[20%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.2)] to-transparent" />
+        <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.15)] to-transparent" />
+        <div className="flex items-center justify-center gap-2.5 mb-4">
+          <img src="/logo.svg" alt="TripGem" className="w-6 h-6 opacity-70" />
+          <span className="font-display font-semibold text-sm text-[var(--text2)]">
+            Trip<span className="text-[var(--neon-magenta)]">Gem</span>
+          </span>
+        </div>
+        <p className="text-xs text-[var(--text3)] max-w-md mx-auto leading-relaxed">
+          Open-source harm reduction resource for educational purposes.
+        </p>
+        <p className="text-[10px] text-[var(--text4)] mt-3 font-mono">
+          Data: <a href="https://psychonautwiki.org" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text2)] transition-colors">PsychonautWiki</a>
+          {' · '}<a href="https://tripsit.me" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text2)] transition-colors">TripSit</a>
+          {' · '}Erowid · WHO
+        </p>
+        <p className="text-[10px] text-[var(--text5)] mt-2 font-mono">
+          <a href="https://github.com/oxygas/DrugVault" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text3)] transition-colors">Source</a>
+          {' · '}© {new Date().getFullYear()} · MIT
+        </p>
+      </footer>
 
       {effectsModalOpen && (
         <Suspense fallback={null}>

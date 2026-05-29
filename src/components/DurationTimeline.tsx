@@ -8,11 +8,11 @@ interface DurationTimelineProps {
 }
 
 const SEGMENT_COLORS = [
-  { key: 'onset', label: 'Onset', color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.35)' },
-  { key: 'comeup', label: 'Come Up', color: '#a855f7', bg: 'rgba(168, 85, 247, 0.3)' },
-  { key: 'peak', label: 'Peak', color: '#ec4899', bg: 'rgba(236, 72, 153, 0.3)' },
-  { key: 'offset', label: 'Offset', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.25)' },
-  { key: 'after', label: 'After', color: '#10b981', bg: 'rgba(16, 185, 129, 0.2)' },
+  { key: 'onset', label: 'Onset', color: '#22d3ee', bg: 'rgba(34, 211, 238, 0.2)' },
+  { key: 'comeup', label: 'Come Up', color: '#a78bfa', bg: 'rgba(167, 139, 250, 0.18)' },
+  { key: 'peak', label: 'Peak', color: '#f472b6', bg: 'rgba(244, 114, 182, 0.18)' },
+  { key: 'offset', label: 'Offset', color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.15)' },
+  { key: 'after', label: 'After', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
 ]
 
 interface Seg { label: string; minutes: number; color: string; bg: string }
@@ -78,42 +78,53 @@ export default function DurationTimeline({ substance }: DurationTimelineProps) {
 
   return (
     <div className="w-full">
-    <h4 className="text-xs lg:text-sm font-semibold text-[var(--text2)] mb-3 flex items-center gap-2 font-display">
-      <span className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full" style={{ background: catColor, boxShadow: `0 0 6px ${catColor}40` }} />
-      Duration Timeline
-    </h4>
-      <div className="timeline-bar w-full rounded-lg overflow-hidden">
+      <h4 className="text-xs lg:text-sm font-semibold text-[var(--text2)] mb-3 flex items-center gap-2 font-display">
+        <span className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full" style={{ background: catColor, boxShadow: `0 0 6px ${catColor}40` }} />
+        Duration Timeline
+      </h4>
+
+      <div className="timeline-bar w-full">
         {segments.map((seg, i) => {
           const pct = (seg.minutes / total) * 100
-          const left = segments.slice(0, i).reduce((s, s2) => s + (s2.minutes / total) * 100, 0)
+          const isFirst = i === 0
+          const isLast = i === segments.length - 1
           return (
             <div
               key={seg.label}
               className="timeline-segment group/seg"
-              style={{ left: `${left}%`, width: `${pct}%`, background: seg.bg, borderColor: `${seg.color}30` }}
+              style={{
+                width: `${pct}%`,
+                background: seg.bg,
+                borderColor: `${seg.color}20`,
+                borderRadius: isFirst ? '999px 0 0 999px' : isLast ? '0 999px 999px 0' : '0',
+              }}
             >
-              <span className="hidden sm:inline truncate px-1.5 font-display text-[10px] font-medium" style={{ color: seg.color }}>{seg.label}</span>
-              <span className="sm:hidden text-[7px] truncate px-0.5 font-mono" style={{ color: seg.color }}>{seg.label.slice(0, 3)}</span>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 rounded-lg glass-strong text-[10px] text-white whitespace-nowrap opacity-0 group-hover/seg:opacity-100 transition-opacity pointer-events-none z-10 font-mono shadow-xl border border-[var(--border2)]">
+              <span className="timeline-seg-label text-[10px] font-medium truncate px-1.5" style={{ color: seg.color }}>
+                {seg.label}
+              </span>
+              <div className="timeline-seg-tooltip">
                 <span style={{ color: seg.color }}>{seg.label}</span>: ~{Math.round(seg.minutes)}min
               </div>
             </div>
           )
         })}
       </div>
-      <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2.5">
+
+      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
         {segments.map(seg => (
           <div key={seg.label} className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: seg.color, boxShadow: `0 0 4px ${seg.color}40` }} />
-            <span className="text-[10px] text-[var(--text4)]">{seg.label}</span>
-            <span className="text-[10px] font-mono" style={{ color: seg.color }}>~{Math.round(seg.minutes)}m</span>
+            <span className="w-2 h-2 rounded-full" style={{ background: seg.color }} />
+            <span className="text-[11px] text-[var(--text4)]">{seg.label}</span>
+            <span className="text-[11px] font-mono" style={{ color: seg.color }}>~{Math.round(seg.minutes)}m</span>
           </div>
         ))}
       </div>
-      <div className="mt-3 text-xs lg:text-sm text-[var(--text3)] font-mono flex items-center gap-1.5">
-        <span className="text-[var(--text2)] font-semibold">{substance.onset}</span> onset
-        <span className="text-[var(--border2)] mx-1">·</span>
-        <span className="text-[var(--text2)] font-semibold">{substance.duration}</span> total
+
+      <div className="mt-2.5 pt-2.5 border-t border-[var(--border)] flex items-center gap-2 text-xs text-[var(--text3)] font-mono">
+        <span className="text-[var(--text2)] font-semibold">{substance.onset}</span>
+        <span className="text-[var(--border2)]">/</span>
+        <span className="text-[var(--text2)] font-semibold">{substance.duration}</span>
+        <span className="text-[var(--text4)]">total</span>
       </div>
     </div>
   )

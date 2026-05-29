@@ -171,7 +171,7 @@ export default memo(function RadarChart({ substance }: RadarChartProps) {
 
   useEffect(() => {
     if (needsRedraw) redraw()
-  })
+  }, [needsRedraw])
 
   return (
     <div className="w-full flex justify-center">
