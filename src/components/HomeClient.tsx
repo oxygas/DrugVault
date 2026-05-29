@@ -39,8 +39,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [isTouch, setIsTouch] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
-  const [sectionTransition, setSectionTransition] = useState<'entering' | 'exiting' | 'idle'>('idle')
-  const [prevSection, setPrevSection] = useState<Section | null>(null)
+
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const { bodyWeight, weightUnit, userLevel, onboarded, toggleSettings, setSettingsOpen, hydrate: hydrateSettings } = useSettingsStore()
   const { toggleTheme, hydrate: hydrateTheme } = useThemeStore()
@@ -83,19 +82,9 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   }, [])
 
   const handleSectionChange = useCallback((section: Section) => {
-    if (section === activeSection || sectionTransition !== 'idle') return
-    if (isMobile) {
-      setActiveSection(section)
-      return
-    }
-    setPrevSection(activeSection)
+    if (section === activeSection) return
     setActiveSection(section)
-    setSectionTransition('entering')
-    setTimeout(() => {
-      setSectionTransition('idle')
-      setPrevSection(null)
-    }, 220)
-  }, [activeSection, sectionTransition, isMobile])
+  }, [activeSection])
 
   // Keyboard shortcuts for desktop
   useEffect(() => {
@@ -319,46 +308,26 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         </section>
 
         <div style={{ display: 'grid' }}>
-          {prevSection && sectionTransition !== 'idle' && (
-            <section
-              key={prevSection}
-              className="section-card"
-              style={{ gridRow: 1, gridColumn: 1, animation: 'fadeOut 0.1s cubic-bezier(0.4, 0, 0.2, 1) both', contain: 'none' }}
-            >
-              {FEATURES.map(feature => {
-                if (feature.key !== prevSection) return null
-                const FeatureComponent = feature.component
-                return (
-                  <FeatureComponent
-                    key={feature.key}
-                    {...(sectionProps[feature.key as Section] ?? {})}
-                  />
-                )
-              })}
-            </section>
-          )}
-          <section
-            key={activeSection}
-            className="section-card"
-            style={{
-              gridRow: 1, gridColumn: 1,
-              animation: sectionTransition === 'entering'
-                ? 'fadeIn 0.12s cubic-bezier(0.16, 1, 0.3, 1) both'
-                : 'none',
-              contain: 'none',
-            }}
-          >
-            {FEATURES.map(feature => {
-              if (feature.key !== activeSection) return null
-              const FeatureComponent = feature.component
-              return (
+          {FEATURES.map(feature => {
+            const isActive = feature.key === activeSection
+            const FeatureComponent = feature.component
+            return (
+              <section
+                key={feature.key}
+                className="section-card"
+                style={{
+                  gridRow: 1,
+                  gridColumn: 1,
+                  display: isActive ? 'block' : 'none',
+                  contain: 'none',
+                }}
+              >
                 <FeatureComponent
-                  key={feature.key}
                   {...(sectionProps[feature.key as Section] ?? {})}
                 />
-              )
-            })}
-          </section>
+              </section>
+            )
+          })}
         </div>
       </main>
 
