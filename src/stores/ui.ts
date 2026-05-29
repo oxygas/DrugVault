@@ -13,17 +13,20 @@ interface UIState {
   safetyOverlayDismissed: Record<string, boolean>
   activeSection: string
   scoreBreakdown: ScoreBreakdownState
+  pianoOpen: boolean
   setSidebarOpen: (open: boolean) => void
   dismissSafetyOverlay: (id: string) => void
   setActiveSection: (section: string) => void
   openScoreBreakdown: (substanceName: string, scoreKey: ScoreKey) => void
   closeScoreBreakdown: () => void
+  setPianoOpen: (open: boolean) => void
 }
 
 export const useUIStore = create<UIState>()((set) => ({
   sidebarOpen: false,
   safetyOverlayDismissed: {},
   activeSection: 'substances',
+  pianoOpen: false,
   scoreBreakdown: {
     isOpen: false,
     substanceName: null,
@@ -39,4 +42,5 @@ export const useUIStore = create<UIState>()((set) => ({
     set({ scoreBreakdown: { isOpen: true, substanceName, scoreKey } }),
   closeScoreBreakdown: () =>
     set({ scoreBreakdown: { isOpen: false, substanceName: null, scoreKey: null } }),
+  setPianoOpen: (open) => set({ pianoOpen: open }),
 }))

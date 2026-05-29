@@ -12,6 +12,7 @@ import OnboardingModal from '@/components/OnboardingModal'
 import ScoreBreakdownPopup from '@/components/ScoreBreakdownPopup'
 import { useSettingsStore } from '@/stores/settings'
 import { useThemeStore } from '@/stores/theme'
+import { useUIStore } from '@/stores/ui'
 import { playClick, playHover, playOpen, playClose, playToggle, playSectionChange, playSearch, hydrateUIsounds, setUIsoundsEnabled } from '@/lib/ui-sounds'
 
 const SubstancePopup = dynamic(() => import('@/features/substances/components/SubstancePopup'), {
@@ -21,6 +22,8 @@ const SubstancePopup = dynamic(() => import('@/features/substances/components/Su
     </div>
   ),
 })
+
+const SurrealPiano = dynamic(() => import('@/components/SurrealPiano'), { ssr: false })
 
 type Section = 'substances' | 'matrix' | 'tools'
 
@@ -47,6 +50,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const popupRef = useRef(popupSubstance)
   const { bodyWeight, weightUnit, userLevel, onboarded, uiSounds, toggleSettings, setSettingsOpen, setUISounds, hydrate: hydrateSettings } = useSettingsStore()
   const { toggleTheme, hydrate: hydrateTheme } = useThemeStore()
+  const { pianoOpen, setPianoOpen } = useUIStore()
 
   const userLevelLabel = userLevel === 'new' ? 'New' : userLevel === 'common' ? 'Common' : 'Heavy'
 
@@ -257,11 +261,22 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
             <div className="w-px h-5 bg-[var(--border)] mx-1 sm:mx-2" />
       <button
         onClick={() => { playToggle(); toggleTheme() }}
-        className="theme-btn p-2.5 rounded-xl"
+        className="theme-btn p-2.5 rounded-xl animate-[pulse_3s_infinite]"
         aria-label="Theme"
+        title="Theme Select"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-[var(--accent)] hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+              </svg>
+            </button>
+            <button
+              onClick={() => { playToggle(); setPianoOpen(true) }}
+              className="theme-btn p-2.5 rounded-xl ml-1"
+              aria-label="Play synth piano"
+              title="Play synth piano"
+            >
+              <svg className="w-5 h-5 text-[var(--accent2)] hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 0L21 8.25M19.5 6C18.672 6 18 6.672 18 7.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zM9 15l10.5-3m0 0L21 14.25M19.5 12c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zM9 9c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5S9.828 9 9 9zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5S9.828 15 9 15z" />
               </svg>
             </button>
           </div>
@@ -384,13 +399,23 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       <button
         onClick={() => { playToggle(); toggleTheme() }}
         className="theme-btn flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg"
-            aria-label="Theme"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
-            </svg>
-            <span className="text-[10px] font-mono uppercase tracking-[0.12em]">Theme</span>
-          </button>
+        aria-label="Theme"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+        </svg>
+        <span className="text-[10px] font-mono uppercase tracking-[0.12em]">Theme</span>
+      </button>
+      <button
+        onClick={() => { playToggle(); setPianoOpen(true) }}
+        className="theme-btn flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg"
+        aria-label="Play synth piano"
+      >
+        <svg className="w-6 h-6 text-[var(--accent2)] hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 0L21 8.25M19.5 6C18.672 6 18 6.672 18 7.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zM9 15l10.5-3m0 0L21 14.25M19.5 12c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zM9 9c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5S9.828 9 9 9zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5S9.828 15 9 15z" />
+        </svg>
+        <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-[var(--accent2)]">Synth</span>
+      </button>
       <button
         onClick={() => { playClick(); toggleSettings() }}
         className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 text-[var(--text3)] hover:text-[var(--accent2)]"
@@ -431,6 +456,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       <UserSettings />
 
       <ThemeSelector />
+
+      <SurrealPiano />
 
       <ScoreBreakdownPopup substances={substances} />
 
