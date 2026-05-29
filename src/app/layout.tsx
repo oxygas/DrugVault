@@ -8,6 +8,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from 'sonner'
 import VisualEffects from '@/components/VisualEffects'
 import { DEFAULT_THEME } from '@/themes/config'
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   subsets: ['latin'],
@@ -166,6 +167,7 @@ export default async function RootLayout({
               }}
             />
             <div className="relative z-10 min-h-[100dvh] flex flex-col">{children}</div>
+            <Analytics />
             <Toaster
               position="bottom-center"
               toastOptions={{
