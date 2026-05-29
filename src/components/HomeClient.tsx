@@ -46,7 +46,6 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const { toggleTheme, hydrate: hydrateTheme } = useThemeStore()
 
   const userLevelLabel = userLevel === 'new' ? 'New' : userLevel === 'common' ? 'Common' : 'Heavy'
-  const isMobile = typeof window !== 'undefined' && 'ontouchstart' in window
 
   useEffect(() => {
     popupRef.current = popupSubstance
@@ -91,7 +90,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
   // Keyboard shortcuts for desktop
   useEffect(() => {
-    if (isMobile) return
+    if (isTouch) return
 
     const onKeyDown = (e: KeyboardEvent) => {
       const ps = popupRef.current
@@ -145,7 +144,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isMobile, showShortcuts, toggleSettings, handleSectionChange])
+  }, [isTouch, showShortcuts, toggleSettings, handleSectionChange, setPopupSubstance])
 
   const toggleCategory = useCallback((cat: Category) => {
     setSelectedCategories(prev =>
@@ -198,7 +197,6 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       substances,
       comboRules: comboMatrix,
       onSelectSubstance: setPopupSubstance,
-      isMobile,
     },
     tools: {
       substances,
@@ -206,10 +204,10 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       substanceCombos,
       onFindSubstance: findSubstance,
     },
-  }), [sortedSubstances, selectedCategories, toggleCategory, onCategoryClear, substances, comboMatrix, isMobile, substanceCombos, findSubstance])
+  }), [sortedSubstances, selectedCategories, toggleCategory, onCategoryClear, substances, comboMatrix, substanceCombos, findSubstance])
 
   return (
-    <div className={`flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px] ${isMobile ? 'pb-16' : ''}`}>
+    <div className={`flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px] ${isTouch ? 'pb-16' : ''}`}>
       {/* Desktop/Tablet Top Nav */}
       <nav
         className={`sticky top-0 z-50 border-b border-[var(--border)] hidden sm:flex nav-bar-desktop ${scrolled ? 'scrolled' : ''}`}
@@ -432,7 +430,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       )}
 
       {/* Keyboard shortcuts hint */}
-      {!isMobile && !showBackToTop && (
+      {!isTouch && !showBackToTop && (
         <button
           onClick={() => setShowShortcuts(true)}
           className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-[var(--accent)]/10 backdrop-blur-sm border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)]/20 transition-all duration-300 hover:scale-110 group"
@@ -446,7 +444,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       )}
 
       {/* Desktop Back to Top Button */}
-      {!isMobile && showBackToTop && (
+      {!isTouch && showBackToTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-[var(--accent)]/20 backdrop-blur-sm border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)]/30 transition-all duration-300 hover:scale-110"

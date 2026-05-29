@@ -8,10 +8,9 @@ interface ComboMatrixProps {
   substances: Substance[]
   comboRules: Record<string, ComboLevel>
   onSelectSubstance?: (substance: Substance) => void
-  isMobile?: boolean
 }
 
-export default function ComboMatrix({ substances, comboRules, onSelectSubstance, isMobile }: ComboMatrixProps) {
+export default function ComboMatrix({ substances, comboRules, onSelectSubstance }: ComboMatrixProps) {
   return (
     <>
       <div className="hidden sm:block">

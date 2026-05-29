@@ -1,10 +1,8 @@
 'use client'
 
-import { memo, useCallback } from 'react'
-import Link from 'next/link'
+import { memo, useCallback, useMemo } from 'react'
 import type { Substance } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
-import { slugify } from '@/lib/data'
 
 interface SubstanceCardProps {
   substance: Substance
@@ -14,27 +12,46 @@ interface SubstanceCardProps {
 
 function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
   const catColor = CATEGORY_COLORS[substance.category]
-  const slug = slugify(substance.name)
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
+  const handleClick = useCallback(() => {
     onClick(substance)
   }, [onClick, substance])
 
-  const allEffects = substance.subjectiveEffects?.allEffects?.slice(0, 3).map(e => e.name)
-  const mostLoved = substance.subjectiveEffects?.mostLoved?.slice(0, 3)
-  const effects = allEffects?.length ? allEffects : mostLoved?.length ? mostLoved : []
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      onClick(substance)
+    }
+  }, [onClick, substance])
 
-  const aliases = substance.aliases.slice(0, 3).join(', ')
-  const aliasOverflow = substance.aliases.length > 3 ? `+${substance.aliases.length - 3}` : ''
+  const allEffects = useMemo(
+    () => substance.subjectiveEffects?.allEffects?.slice(0, 3).map(e => e.name),
+    [substance]
+  )
+  const mostLoved = useMemo(
+    () => substance.subjectiveEffects?.mostLoved?.slice(0, 3),
+    [substance]
+  )
+  const effects = useMemo(
+    () => allEffects?.length ? allEffects : mostLoved?.length ? mostLoved : [],
+    [allEffects, mostLoved]
+  )
+
+  const aliases = useMemo(() => substance.aliases.slice(0, 3).join(', '), [substance])
+  const aliasOverflow = useMemo(
+    () => substance.aliases.length > 3 ? `+${substance.aliases.length - 3}` : '',
+    [substance]
+  )
   const hasAliases = aliases.length > 0
 
   return (
-    <Link
-      href={`/substances/${slug}`}
+    <div
       onClick={handleClick}
-      className="vaporwave-card w-full"
+      onKeyDown={handleKeyDown}
+      className="substance-card vaporwave-card w-full cursor-pointer"
       style={{ '--tube-c': catColor, ...style } as React.CSSProperties}
+      role="button"
+      tabIndex={0}
       aria-label={`View ${substance.name}`}
     >
       <div className="neon-stripe" style={{ background: catColor }} />
@@ -79,7 +96,7 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
         )}
       </div>
       </div>
-    </Link>
+    </div>
   )
 }
 
