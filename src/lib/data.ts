@@ -1,9 +1,12 @@
 import rawData from '@/data/all-data.json'
 import rawEffects from '@/data/subjective-effects.json'
 import mdmaEffectsJson from '@/data/mdma-effects.json'
-import type { Substance, Category, ComboRule, ComboLevel, HarmLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration, SubjectiveEffects } from '@/lib/types'
+import type { Substance, Category, ComboRule, ComboLevel, HarmLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration, SubjectiveEffects, ScoreFactor, ScoreBreakdown } from '@/lib/types'
 import { CATEGORY_REGISTRY, COMBO_LEVEL_REGISTRY } from '@/lib/registry'
 import { CATEGORIES, CATEGORY_COLORS, COMBO_DESCRIPTIONS } from '@/lib/types'
+
+interface RawScoreFactor { l: string; e: string; su?: string }
+interface RawScoreBreakdown { factors: RawScoreFactor[]; su?: string }
 
 // Compact key types matching all-data.json
 interface RawSubstance {
@@ -12,6 +15,7 @@ interface RawSubstance {
   r: string[]; od2: string[]; s: string[]; i: string[]
   w?: string[]; rc?: string[]; sm: string; bm?: string; nm?: string
   pw: string | null; pr: RawRoa[] | null; ld?: string
+  sb?: { hs?: RawScoreBreakdown; as?: RawScoreBreakdown; od?: RawScoreBreakdown; ws?: RawScoreBreakdown; id?: RawScoreBreakdown; dl?: RawScoreBreakdown }
 }
 interface RawRoa { n: string; d: RawDose | null; dur: RawDur | null }
 interface RawDose { t: number | string; l: string; c: string; s: string; h: string | number; u: string }
@@ -25,6 +29,13 @@ const data = rawData as RawData
 
 // Expand compact JSON to full types
 function expandSubstance(r: RawSubstance): Substance {
+  function mapFactor(f: RawScoreFactor): ScoreFactor {
+    return { label: f.l, explanation: f.e, sourceUrl: f.su }
+  }
+  function mapBreakdown(b?: RawScoreBreakdown): ScoreBreakdown | undefined {
+    if (!b) return undefined
+    return { factors: b.factors.map(mapFactor), sourceUrl: b.su }
+  }
   return {
     name: r.n, aliases: r.a,
     brandNames: r.bn || [],
@@ -32,7 +43,7 @@ function expandSubstance(r: RawSubstance): Substance {
     category: r.c as Category,
     harmLevel: r.hl as HarmLevel, harmScore: r.hs, addictionScore: r.as,
     onset: r.o, duration: r.d, odRisk: r.od,
-    withdrawalSeverity: r.ws, interactionDanger: r.id, dependenceLiability: r.dl,
+    withdrawalSeverity: r.ws, interactionDanger: Math.min(r.id, 100), dependenceLiability: r.dl,
     risks: r.r, overdose: r.od2, safety: r.s, interactions: r.i,
     withdrawal: r.w && r.w.length ? r.w : undefined,
     recovery: r.rc && r.rc.length ? r.rc : undefined,
@@ -42,7 +53,15 @@ function expandSubstance(r: RawSubstance): Substance {
       n: p.n,
       d: p.d ? { t: p.d.t, l: p.d.l, c: p.d.c, s: p.d.s, h: p.d.h, u: p.d.u } as RoaDose : null,
       dur: p.dur ? { o: p.dur.o, p: p.dur.p, t: p.dur.t } as RoaDuration : null
-    })) : null
+    })) : null,
+    scoreBreakdowns: r.sb ? {
+      harmScore: mapBreakdown(r.sb.hs) ?? { factors: [] },
+      addictionScore: mapBreakdown(r.sb.as) ?? { factors: [] },
+      odRisk: mapBreakdown(r.sb.od) ?? { factors: [] },
+      withdrawalSeverity: mapBreakdown(r.sb.ws) ?? { factors: [] },
+      interactionDanger: mapBreakdown(r.sb.id) ?? { factors: [] },
+      dependenceLiability: mapBreakdown(r.sb.dl) ?? { factors: [] },
+    } : undefined
   }
 }
 
@@ -281,16 +300,30 @@ export function checkInteraction(
   return { substanceA: a, substanceB: b, level, description, note }
 }
 
-let statsCache: { total: number; avgHarm: number; avgAddiction: number; extremeCount: number; categories: number } | null = null
+let statsCache: {
+  total: number;
+  avgHarm: number;
+  avgAddiction: number;
+  avgOdRisk: number;
+  avgWithdrawal: number;
+  avgInteraction: number;
+  avgDependence: number;
+  extremeCount: number;
+  categories: number;
+} | null = null
 
 export function getSubstanceStats() {
   if (statsCache) return statsCache
   const total = substances.length
   const avgHarm = Math.round(substances.reduce((s, d) => s + d.harmScore, 0) / total)
   const avgAddiction = Math.round(substances.reduce((s, d) => s + d.addictionScore, 0) / total)
+  const avgOdRisk = Math.round(substances.reduce((s, d) => s + d.odRisk, 0) / total)
+  const avgWithdrawal = Math.round(substances.reduce((s, d) => s + d.withdrawalSeverity, 0) / total)
+  const avgInteraction = Math.round(substances.reduce((s, d) => s + d.interactionDanger, 0) / total)
+  const avgDependence = Math.round(substances.reduce((s, d) => s + d.dependenceLiability, 0) / total)
   const extremeCount = substances.filter(s => s.harmLevel === 'extreme').length
   const categories = byCategory.size
-  statsCache = { total, avgHarm, avgAddiction, extremeCount, categories }
+  statsCache = { total, avgHarm, avgAddiction, avgOdRisk, avgWithdrawal, avgInteraction, avgDependence, extremeCount, categories }
   return statsCache
 }
 

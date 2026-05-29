@@ -1,5 +1,25 @@
 import { z } from 'zod'
 
+export const ScoreFactorSchema = z.object({
+  label: z.string(),
+  explanation: z.string(),
+  sourceUrl: z.string().url().optional(),
+})
+
+export const ScoreBreakdownSchema = z.object({
+  factors: z.array(ScoreFactorSchema),
+  sourceUrl: z.string().url().optional(),
+})
+
+export const ScoreBreakdownsSchema = z.object({
+  harmScore: ScoreBreakdownSchema,
+  addictionScore: ScoreBreakdownSchema,
+  odRisk: ScoreBreakdownSchema,
+  withdrawalSeverity: ScoreBreakdownSchema,
+  interactionDanger: ScoreBreakdownSchema,
+  dependenceLiability: ScoreBreakdownSchema,
+})
+
 export const ROASchema = z.object({
   name: z.string(),
   bioavail: z.number().min(0).max(100).optional(),

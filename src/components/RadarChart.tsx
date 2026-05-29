@@ -17,6 +17,16 @@ const AXES = [
   { label: 'Dependence', key: 'dependenceLiability' as const },
 ]
 
+const GREEN = '#10b981'
+const AMBER = '#f59e0b'
+const RED = '#ef4444'
+
+function getSeverityColor(val: number) {
+  if (val <= 30) return GREEN
+  if (val <= 60) return AMBER
+  return RED
+}
+
 function drawChart(
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -36,10 +46,31 @@ function drawChart(
   const n = values.length
   const angleStep = (Math.PI * 2) / n
 
+  // Background base
   ctx.beginPath()
   ctx.arc(cx, cy, r + size * 0.07, 0, Math.PI * 2)
   ctx.fillStyle = 'rgba(255,255,255,0.02)'
   ctx.fill()
+
+  // Severity zone shading
+  const zones = [
+    { r: r, color: `${RED}08` },        // 60-100% Red Zone
+    { r: r * 0.6, color: `${AMBER}08` }, // 30-60% Amber Zone
+    { r: r * 0.3, color: `${GREEN}08` }  // 0-30% Green Zone
+  ]
+
+  for (const zone of zones) {
+    ctx.beginPath()
+    for (let i = 0; i <= n; i++) {
+      const angle = i * angleStep - Math.PI / 2
+      const x = cx + zone.r * Math.cos(angle)
+      const y = cy + zone.r * Math.sin(angle)
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+    }
+    ctx.closePath()
+    ctx.fillStyle = zone.color
+    ctx.fill()
+  }
 
   for (let ring = 1; ring <= 4; ring++) {
     ctx.beginPath()
@@ -66,6 +97,7 @@ function drawChart(
     ctx.stroke()
   }
 
+  // Draw data polygon
   ctx.beginPath()
   for (let i = 0; i <= n; i++) {
     const idx = i % n
@@ -118,11 +150,17 @@ function drawChart(
     const labelR = r + size * 0.09
     const x = cx + labelR * Math.cos(angle)
     const y = cy + labelR * Math.sin(angle)
+    
+    const val = values[i]
+    const sevColor = getSeverityColor(val)
+
     ctx.fillStyle = 'rgba(255,255,255,0.4)'
     ctx.fillText(AXES[i].label, x, y)
+    
     ctx.font = `600 ${fontSize * 0.85}px 'JetBrains Mono', monospace`
-    ctx.fillStyle = `${catColor}cc`
-    ctx.fillText(String(values[i]), x, y + fontSize + 3)
+    ctx.fillStyle = sevColor
+    ctx.fillText(String(val), x, y + fontSize + 3)
+    
     ctx.font = `500 ${fontSize}px Inter, system-ui, sans-serif`
   }
 

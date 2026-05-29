@@ -13,6 +13,7 @@ import DosageTable from '@/components/DosageTable'
 import ToleranceSection from '@/components/ToleranceSection'
 import EffectsTabContent from '@/components/EffectsTabContent'
 import LegalStatusTabContent from '@/components/LegalStatusTabContent'
+import ScoreBadges from '@/components/ScoreBadges'
 import dynamic from 'next/dynamic'
 
 const SubjectiveEffectsModal = dynamic(
@@ -127,7 +128,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
 
       <main className="w-full px-4 sm:px-8 py-0 space-y-6 sm:space-y-10 flex-1">
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 sm:py-5 bg-[rgba(10,6,22,0.65)] border-b border-[var(--border)]">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex items-center gap-2 mb-3">
           <div className="w-1.5 h-7 sm:h-8 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
           <div>
             <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] sm:text-sm">
@@ -138,10 +139,12 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
               >
                 {substance.harmLevel}
               </span>
-              <span className="text-[var(--text4)] font-mono hidden xs:inline">Harm: {substance.harmScore} · Add: {substance.addictionScore}{substance.ld50 ? ` · LD50: ${substance.ld50}` : ''}</span>
+              {substance.ld50 && <span className="text-[var(--text4)] font-mono hidden xs:inline">LD50: {substance.ld50}</span>}
             </div>
           </div>
         </div>
+        
+        <ScoreBadges substance={substance} className="mb-4" />
 
         {substance.aliases.length > 0 && (
           <div className="flex flex-wrap gap-1.5">

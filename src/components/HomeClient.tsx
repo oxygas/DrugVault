@@ -9,6 +9,7 @@ import KeyboardShortcutsModal from '@/components/KeyboardShortcutsModal'
 import UserSettings from '@/components/UserSettings'
 import ThemeSelector from '@/components/ThemeSelector'
 import OnboardingModal from '@/components/OnboardingModal'
+import ScoreBreakdownPopup from '@/components/ScoreBreakdownPopup'
 import { useSettingsStore } from '@/stores/settings'
 import { useThemeStore } from '@/stores/theme'
 import { playClick, playHover, playOpen, playClose, playToggle, playSectionChange, playSearch, hydrateUIsounds, setUIsoundsEnabled } from '@/lib/ui-sounds'
@@ -430,6 +431,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       <UserSettings />
 
       <ThemeSelector />
+
+      <ScoreBreakdownPopup substances={substances} />
 
       {popupSubstance && (
         <SubstancePopup

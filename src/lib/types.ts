@@ -85,6 +85,26 @@ export interface SubjectiveEffects {
 
 export type UserLevel = 'new' | 'common' | 'heavy'
 
+export interface ScoreFactor {
+  label: string
+  explanation: string
+  sourceUrl?: string
+}
+
+export interface ScoreBreakdown {
+  factors: ScoreFactor[]
+  sourceUrl?: string
+}
+
+export interface ScoreBreakdowns {
+  harmScore: ScoreBreakdown
+  addictionScore: ScoreBreakdown
+  odRisk: ScoreBreakdown
+  withdrawalSeverity: ScoreBreakdown
+  interactionDanger: ScoreBreakdown
+  dependenceLiability: ScoreBreakdown
+}
+
 export interface Substance {
   name: string
   aliases: string[]
@@ -117,6 +137,7 @@ export interface Substance {
   pwSummary: string | null
   pwRoas: Roa[] | null
   subjectiveEffects?: SubjectiveEffects
+  scoreBreakdowns?: ScoreBreakdowns
 }
 
 export interface ComboRule {
