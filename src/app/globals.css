@@ -2064,12 +2064,15 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
   .vaporwave-card:hover {
     border-color: var(--border) !important;
     box-shadow: 0 0 40px rgba(207, 10, 110, 0.04) !important;
+    transform: none !important;
+    animation: none !important;
   }
 
   .vaporwave-card:hover .card-name {
     animation: none !important;
   }
   .vaporwave-card:hover::after {
+    content: none !important;
     display: none !important;
   }
 

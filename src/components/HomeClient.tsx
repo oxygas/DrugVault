@@ -37,7 +37,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
-  const [isTouch] = useState(() => typeof window !== 'undefined' && 'ontouchstart' in window)
+  const [isTouch, setIsTouch] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
 
   const searchInputRef = useRef<HTMLInputElement | null>(null)
@@ -52,6 +52,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   }, [popupSubstance])
 
   useEffect(() => {
+    setIsTouch('ontouchstart' in window)
     hydrateTheme()
     hydrateSettings()
     requestAnimationFrame(() => setMounted(true))
@@ -216,13 +217,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           WebkitBackdropFilter: isTouch ? 'blur(12px)' : 'blur(24px) saturate(1.6)',
         }}
       >
-        <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center justify-between gap-3 sm:gap-4">
-          <a href="#" className="flex items-center gap-2.5 group shrink-0">
-            <img src="/logo.svg" alt="TripGem" className="w-8 h-8 drop-shadow-[0_0_10px_rgba(207,10,110,0.6)]" />
-            <span className="font-display font-bold text-base sm:text-lg tracking-tight">
-              <span className="text-[var(--neon-magenta)]">Trip</span><span className="text-white">Gem</span>
-            </span>
-          </a>
+      <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center justify-between gap-3 sm:gap-4">
+        <div className="shrink-0" />
           <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-full bg-[rgba(255,255,255,0.03)] border border-[var(--border)]">
             {FEATURES.map(feature => (
               <button
@@ -275,21 +271,22 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
           WebkitBackdropFilter: 'blur(12px)',
         }}
       >
-        <div className="w-full px-4 h-14 flex items-center justify-center">
-          <a href="#" className="flex items-center gap-2">
-            <img src="/logo.svg" alt="TripGem" className="w-7 h-7 drop-shadow-[0_0_8px_rgba(207,10,110,0.5)]" />
-            <span className="font-display font-bold text-base tracking-tight">
-              <span className="text-[var(--neon-magenta)]">Trip</span><span className="text-white">Gem</span>
-            </span>
-          </a>
-        </div>
+      <div className="w-full px-4 h-14 flex items-center justify-center">
+        <div />
+      </div>
       </nav>
 
       <main className="w-full px-4 sm:px-8 py-0 sm:py-0 space-y-6 sm:space-y-10 flex-1">
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 bg-[rgba(10,6,22,0.65)] border-b border-[var(--border)]">
-          <header className="text-center py-8 sm:py-14 lg:py-18 relative">
-            <div className="hero-glow" />
-            <div className="hero-badge mx-auto">
+  <header className="text-center py-8 sm:py-14 lg:py-18 relative">
+    <div className="hero-glow" />
+    <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
+      <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFkdHQzaHphODF6Y3Rlb2JnMTYybzlsaHVibG8zZXNpYjAybWc4NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Wt0zLr2PkDbDkfQOSo/giphy.gif" alt="TripGem" className="w-20 h-20 sm:w-32 sm:h-32 drop-shadow-[0_0_30px_rgba(207,10,110,0.6)]" />
+      <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
+        <span className="text-[var(--neon-magenta)] drop-shadow-[0_0_20px_rgba(207,10,110,0.4)]">Trip</span><span className="text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]">Gem</span>
+      </span>
+    </div>
+    <div className="hero-badge mx-auto">
               <span className="dot" />
               {stats.total} substances indexed
             </div>
@@ -386,16 +383,10 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         </div>
       </nav>
 
-      <footer className="w-full text-center py-12 sm:py-24 border-t border-[var(--border)] relative mt-8 mb-16 sm:mb-0">
-        <div className="absolute top-0 left-[20%] right-[20%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.2)] to-transparent" />
-        <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.15)] to-transparent" />
-        <div className="flex items-center justify-center gap-2.5 mb-4">
-          <img src="/logo.svg" alt="TripGem" className="w-6 h-6 opacity-70" />
-          <span className="font-display font-semibold text-sm text-[var(--text2)]">
-            Trip<span className="text-[var(--neon-magenta)]">Gem</span>
-          </span>
-        </div>
-        <p className="text-xs text-[var(--text3)] max-w-md mx-auto leading-relaxed">
+<footer className="w-full text-center py-12 sm:py-24 border-t border-[var(--border)] relative mt-8 mb-16 sm:mb-0">
+  <div className="absolute top-0 left-[20%] right-[20%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.2)] to-transparent" />
+  <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.15)] to-transparent" />
+  <p className="text-xs text-[var(--text3)] max-w-md mx-auto leading-relaxed">
           Open-source harm reduction resource for educational purposes.
         </p>
         <p className="text-[10px] text-[var(--text4)] mt-3 font-mono">

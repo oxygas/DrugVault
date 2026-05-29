@@ -154,9 +154,9 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     <div className="popup-header sticky top-0 z-10 p-4 sm:p-5 lg:p-6">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2.5 mb-1.5">
-            <div className="w-1.5 h-6 lg:h-7 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-white truncate">{substance.name}</h2>
+      <div className="flex items-center gap-2.5 mb-1.5">
+    <div className="w-1.5 h-6 lg:h-7 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
+    <h2 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-white truncate">{substance.name}</h2>
           </div>
           <div className="flex flex-wrap items-center gap-2 ml-4">
             <span className="text-xs lg:text-sm text-[var(--text3)] font-display">{substance.category}</span>

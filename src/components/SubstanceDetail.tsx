@@ -323,14 +323,8 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
 
       <footer className="w-full text-center py-12 sm:py-24 border-t border-[var(--border)] relative mt-8 mb-16 sm:mb-0">
         <div className="absolute top-0 left-[20%] right-[20%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.2)] to-transparent" />
-        <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.15)] to-transparent" />
-        <div className="flex items-center justify-center gap-2.5 mb-4">
-          <img src="/logo.svg" alt="TripGem" className="w-6 h-6 opacity-70" />
-          <span className="font-display font-semibold text-sm text-[var(--text2)]">
-            Trip<span className="text-[var(--neon-magenta)]">Gem</span>
-          </span>
-        </div>
-        <p className="text-xs text-[var(--text3)] max-w-md mx-auto leading-relaxed">
+<div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.15)] to-transparent" />
+  <p className="text-xs text-[var(--text3)] max-w-md mx-auto leading-relaxed">
           Open-source harm reduction resource for educational purposes.
         </p>
         <p className="text-[10px] text-[var(--text4)] mt-3 font-mono">
