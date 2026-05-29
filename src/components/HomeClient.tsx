@@ -11,6 +11,7 @@ import ThemeSelector from '@/components/ThemeSelector'
 import OnboardingModal from '@/components/OnboardingModal'
 import { useSettingsStore } from '@/stores/settings'
 import { useThemeStore } from '@/stores/theme'
+import { playClick, playHover, playOpen, playClose, playToggle, playSectionChange, playSearch, hydrateUIsounds, setUIsoundsEnabled } from '@/lib/ui-sounds'
 
 const SubstancePopup = dynamic(() => import('@/features/substances/components/SubstancePopup'), {
   loading: () => (
@@ -38,25 +39,43 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [scrolled, setScrolled] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [isTouch, setIsTouch] = useState(false)
+  const isTouchRef = useRef(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
 
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const popupRef = useRef(popupSubstance)
-  const { bodyWeight, weightUnit, userLevel, onboarded, toggleSettings, setSettingsOpen, hydrate: hydrateSettings } = useSettingsStore()
+  const { bodyWeight, weightUnit, userLevel, onboarded, uiSounds, toggleSettings, setSettingsOpen, setUISounds, hydrate: hydrateSettings } = useSettingsStore()
   const { toggleTheme, hydrate: hydrateTheme } = useThemeStore()
 
   const userLevelLabel = userLevel === 'new' ? 'New' : userLevel === 'common' ? 'Common' : 'Heavy'
+
+  const openPopup = useCallback((s: Substance | null) => {
+    if (s) playOpen()
+    setPopupSubstance(s)
+  }, [])
+
+  const closePopup = useCallback(() => {
+    playClose()
+    setPopupSubstance(null)
+  }, [])
 
   useEffect(() => {
     popupRef.current = popupSubstance
   }, [popupSubstance])
 
   useEffect(() => {
-    setIsTouch('ontouchstart' in window)
+    const touch = 'ontouchstart' in window
+    isTouchRef.current = touch
     hydrateTheme()
     hydrateSettings()
+    hydrateUIsounds()
     requestAnimationFrame(() => setMounted(true))
+    if (touch) queueMicrotask(() => setIsTouch(true))
   }, [hydrateTheme, hydrateSettings])
+
+  useEffect(() => {
+    setUIsoundsEnabled(uiSounds)
+  }, [uiSounds])
 
   useEffect(() => {
     let ticking = false
@@ -86,6 +105,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
   const handleSectionChange = useCallback((section: Section) => {
     if (section === activeSection) return
+    playSectionChange()
     setActiveSection(section)
   }, [activeSection])
 
@@ -109,9 +129,9 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         handleSectionChange('tools')
       }
       // Escape to close popup or shortcuts modal
-      if (e.key === 'Escape' && ps) {
-        setPopupSubstance(null)
-      }
+  if (e.key === 'Escape' && ps) {
+    closePopup()
+  }
       if (e.key === 'Escape' && !ps && showShortcuts) {
         setShowShortcuts(false)
       }
@@ -145,7 +165,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isTouch, showShortcuts, toggleSettings, handleSectionChange, setPopupSubstance])
+  }, [isTouch, showShortcuts, toggleSettings, handleSectionChange, closePopup])
 
   const toggleCategory = useCallback((cat: Category) => {
     setSelectedCategories(prev =>
@@ -191,13 +211,13 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       selectedCategories,
       onCategoryToggle: toggleCategory,
       onCategoryClear,
-      onSubstanceClick: setPopupSubstance,
+      onSubstanceClick: openPopup,
       searchInputRef,
     },
     matrix: {
       substances,
       comboRules: comboMatrix,
-      onSelectSubstance: setPopupSubstance,
+      onSelectSubstance: openPopup,
     },
     tools: {
       substances,
@@ -205,7 +225,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       substanceCombos,
       onFindSubstance: findSubstance,
     },
-  }), [sortedSubstances, selectedCategories, toggleCategory, onCategoryClear, substances, comboMatrix, substanceCombos, findSubstance])
+  }), [sortedSubstances, selectedCategories, toggleCategory, onCategoryClear, openPopup, substances, comboMatrix, substanceCombos, findSubstance])
 
   return (
     <div className={`flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px] ${isTouch ? 'pb-16' : ''}`}>
@@ -221,10 +241,11 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         <div className="shrink-0" />
           <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-full bg-[rgba(255,255,255,0.03)] border border-[var(--border)]">
             {FEATURES.map(feature => (
-              <button
-                key={feature.key}
-                onClick={() => handleSectionChange(feature.key as Section)}
-                className={`nav-tab flex items-center gap-1.5 ${activeSection === feature.key ? 'active' : ''}`}
+        <button
+          key={feature.key}
+          onClick={() => handleSectionChange(feature.key as Section)}
+          onMouseEnter={playHover}
+          className={`nav-tab flex items-center gap-1.5 ${activeSection === feature.key ? 'active' : ''}`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d={feature.icon} />
@@ -233,19 +254,19 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
               </button>
             ))}
             <div className="w-px h-5 bg-[var(--border)] mx-1 sm:mx-2" />
-            <button
-              onClick={toggleTheme}
-              className="theme-btn p-2.5 rounded-xl"
-              aria-label="Theme"
+      <button
+        onClick={() => { playToggle(); toggleTheme() }}
+        className="theme-btn p-2.5 rounded-xl"
+        aria-label="Theme"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
               </svg>
             </button>
           </div>
-          <button
-            onClick={toggleSettings}
-            className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl hover:bg-[rgba(255,255,255,0.06)] transition-all text-[var(--text4)] hover:text-[var(--accent2)] group"
+      <button
+        onClick={() => { playClick(); toggleSettings() }}
+        className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl hover:bg-[rgba(255,255,255,0.06)] transition-all text-[var(--text4)] hover:text-[var(--accent2)] group"
             aria-label="User settings"
             title="User settings (Alt+S)"
           >
@@ -281,10 +302,10 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   <header className="text-center py-8 sm:py-14 lg:py-18 relative">
     <div className="hero-glow" />
     <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
-      <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFkdHQzaHphODF6Y3Rlb2JnMTYybzlsaHVibG8zZXNpYjAybWc4NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Wt0zLr2PkDbDkfQOSo/giphy.gif" alt="TripGem" className="w-20 h-20 sm:w-32 sm:h-32 drop-shadow-[0_0_30px_rgba(207,10,110,0.6)]" />
-      <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
-        <span className="text-[var(--neon-magenta)] drop-shadow-[0_0_20px_rgba(207,10,110,0.4)]">Trip</span><span className="text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]">Gem</span>
-      </span>
+          <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFkdHQzaHphODF6Y3Rlb2JnMTYybzlsaHVibG8zZXNpYjAybWc4NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Wt0zLr2PkDbDkfQOSo/giphy.gif" alt="TripGem" className="tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
+          <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
+            <span className="tripgem-text-trip">Trip</span><span className="tripgem-text-gem">Gem</span>
+          </span>
     </div>
     <div className="hero-badge mx-auto">
               <span className="dot" />
@@ -359,9 +380,9 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
               <span className="text-xs font-medium">{feature.label}</span>
             </button>
           ))}
-          <button
-            onClick={toggleTheme}
-            className="theme-btn flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg"
+      <button
+        onClick={() => { playToggle(); toggleTheme() }}
+        className="theme-btn flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg"
             aria-label="Theme"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -369,9 +390,9 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
             </svg>
             <span className="text-[10px] font-mono uppercase tracking-[0.12em]">Theme</span>
           </button>
-          <button
-            onClick={toggleSettings}
-            className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 text-[var(--text3)] hover:text-[var(--accent2)]"
+      <button
+        onClick={() => { playClick(); toggleSettings() }}
+        className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 text-[var(--text3)] hover:text-[var(--accent2)]"
             aria-label="Settings"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -414,8 +435,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         <SubstancePopup
           substance={popupSubstance}
           comboMatrix={comboMatrix}
-          onClose={() => setPopupSubstance(null)}
-          onNavigate={sub => setPopupSubstance(sub)}
+  onClose={closePopup}
+  onNavigate={openPopup}
           allSubstances={substances}
         />
       )}

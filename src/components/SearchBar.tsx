@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import type { Substance, Category } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
 import { searchSubstances } from '@/lib/data'
+import { playCategoryClick, playClick } from '@/lib/ui-sounds'
 
 const RECENT_SEARCHES_KEY = 'tripgem_recent_searches'
 const MAX_RECENT = 8
@@ -52,6 +53,7 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
   }, [])
 
   const handleSelect = useCallback((substance: Substance) => {
+    playCategoryClick(substance.category)
     onSelect(substance)
     addRecentSearch(substance.name)
     setRecentSearches(getRecentSearches())
@@ -80,7 +82,7 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
       <div className="relative search-input">
         <div className="flex items-center gap-2 sm:gap-2.5 px-2 sm:px-3">
           <button
-            onClick={onCategoryClear}
+            onClick={() => { playClick(); onCategoryClear() }}
             className={`cat-pill-inline shrink-0 ${selectedCategories.length === 0 ? 'active' : ''}`}
             style={{ '--pill-c': 'var(--accent)' } as React.CSSProperties}
             aria-label="Show all categories"
@@ -215,10 +217,10 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
       </div>
 
       <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
-        {categories.map(([cat, color]) => (
-          <button
-            key={cat}
-            onClick={() => onCategoryToggle(cat)}
+      {categories.map(([cat, color]) => (
+        <button
+          key={cat}
+          onClick={() => { playCategoryClick(cat); onCategoryToggle(cat) }}
             className={`cat-pill ${selectedCategories.includes(cat) ? 'active' : ''}`}
             style={{ '--pill-c': color, color: selectedCategories.includes(cat) ? '#fff' : undefined } as React.CSSProperties}
           >

@@ -24,15 +24,17 @@ const USER_LEVEL_INFO: Record<UserLevel, { label: string; description: string; c
 
 export default function UserSettings() {
   const {
-    bodyWeight,
-    weightUnit,
-    userLevel,
-    settingsOpen,
-    setBodyWeight,
-    setWeightUnit,
-    setUserLevel,
-    setSettingsOpen,
-    setOnboarded,
+  bodyWeight,
+  weightUnit,
+  userLevel,
+  settingsOpen,
+  uiSounds,
+  setBodyWeight,
+  setWeightUnit,
+  setUserLevel,
+  setSettingsOpen,
+  setOnboarded,
+  setUISounds,
   } = useSettingsStore()
 
   const [weightInput, setWeightInput] = useState(String(bodyWeight))
@@ -155,6 +157,35 @@ export default function UserSettings() {
                 </button>
               ))}
             </div>
+                  </div>
+
+          {/* UI Sounds */}
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 text-sm font-mono text-[var(--text4)] uppercase tracking-[0.15em]">
+              <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+              </svg>
+              UI Sounds
+            </label>
+            <button
+              onClick={() => setUISounds(!uiSounds)}
+              className={`flex items-center gap-3 w-full p-3 rounded-xl border transition-all text-left ${
+                uiSounds
+                  ? 'border-[rgba(6,182,212,0.4)] bg-[rgba(6,182,212,0.08)]'
+                  : 'border-[var(--border)] hover:border-[var(--border2)] bg-[rgba(255,255,255,0.02)]'
+              }`}
+            >
+              <span className={`w-3 h-3 rounded-full flex-shrink-0`} style={{ background: uiSounds ? '#06b6d4' : '#475569' }} />
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold text-white">{uiSounds ? 'On' : 'Off'}</div>
+                <div className="text-xs text-[var(--text4)] mt-0.5">Retro synth click & interaction sounds</div>
+              </div>
+              {uiSounds && (
+                <svg className="w-4 h-4 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              )}
+            </button>
           </div>
 
           <div className="rounded-xl p-4 border border-[var(--border)] bg-[rgba(255,255,255,0.02)] space-y-3">

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, Suspense, lazy } from 'react'
 import Image from 'next/image'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
+import { playClick, playFavorite, playPopupTab } from '@/lib/ui-sounds'
 import RadarChart from '@/components/RadarChart'
 import DurationTimeline from '@/components/DurationTimeline'
 import DosageTable from '@/components/DosageTable'
@@ -12,6 +13,93 @@ import EffectsTabContent from '@/components/EffectsTabContent'
 import LegalStatusTabContent from '@/components/LegalStatusTabContent'
 
 const SubjectiveEffectsModal = lazy(() => import('@/components/SubjectiveEffectsModal'))
+
+const PRONUNCIATIONS: Record<string, string> = {
+  'Fentanyl': 'FEN-tuh-nil',
+  'NBOMe': 'EN-bee-oh-em',
+  '25I-NBOMe': 'twenty-five-eye EN-bee-oh-em',
+  '25B-NBOMe': 'twenty-five-bee EN-bee-oh-em',
+  '25C-NBOMe': 'twenty-five-see EN-bee-oh-em',
+  '25D-NBOMe': 'twenty-five-dee EN-bee-oh-em',
+  '25E-NBOMe': 'twenty-five-ee EN-bee-oh-em',
+  '25G-NBOMe': 'twenty-five-gee EN-bee-oh-em',
+  '25H-NBOMe': 'twenty-five-aitch EN-bee-oh-em',
+  '25I-NBF': 'twenty-five-eye EN-bee-eff',
+  '25I-NBMD': 'twenty-five-eye EN-bee-em-dee',
+  '25iP-NBOMe': 'twenty-five-eye-pee EN-bee-oh-em',
+  '25N-NBOMe': 'twenty-five-en EN-bee-oh-em',
+  '25P-NBOMe': 'twenty-five-pee EN-bee-oh-em',
+  '25T-2-NBOMe': 'twenty-five-tee-two EN-bee-oh-em',
+  '25T-4-NBOMe': 'twenty-five-tee-four EN-bee-oh-em',
+  '25x-NBOMe': 'twenty-five-x EN-bee-oh-em',
+  'Datura': 'duh-TOOR-uh',
+  'Scopolamine': 'skoh-PALL-uh-meen',
+  'Krokodil': 'KROK-uh-deel',
+  'DPH': 'dee-pee-aitch',
+  'Xylazine': 'ZIL-uh-zeen',
+  'Sufentanil': 'soo-FEN-tuh-nil',
+  'Acetylfentanyl': 'uh-SEE-til-FEN-tuh-nil',
+  'Acrylfentanyl': 'AK-ril-FEN-tuh-nil',
+  'Butyrfentanyl': 'BYOO-ter-FEN-tuh-nil',
+  'Furanylfentanyl': 'FYOO-ran-il-FEN-tuh-nil',
+  'Bromadol': 'BRO-muh-dol',
+  'Bromo-DragonFLY': 'BRO-mo DRAG-un-fly',
+  'Clonitazene': 'kloh-NIT-uh-zeen',
+  'Nitazenes': 'nye-TAZ-uh-zeen',
+  'Alpha-PVP': 'AL-fuh pee-vee-pee',
+  'U-47700': 'you forty-seven seven hundred',
+  'U-49900': 'you forty-nine nine hundred',
+  'U-51754': 'you fifty-one seven fifty-four',
+  'W-15': 'double-you fifteen',
+  'AH-7921': 'ay-aitch seventy-nine twenty-one',
+  'MT-45': 'em-tee forty-five',
+  'MPTP': 'em-pee-tee-pee',
+  '6-MDDM': 'six em-dee-dee-em',
+  'Methoxyacetyl-Fentanyl': 'meh-THOK-see-uh-SEE-til-FEN-tuh-nil',
+  'Parafluorofentanyl': 'PAR-uh-FLOOR-oh-FEN-tuh-nil',
+  'Tetrahydrofuran-Fentanyl': 'TET-ruh-HY-dro-FYOOR-an-FEN-tuh-nil',
+  'Valerylfentanyl': 'VAL-er-il-FEN-tuh-nil',
+  '4-Fluorobutyrfentanyl': 'four FLOOR-oh-BYOO-ter-FEN-tuh-nil',
+  '4-MeO-Butyrfentanyl': 'four-mee-oh BYOO-ter-FEN-tuh-nil',
+  'Cyclopentyl-Fentanyl': 'SY-kloh-PEN-til-FEN-tuh-nil',
+  'Benzodioxole-Fentanyl': 'BEN-zoh-dye-OX-ohl-FEN-tuh-nil',
+  'Hydromorphone': 'HY-droh-MOR-fone',
+  'Oxymorphone': 'OK-see-MOR-fone',
+  'Dextromoramide': 'DEK-stroh-MOR-uh-mide',
+  'Dipipanone': 'dye-PIP-uh-none',
+  'Ketobemidone': 'KEE-toh-BEM-ih-done',
+  'Morpheridine': 'MOR-FER-ih-deen',
+  'Nicomorphine': 'NIK-oh-MOR-feen',
+  'Isomethadone': 'eye-soh-METH-uh-done',
+  'Methiodone': 'meth-EYE-oh-done',
+  'PMA': 'pee-em-ay',
+  'PST': 'pee-ess-tee',
+  'MGM-15': 'em-gee-em fifteen',
+  'MGM-16': 'em-gee-em sixteen',
+  '7-Hydroxymitragynine': 'seven HY-drok-see-mih-TRAJ-ih-neen',
+  'Mitragynine Pseudoindoxyl': 'mih-TRAJ-ih-neen SOO-doh-IN-dok-sil',
+  'Synthetic Cannabinoids': 'sin-THET-ik kan-AB-in-oydz',
+  'Methamphetamine': 'meth-am-FET-uh-meen',
+  'Heroin': 'HAIR-oh-win',
+  'Morphine': 'MOR-feen',
+  'Opium': 'OH-pee-um',
+  'Oxycodone': 'OK-see-KOH-done',
+  'Hydrocodone': 'HY-droh-KOH-done',
+}
+
+function speakSubstanceName(name: string) {
+  if (typeof window === 'undefined') return
+  const prev = document.querySelector('.tripgem-tts-audio')
+  if (prev) prev.remove()
+  const audio = document.createElement('audio')
+  audio.className = 'tripgem-tts-audio'
+  audio.style.display = 'none'
+  audio.volume = 0.8
+  audio.src = `/api/tts?text=${encodeURIComponent(name)}`
+  document.body.appendChild(audio)
+  audio.play().catch(() => audio.remove())
+  audio.onended = () => audio.remove()
+}
 
 const FAVORITES_KEY = 'tripgem_favorites'
 
@@ -114,6 +202,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
   }
 
   const handleFavorite = () => {
+    playFavorite()
     toggleFavorite(substance.name)
     setIsFav(getFavorites().includes(substance.name))
     setFavPulse(v => v + 1)
@@ -155,8 +244,26 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
       <div className="flex items-center gap-2.5 mb-1.5">
-    <div className="w-1.5 h-6 lg:h-7 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
-    <h2 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-white truncate">{substance.name}</h2>
+                <div className="w-1.5 h-6 lg:h-7 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-white truncate">{substance.name}</h2>
+                {substance.harmLevel === 'extreme' && (
+                  <svg className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 skull-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 2C7.58 2 4 5.58 4 10c0 2.5 1.17 4.73 3 6.2V18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-1.8c1.83-1.47 3-3.7 3-6.2 0-4.42-3.58-8-8-8zM9 22h6M10 18v4M14 18v4" />
+                    <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor" />
+                    <circle cx="14.5" cy="9.5" r="1.5" fill="currentColor" />
+                    <path strokeLinecap="round" d="M10.5 14.5h3M12 14.5v2" strokeWidth={1.2} />
+                  </svg>
+                )}
+                <button
+                  onClick={() => speakSubstanceName(substance.name)}
+                  className="p-1.5 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors flex-shrink-0 text-[var(--text4)] hover:text-[var(--cyan)]"
+                  aria-label={`Pronounce ${substance.name}`}
+                  title="Listen to pronunciation"
+                >
+                  <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                  </svg>
+                </button>
           </div>
           <div className="flex flex-wrap items-center gap-2 ml-4">
             <span className="text-xs lg:text-sm text-[var(--text3)] font-display">{substance.category}</span>
@@ -194,7 +301,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
           <div className="flex items-center gap-1">
             {hasEffects && (
               <button
-                onClick={() => setTab('effects')}
+                onClick={() => { playPopupTab('effects'); setTab('effects') }}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-display font-semibold transition-all"
                 style={{
                   background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15))',
@@ -240,7 +347,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
                 key={key}
                 role="tab"
                 aria-selected={tab === key}
-                onClick={() => setTab(key)}
+                onClick={() => { playPopupTab(key); setTab(key) }}
                 className={`tab-btn flex-shrink-0 ${tab === key ? 'active' : ''}`}
               >
                 {key.charAt(0).toUpperCase() + key.slice(1)}

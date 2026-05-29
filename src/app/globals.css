@@ -1086,6 +1086,72 @@ body::before {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
+
+@keyframes tripgem-wave {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  15% { transform: translateY(-3px) rotate(-1.5deg); }
+  30% { transform: translateY(-6px) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(1.5deg); }
+  70% { transform: translateY(0) rotate(0.5deg); }
+  85% { transform: translateY(1px) rotate(-0.5deg); }
+}
+
+@keyframes tripgem-color {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(207,10,110,0.5)) drop-shadow(0 0 40px rgba(139,92,246,0.3)); }
+  20% { filter: drop-shadow(0 0 25px rgba(139,92,246,0.6)) drop-shadow(0 0 45px rgba(6,182,212,0.2)); }
+  40% { filter: drop-shadow(0 0 22px rgba(6,182,212,0.5)) drop-shadow(0 0 40px rgba(16,185,129,0.3)); }
+  60% { filter: drop-shadow(0 0 25px rgba(16,185,129,0.5)) drop-shadow(0 0 45px rgba(236,72,153,0.3)); }
+  80% { filter: drop-shadow(0 0 22px rgba(236,72,153,0.6)) drop-shadow(0 0 40px rgba(207,10,110,0.4)); }
+}
+
+.tripgem-logo {
+  animation: tripgem-wave 4s ease-in-out infinite, tripgem-color 8s ease-in-out infinite;
+}
+
+.tripgem-text-trip {
+  background: linear-gradient(90deg, #cf0a6e, #a855f7, #06b6d4, #10b981, #ec4899, #cf0a6e);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: tripgem-text-shift 6s ease-in-out infinite;
+}
+
+.tripgem-text-gem {
+  color: #fff;
+  animation: tripgem-gem-glow 4s ease-in-out infinite;
+}
+
+@keyframes tripgem-gem-glow {
+  0%, 100% {
+    text-shadow: 0 0 12px rgba(255,255,255,0.3), 0 0 30px rgba(207,10,110,0.2);
+  }
+  25% {
+    text-shadow: 0 0 15px rgba(139,92,246,0.5), 0 0 35px rgba(6,182,212,0.2);
+  }
+  50% {
+    text-shadow: 0 0 18px rgba(6,182,212,0.5), 0 0 40px rgba(16,185,129,0.3);
+  }
+  75% {
+    text-shadow: 0 0 15px rgba(236,72,153,0.5), 0 0 35px rgba(207,10,110,0.2);
+  }
+}
+
+@keyframes tripgem-text-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.skull-icon {
+  color: var(--neon-red, #ef4444);
+  filter: drop-shadow(0 0 6px rgba(239,68,68,0.5));
+  animation: skull-pulse 2s ease-in-out infinite;
+}
+@keyframes skull-pulse {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(239,68,68,0.5)); }
+  50% { opacity: 0.7; filter: drop-shadow(0 0 10px rgba(239,68,68,0.8)); }
+}
+
 /* Favorite heart toggle pulse */
 @keyframes heart-beat {
   0% { transform: scale(1); }
@@ -1975,7 +2041,10 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
   .chromatic-overlay { display: none; }
   .cyber-grid { opacity: 0.12; }
   .cyber-grid::before { animation: none; }
-  .digital-rain-canvas { display: none; }
+.digital-rain-canvas { display: none; }
+.tripgem-logo { animation: none !important; }
+.tripgem-text-trip { animation: none !important; background: var(--neon-magenta, #cf0a6e); -webkit-text-fill-color: transparent; }
+.tripgem-text-gem { animation: none !important; text-shadow: 0 0 12px rgba(255,255,255,0.3); color: #fff; }
 }
 
 /* Mobile card overrides */

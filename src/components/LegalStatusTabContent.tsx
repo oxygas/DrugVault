@@ -43,18 +43,31 @@ function getStatusTier(status: string): 'green' | 'amber' | 'red' {
   return 'amber'
 }
 
+function StateFlag({ code, color }: { code: string; color: string }) {
+  return (
+    <span
+      className="inline-flex items-center justify-center w-6 h-4 rounded-sm text-[7px] font-mono font-bold text-white flex-shrink-0"
+      style={{ background: color, boxShadow: `0 0 4px ${color}40`, letterSpacing: '0.03em' }}
+    >
+      {code}
+    </span>
+  )
+}
+
 function StatusCard({
   flag,
   label,
   status,
   statusNote,
   isState,
+  stateCode,
 }: {
   flag: string
   label: string
   status: string | undefined
   statusNote?: string
   isState: boolean
+  stateCode?: string
 }) {
   const tier = status ? getStatusTier(status) : 'amber'
   const sc = status ? statusColor(status) : 'var(--text4)'
@@ -68,7 +81,7 @@ function StatusCard({
       <div className="neon-stripe" style={{ background: sc }} />
       <div className="diagonal-shine" />
       <div className="flex items-center gap-2.5 relative z-[1]">
-        <span className="text-lg flex-shrink-0">{flag}</span>
+          {isState && stateCode ? <StateFlag code={stateCode} color={flag} /> : <span className="text-lg flex-shrink-0">{flag}</span>}
         <div className="flex-1 min-w-0">
           <div className="text-[11px] font-mono text-[var(--text4)] mb-0.5">{label}</div>
           <div
@@ -134,13 +147,15 @@ export default function LegalStatusTabContent({
         onClick={() => setSelectedState(s.code)}
         className={`state-pill ${effectiveState === s.code ? 'active' : ''}`}
         style={{
+          '--state-color': s.flag,
+          borderLeft: `3px solid ${s.flag}`,
           ...(effectiveState === s.code ? {
             '--pill-glow': `${catColor}30`,
             '--pill-border': `${catColor}60`,
             '--pill-bg': `${catColor}12`,
           } as React.CSSProperties : {}),
           animationDelay: `${i * 30}ms`,
-        }}
+        } as React.CSSProperties}
       >
         {s.code}
       </button>
@@ -181,15 +196,16 @@ export default function LegalStatusTabContent({
             isState={false}
           />
 
-          {effectiveState && (
-            <StatusCard
-              flag={stateInfo?.flag || '🇺🇸'}
-              label={`State (${stateInfo?.code || effectiveState})`}
-              status={stateStatus || federalStatus}
-              statusNote={!stateStatus ? 'Follows federal law — no additional state controls' : undefined}
-              isState
-            />
-          )}
+      {effectiveState && (
+          <StatusCard
+            flag={stateInfo?.flag || '#003F87'}
+            label={`${stateInfo?.name || effectiveState}`}
+            status={stateStatus || federalStatus}
+            statusNote={!stateStatus ? 'Follows federal law — no additional state controls' : undefined}
+            isState
+            stateCode={stateInfo?.code || effectiveState}
+          />
+        )}
         </div>
       )}
 

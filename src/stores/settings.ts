@@ -10,6 +10,7 @@ interface PersistedData {
   weightUnit: 'kg' | 'lb'
   userLevel: UserLevel
   onboarded: boolean
+  uiSounds: boolean
 }
 
 const DEFAULTS: PersistedData = {
@@ -17,6 +18,7 @@ const DEFAULTS: PersistedData = {
   weightUnit: 'kg',
   userLevel: 'common',
   onboarded: false,
+  uiSounds: true,
 }
 
 function loadFromStorage(): PersistedData {
@@ -30,6 +32,7 @@ function loadFromStorage(): PersistedData {
       weightUnit: parsed.weightUnit === 'lb' ? 'lb' : 'kg',
       userLevel: parsed.userLevel === 'new' || parsed.userLevel === 'heavy' ? parsed.userLevel : 'common',
       onboarded: parsed.onboarded === true,
+      uiSounds: parsed.uiSounds !== false,
     }
   } catch {
     return DEFAULTS
@@ -50,6 +53,7 @@ interface SettingsState {
   userLevel: UserLevel
   settingsOpen: boolean
   onboarded: boolean
+  uiSounds: boolean
   hydrated: boolean
   weightKg: number
   setBodyWeight: (w: number) => void
@@ -58,6 +62,7 @@ interface SettingsState {
   setSettingsOpen: (o: boolean) => void
   toggleSettings: () => void
   setOnboarded: (o: boolean) => void
+  setUISounds: (on: boolean) => void
   hydrate: () => void
 }
 
@@ -71,6 +76,7 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   userLevel: DEFAULTS.userLevel,
   settingsOpen: false,
   onboarded: false,
+  uiSounds: DEFAULTS.uiSounds,
   hydrated: false,
   weightKg: computeKg(DEFAULTS.bodyWeight, DEFAULTS.weightUnit),
   setBodyWeight: (w) => {
@@ -91,6 +97,10 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
     set({ onboarded: o })
     saveToStorage({ onboarded: o })
   },
+  setUISounds: (on) => {
+    set({ uiSounds: on })
+    saveToStorage({ uiSounds: on })
+  },
   hydrate: () => {
     if (get().hydrated) return
     const data = loadFromStorage()
@@ -100,6 +110,7 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
       weightKg: computeKg(data.bodyWeight, data.weightUnit),
       userLevel: data.userLevel,
       onboarded: data.onboarded,
+      uiSounds: data.uiSounds,
       hydrated: true,
     })
   },

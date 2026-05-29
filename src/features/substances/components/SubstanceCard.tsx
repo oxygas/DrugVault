@@ -3,6 +3,7 @@
 import { memo, useCallback, useMemo } from 'react'
 import type { Substance } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
+import { playCategoryClick } from '@/lib/ui-sounds'
 
 interface SubstanceCardProps {
   substance: Substance
@@ -14,12 +15,14 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
   const catColor = CATEGORY_COLORS[substance.category]
 
   const handleClick = useCallback(() => {
+    playCategoryClick(substance.category)
     onClick(substance)
   }, [onClick, substance])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
+      playCategoryClick(substance.category)
       onClick(substance)
     }
   }, [onClick, substance])
