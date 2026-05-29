@@ -1589,8 +1589,7 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
 
   /* Vaporwave card — compact replacement for .substance-card */
 .vaporwave-card {
-  content-visibility: auto;
-  contain-intrinsic-size: 92px;
+  contain: layout style paint;
   display: block;
   padding: 12px 14px;
   max-width: 100%;

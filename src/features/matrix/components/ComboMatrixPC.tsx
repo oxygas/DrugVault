@@ -203,6 +203,7 @@ export default function ComboMatrixPC({ substances, comboRules, onSelectSubstanc
                         transition: 'all 0.15s ease',
                       }}
                       onClick={() => setClickedCell(clickedCell === key ? null : key)}
+                      onTouchStart={() => { if (showTimer.current) clearTimeout(showTimer.current); if (hideTimer.current) clearTimeout(hideTimer.current); setClickedCell(clickedCell === key ? null : key); setHoveredCell(null) }}
                       onMouseEnter={e => handleHover(e, key)}
                       onMouseLeave={handleHoverOut}
                       aria-label={`${row} + ${col}: ${COMBO_LEVEL_LABELS[level]}`}

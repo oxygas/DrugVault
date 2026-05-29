@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
           <div className="h-10 w-48 rounded-lg skeleton-shimmer" />

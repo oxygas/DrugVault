@@ -138,7 +138,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     <div
       ref={overlayRef}
       className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center backdrop-blur-sm"
-      style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.08) 0%, rgba(236,72,153,0.04) 30%, rgba(0,0,0,0.65) 70%)', touchAction: 'none' } as React.CSSProperties}
+      style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.08) 0%, rgba(236,72,153,0.04) 30%, rgba(0,0,0,0.65) 70%)' } as React.CSSProperties}
       onClick={e => { if (e.target === overlayRef.current) onClose() }}
       onTouchStart={e => { if (e.target === overlayRef.current) onClose() }}
       role="dialog"

@@ -39,7 +39,7 @@ export function LabClient() {
     : null
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-[100dvh]">
       <header className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link

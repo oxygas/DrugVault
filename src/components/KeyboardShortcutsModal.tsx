@@ -55,8 +55,20 @@ export default function KeyboardShortcutsModal({ onClose }: KeyboardShortcutsMod
       if (e.key === 'Escape' || e.key === '?') onCloseRef.current()
     }
     document.addEventListener('keydown', handler)
+    const scrollY = window.scrollY
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
     document.body.style.overflow = 'hidden'
-    return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = '' }
+    return () => {
+      document.removeEventListener('keydown', handler)
+      const top = document.body.style.top
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      document.body.style.overflow = ''
+      if (top) window.scrollTo(0, parseInt(top.replace('px', '')) * -1)
+    }
   }, [])
 
   return (

@@ -12,13 +12,18 @@ interface PersistedData {
   onboarded: boolean
 }
 
+const DEFAULTS: PersistedData = {
+  bodyWeight: 70,
+  weightUnit: 'kg',
+  userLevel: 'common',
+  onboarded: false,
+}
+
 function loadFromStorage(): PersistedData {
-  if (typeof window === 'undefined') {
-    return { bodyWeight: 70, weightUnit: 'kg', userLevel: 'common', onboarded: false }
-  }
+  if (typeof window === 'undefined') return DEFAULTS
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { bodyWeight: 70, weightUnit: 'kg', userLevel: 'common', onboarded: false }
+    if (!raw) return DEFAULTS
     const parsed = JSON.parse(raw) as Partial<PersistedData>
     return {
       bodyWeight: typeof parsed.bodyWeight === 'number' && parsed.bodyWeight > 0 && parsed.bodyWeight <= 500 ? parsed.bodyWeight : 70,
@@ -27,7 +32,7 @@ function loadFromStorage(): PersistedData {
       onboarded: parsed.onboarded === true,
     }
   } catch {
-    return { bodyWeight: 70, weightUnit: 'kg', userLevel: 'common', onboarded: false }
+    return DEFAULTS
   }
 }
 
@@ -45,6 +50,7 @@ interface SettingsState {
   userLevel: UserLevel
   settingsOpen: boolean
   onboarded: boolean
+  hydrated: boolean
   weightKg: number
   setBodyWeight: (w: number) => void
   setWeightUnit: (u: 'kg' | 'lb') => void
@@ -52,16 +58,16 @@ interface SettingsState {
   setSettingsOpen: (o: boolean) => void
   toggleSettings: () => void
   setOnboarded: (o: boolean) => void
+  hydrate: () => void
 }
 
-const initial = loadFromStorage()
-
 export const useSettingsStore = create<SettingsState>()((set, get) => ({
-  bodyWeight: initial.bodyWeight,
-  weightUnit: initial.weightUnit,
-  userLevel: initial.userLevel,
+  bodyWeight: DEFAULTS.bodyWeight,
+  weightUnit: DEFAULTS.weightUnit,
+  userLevel: DEFAULTS.userLevel,
   settingsOpen: false,
-  onboarded: initial.onboarded,
+  onboarded: false,
+  hydrated: false,
   get weightKg() {
     const s = get()
     return s.weightUnit === 'lb' ? s.bodyWeight * 0.453592 : s.bodyWeight
@@ -83,5 +89,16 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   setOnboarded: (o) => {
     set({ onboarded: o })
     saveToStorage({ onboarded: o })
+  },
+  hydrate: () => {
+    if (get().hydrated) return
+    const data = loadFromStorage()
+    set({
+      bodyWeight: data.bodyWeight,
+      weightUnit: data.weightUnit,
+      userLevel: data.userLevel,
+      onboarded: data.onboarded,
+      hydrated: true,
+    })
   },
 }))

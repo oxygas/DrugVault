@@ -290,6 +290,37 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
         </div>
       </main>
 
+      {/* Mobile Bottom Nav */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] sm:hidden"
+        style={{
+          background: 'rgba(4, 4, 12, 0.95)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        }}
+      >
+        <div className="flex items-center justify-around h-16">
+          <Link
+            href="/"
+            className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 text-[var(--text3)]"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            <span className="text-[10px] font-mono font-semibold">Home</span>
+          </Link>
+          <Link
+            href="/"
+            className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 text-[var(--text3)]"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+            <span className="text-[10px] font-mono font-semibold">Search</span>
+          </Link>
+        </div>
+      </nav>
+
       <footer className="w-full text-center py-12 sm:py-24 border-t border-[var(--border)] relative mt-8 mb-16 sm:mb-0">
         <div className="absolute top-0 left-[20%] right-[20%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.2)] to-transparent" />
         <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.15)] to-transparent" />

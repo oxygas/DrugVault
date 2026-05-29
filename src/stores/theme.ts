@@ -21,31 +21,37 @@ function saveTheme(id: string) {
 function lockScroll(lock: boolean) {
   if (typeof document === 'undefined') return
   if (lock) {
+    const scrollY = window.scrollY
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
     document.body.style.overflow = 'hidden'
   } else {
+    const top = document.body.style.top
+    document.body.style.position = ''
+    document.body.style.top = ''
+    document.body.style.width = ''
     document.body.style.overflow = ''
+    if (top) {
+      window.scrollTo(0, parseInt(top.replace('px', '')) * -1)
+    }
   }
 }
 
 interface ThemeState {
   themeId: string
   themeOpen: boolean
+  hydrated: boolean
   setTheme: (id: string) => void
   setThemeOpen: (o: boolean) => void
   toggleTheme: () => void
+  hydrate: () => void
 }
 
-function initThemeAttribute(): string {
-  const id = loadTheme()
-  if (typeof document !== 'undefined') {
-    document.documentElement.setAttribute('data-theme', id)
-  }
-  return id
-}
-
-export const useThemeStore = create<ThemeState>()((set) => ({
-  themeId: initThemeAttribute(),
+export const useThemeStore = create<ThemeState>()((set, get) => ({
+  themeId: DEFAULT_THEME,
   themeOpen: false,
+  hydrated: false,
   setTheme: (id) => {
     set({ themeId: id })
     saveTheme(id)
@@ -62,4 +68,12 @@ export const useThemeStore = create<ThemeState>()((set) => ({
     lockScroll(next)
     return { themeOpen: next }
   }),
+  hydrate: () => {
+    if (get().hydrated) return
+    const id = loadTheme()
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', id)
+    }
+    set({ themeId: id, hydrated: true })
+  },
 }))

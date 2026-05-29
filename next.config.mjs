@@ -22,6 +22,14 @@ const nextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
+  experimental: {
+    optimizePackageImports: [
+      'framer-motion',
+      'lucide-react',
+      'zod',
+      'react-virtuoso',
+    ],
+  },
 }
 
 export default withSentryConfig(nextConfig, {

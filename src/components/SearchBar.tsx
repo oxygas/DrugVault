@@ -106,6 +106,8 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
             aria-expanded={focused && (results.length > 0 || recentSearches.length > 0)}
             aria-controls="search-results"
             aria-autocomplete="list"
+            enterKeyHint="search"
+            autoComplete="off"
           />
 
           {query ? (

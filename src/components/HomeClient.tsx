@@ -42,8 +42,8 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [sectionTransition, setSectionTransition] = useState<'entering' | 'exiting' | 'idle'>('idle')
   const [prevSection, setPrevSection] = useState<Section | null>(null)
   const searchInputRef = useRef<HTMLInputElement | null>(null)
-  const { bodyWeight, weightUnit, userLevel, onboarded, toggleSettings, setSettingsOpen } = useSettingsStore()
-  const { toggleTheme } = useThemeStore()
+  const { bodyWeight, weightUnit, userLevel, onboarded, toggleSettings, setSettingsOpen, hydrate: hydrateSettings } = useSettingsStore()
+  const { toggleTheme, hydrate: hydrateTheme } = useThemeStore()
 
   const userLevelLabel = userLevel === 'new' ? 'New' : userLevel === 'common' ? 'Common' : 'Heavy'
   const isMobile = isTouch
@@ -51,8 +51,10 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsTouch('ontouchstart' in window)
+    hydrateTheme()
+    hydrateSettings()
     requestAnimationFrame(() => setMounted(true))
-  }, [])
+  }, [hydrateTheme, hydrateSettings])
 
   useEffect(() => {
     let ticking = false
@@ -208,7 +210,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   }
 
   return (
-    <div className={`transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'} flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px] ${isMobile ? 'pb-16' : ''}`}>
+    <div className={`flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px] ${isMobile ? 'pb-16' : ''}`}>
       {/* Desktop/Tablet Top Nav */}
       <nav
         className={`sticky top-0 z-50 border-b border-[var(--border)] hidden sm:flex nav-bar-desktop ${scrolled ? 'scrolled' : ''}`}
@@ -434,7 +436,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         <KeyboardShortcutsModal onClose={() => setShowShortcuts(false)} />
       )}
 
-      <OnboardingModal />
+      {mounted && <OnboardingModal />}
 
       <UserSettings />
 

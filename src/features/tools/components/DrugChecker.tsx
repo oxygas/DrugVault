@@ -159,6 +159,8 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
               onFocus={() => setDropdownOpen(true)}
               placeholder={selected.length === 0 ? 'Search substances to check interactions...' : 'Add another substance...'}
               className="flex-1 bg-transparent text-white placeholder-[var(--text4)] focus:outline-none text-base sm:text-xl"
+              enterKeyHint="search"
+              autoComplete="off"
             />
             {query && (
               <button

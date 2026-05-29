@@ -175,11 +175,13 @@ export default memo(function RadarChart({ substance }: RadarChartProps) {
 
   return (
     <div className="w-full flex justify-center">
-      <canvas
-        ref={canvasRef}
-        className="w-full max-w-[260px] sm:max-w-[300px] lg:max-w-[340px]"
-        style={{ aspectRatio: '1' }}
-      />
+        <canvas
+          ref={canvasRef}
+          width={300}
+          height={300}
+          className="w-full max-w-[260px] sm:max-w-[300px] lg:max-w-[340px]"
+          style={{ aspectRatio: '1' }}
+        />
     </div>
   )
 })
