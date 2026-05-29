@@ -3,7 +3,7 @@ import rawEffects from '@/data/subjective-effects.json'
 import mdmaEffectsJson from '@/data/mdma-effects.json'
 import type { Substance, Category, ComboRule, ComboLevel, HarmLevel, CategoryMeta, SubstanceCombo, Roa, RoaDose, RoaDuration, SubjectiveEffects, ScoreFactor, ScoreBreakdown } from '@/lib/types'
 import { CATEGORY_REGISTRY, COMBO_LEVEL_REGISTRY } from '@/lib/registry'
-import { CATEGORIES, CATEGORY_COLORS, COMBO_DESCRIPTIONS } from '@/lib/types'
+import { CATEGORY_COLORS, COMBO_DESCRIPTIONS } from '@/lib/types'
 
 interface RawScoreFactor { l: string; e: string; su?: string }
 interface RawScoreBreakdown { factors: RawScoreFactor[]; su?: string }

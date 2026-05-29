@@ -23,8 +23,6 @@ const SubstancePopup = dynamic(() => import('@/features/substances/components/Su
   ),
 })
 
-const SurrealPiano = dynamic(() => import('@/components/SurrealPiano'), { ssr: false })
-
 type Section = 'substances' | 'matrix' | 'tools'
 
 interface HomeClientProps {
@@ -41,7 +39,6 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [activeSection, setActiveSection] = useState<Section>('substances')
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [showBackToTop, setShowBackToTop] = useState(false)
   const [isTouch, setIsTouch] = useState(false)
   const isTouchRef = useRef(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
@@ -50,7 +47,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const popupRef = useRef(popupSubstance)
   const { bodyWeight, weightUnit, userLevel, onboarded, uiSounds, toggleSettings, setSettingsOpen, setUISounds, hydrate: hydrateSettings } = useSettingsStore()
   const { toggleTheme, hydrate: hydrateTheme } = useThemeStore()
-  const { pianoOpen, setPianoOpen } = useUIStore()
+
 
   const userLevelLabel = userLevel === 'new' ? 'New' : userLevel === 'common' ? 'Common' : 'Heavy'
 
@@ -85,19 +82,13 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   useEffect(() => {
     let ticking = false
     let lastScrolled = false
-    let lastBackToTop = false
     const onScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           const nowScrolled = window.scrollY > 50
-          const nowBackToTop = window.scrollY > 500
           if (nowScrolled !== lastScrolled) {
             lastScrolled = nowScrolled
             setScrolled(nowScrolled)
-          }
-          if (nowBackToTop !== lastBackToTop) {
-            lastBackToTop = nowBackToTop
-            setShowBackToTop(nowBackToTop)
           }
           ticking = false
         })
@@ -261,22 +252,12 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
             <div className="w-px h-5 bg-[var(--border)] mx-1 sm:mx-2" />
       <button
         onClick={() => { playToggle(); toggleTheme() }}
-        className="theme-btn p-2.5 rounded-xl animate-[pulse_3s_infinite]"
+        className="theme-btn p-2.5 rounded-xl"
         aria-label="Theme"
         title="Theme Select"
             >
               <svg className="w-5 h-5 text-[var(--accent)] hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
-              </svg>
-            </button>
-            <button
-              onClick={() => { playToggle(); setPianoOpen(true) }}
-              className="theme-btn p-2.5 rounded-xl ml-1"
-              aria-label="Play synth piano"
-              title="Play synth piano"
-            >
-              <svg className="w-5 h-5 text-[var(--accent2)] hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 0L21 8.25M19.5 6C18.672 6 18 6.672 18 7.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zM9 15l10.5-3m0 0L21 14.25M19.5 12c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zM9 9c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5S9.828 9 9 9zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5S9.828 15 9 15z" />
               </svg>
             </button>
           </div>
@@ -407,16 +388,6 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         <span className="text-[10px] font-mono uppercase tracking-[0.12em]">Theme</span>
       </button>
       <button
-        onClick={() => { playToggle(); setPianoOpen(true) }}
-        className="theme-btn flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg"
-        aria-label="Play synth piano"
-      >
-        <svg className="w-6 h-6 text-[var(--accent2)] hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 0L21 8.25M19.5 6C18.672 6 18 6.672 18 7.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zM9 15l10.5-3m0 0L21 14.25M19.5 12c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zM9 9c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5S9.828 9 9 9zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5S9.828 15 9 15z" />
-        </svg>
-        <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-[var(--accent2)]">Synth</span>
-      </button>
-      <button
         onClick={() => { playClick(); toggleSettings() }}
         className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 text-[var(--text3)] hover:text-[var(--accent2)]"
             aria-label="Settings"
@@ -457,8 +428,6 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
       <ThemeSelector />
 
-      <SurrealPiano />
-
       <ScoreBreakdownPopup substances={substances} />
 
       {popupSubstance && (
@@ -472,7 +441,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       )}
 
       {/* Keyboard shortcuts hint */}
-      {!isTouch && !showBackToTop && (
+      {!isTouch && (
         <button
           onClick={() => setShowShortcuts(true)}
           className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-[var(--accent)]/10 backdrop-blur-sm border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)]/20 transition-all duration-300 hover:scale-110 group"
@@ -481,19 +450,6 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         >
           <svg className="w-5 h-5 text-[var(--accent2)] group-hover:text-[var(--accent)] transition-colors" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18m-7.5 6.75l-1.591 1.591M12 13.875l1.591-1.591M7.5 10.5H6.375m4.284-5.674l-1.59-1.59m-3.36 5.844l1.59 1.59" />
-          </svg>
-        </button>
-      )}
-
-      {/* Desktop Back to Top Button */}
-      {!isTouch && showBackToTop && (
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-[var(--accent)]/20 backdrop-blur-sm border border-[var(--border)] flex items-center justify-center hover:bg-[var(--accent)]/30 transition-all duration-300 hover:scale-110"
-          aria-label="Back to top"
-        >
-          <svg className="w-5 h-5 text-[var(--accent2)]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
           </svg>
         </button>
       )}

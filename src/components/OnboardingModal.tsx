@@ -2,13 +2,7 @@
 
 import { useState } from 'react'
 import { useSettingsStore } from '@/stores/settings'
-import type { UserLevel } from '@/lib/types'
-
-const USER_LEVEL_OPTIONS: { value: UserLevel; label: string; description: string; color: string }[] = [
-  { value: 'new', label: 'New', description: 'Little to no tolerance', color: '#10b981' },
-  { value: 'common', label: 'Common', description: 'Moderate tolerance, regular use', color: '#f59e0b' },
-  { value: 'heavy', label: 'Heavy', description: 'Significant tolerance, higher doses', color: '#ef4444' },
-]
+import { USER_LEVEL_OPTIONS } from '@/lib/user-level'
 
 export default function OnboardingModal() {
   const {

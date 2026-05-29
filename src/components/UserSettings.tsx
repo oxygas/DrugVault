@@ -3,24 +3,7 @@
 import { useState } from 'react'
 import { useSettingsStore } from '@/stores/settings'
 import type { UserLevel } from '@/lib/types'
-
-const USER_LEVEL_INFO: Record<UserLevel, { label: string; description: string; color: string }> = {
-  new: {
-    label: 'New',
-    description: 'Little to no tolerance, lower starting doses recommended',
-    color: '#10b981',
-  },
-  common: {
-    label: 'Common',
-    description: 'Moderate tolerance with regular use',
-    color: '#f59e0b',
-  },
-  heavy: {
-    label: 'Heavy',
-    description: 'Significant tolerance, higher doses may be needed',
-    color: '#ef4444',
-  },
-}
+import { USER_LEVEL_INFO } from '@/lib/user-level'
 
 export default function UserSettings() {
   const {

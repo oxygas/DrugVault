@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
 const DigitalRain = dynamic(() => import('@/components/DigitalRain'), { ssr: false })
-const AmbientSound = dynamic(() => import('@/components/AmbientSound'), { ssr: false })
 
 export default function VisualEffects() {
   const pathname = usePathname()
@@ -82,7 +81,6 @@ export default function VisualEffects() {
         </div>
       )}
       <div className="mouse-glow" />
-      <AmbientSound />
     </>
   )
 }

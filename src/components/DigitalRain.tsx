@@ -130,7 +130,7 @@ export default function DigitalRain() {
       width={typeof window !== 'undefined' ? window.innerWidth : 1920}
       height={typeof window !== 'undefined' ? window.innerHeight : 1080}
       className="digital-rain-canvas fixed inset-0 pointer-events-none z-[1]"
-      style={{ opacity: 0.2, maskImage: 'linear-gradient(to bottom, transparent 8%, black 35%, transparent 85%)' }}
+      style={{ opacity: 0.4, maskImage: 'linear-gradient(to bottom, transparent 8%, black 35%, transparent 85%)' }}
       aria-hidden="true"
     />
   )

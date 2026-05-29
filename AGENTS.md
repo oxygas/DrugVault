@@ -30,7 +30,7 @@ A Next.js 16 App Router SSG site: 618 substances, 619+ static pages, combo matri
 
 ## State Management
 - **5 zustand stores**: `src/stores/bookmarks.ts`, `journal.ts`, `settings.ts`, `theme.ts`, `ui.ts`.
-- **Theme**: 10 themes from `src/themes/config.ts` via `data-theme` attribute on `<html>`, managed by `src/stores/theme.ts`.
+- **Theme**: 9 themes from `src/themes/config.ts` via `data-theme` attribute on `<html>`, managed by `src/stores/theme.ts`.
 
 ## Performance (do not regress)
 - **DigitalRain.tsx**: RAF loop MUST pause when `document.hidden` and resume on `visibilitychange` — was running 24/7 on full-viewport canvas.
@@ -51,7 +51,6 @@ A Next.js 16 App Router SSG site: 618 substances, 619+ static pages, combo matri
 - `z-index: 1` — Particles, DigitalRain canvas
 - `z-index: 2` — Mouse-glow radial follower
 - `z-index: 99` — Chromatic aberration overlay
-- `z-index: 9998` — AmbientSound toggle button
 - `z-index: 9999` — CRT scanlines + vignette
 - Reduced motion: `prefers-reduced-motion: reduce` kills all layers above z-2 via `display: none`.
 
@@ -62,6 +61,5 @@ A Next.js 16 App Router SSG site: 618 substances, 619+ static pages, combo matri
 
 ## Environment & Setup
 - **Required**: `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` in `.env.local` (Sanity Studio crashes without them).
-- **Sentry**: configured in `next.config.mjs` with tunnel `/monitoring`. DSN in `sentry.server.config.ts`, `sentry.client.config.ts`, `sentry.edge.config.ts`. `@sentry/nextjs` in deps, `@sentry/wizard` in devDeps.
-- **Sanity**: Packages exist but unused in `src/` — Studio schema at `src/sanity/schemas/`. Studio route at `/studio/[[...index]]/page.tsx`. Safe to remove if unwanted.
+- **Sentry**: configured in `next.config.mjs` with tunnel `/monitoring`. DSN in `sentry.server.config.ts`, `sentry.client.config.ts`, `sentry.edge.config.ts`. `@sentry/nextjs` in deps.
 - **Vercel deploy**: `vercel.json` sets `iad1` region, security headers, standard build.
