@@ -61,6 +61,10 @@ interface SettingsState {
   hydrate: () => void
 }
 
+function computeKg(bodyWeight: number, weightUnit: 'kg' | 'lb'): number {
+  return weightUnit === 'lb' ? bodyWeight * 0.453592 : bodyWeight
+}
+
 export const useSettingsStore = create<SettingsState>()((set, get) => ({
   bodyWeight: DEFAULTS.bodyWeight,
   weightUnit: DEFAULTS.weightUnit,
@@ -68,16 +72,13 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   settingsOpen: false,
   onboarded: false,
   hydrated: false,
-  get weightKg() {
-    const s = get()
-    return s.weightUnit === 'lb' ? s.bodyWeight * 0.453592 : s.bodyWeight
-  },
+  weightKg: computeKg(DEFAULTS.bodyWeight, DEFAULTS.weightUnit),
   setBodyWeight: (w) => {
-    set({ bodyWeight: w })
+    set((s) => ({ bodyWeight: w, weightKg: computeKg(w, s.weightUnit) }))
     saveToStorage({ bodyWeight: w })
   },
   setWeightUnit: (u) => {
-    set({ weightUnit: u })
+    set((s) => ({ weightUnit: u, weightKg: computeKg(s.bodyWeight, u) }))
     saveToStorage({ weightUnit: u })
   },
   setUserLevel: (l) => {
@@ -96,6 +97,7 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
     set({
       bodyWeight: data.bodyWeight,
       weightUnit: data.weightUnit,
+      weightKg: computeKg(data.bodyWeight, data.weightUnit),
       userLevel: data.userLevel,
       onboarded: data.onboarded,
       hydrated: true,

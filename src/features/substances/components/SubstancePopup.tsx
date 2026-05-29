@@ -23,9 +23,10 @@ function getFavorites(): string[] {
 }
 
 function toggleFavorite(name: string) {
-  const favs = getFavorites().filter(n => n !== name)
-  if (!favs.includes(name)) favs.push(name)
-  else favs.splice(favs.indexOf(name), 1)
+  const favs = getFavorites()
+  const idx = favs.indexOf(name)
+  if (idx >= 0) favs.splice(idx, 1)
+  else favs.push(name)
   localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs))
   return favs
 }
@@ -140,7 +141,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
       className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center backdrop-blur-sm"
       style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.08) 0%, rgba(236,72,153,0.04) 30%, rgba(0,0,0,0.65) 70%)' } as React.CSSProperties}
       onClick={e => { if (e.target === overlayRef.current) onClose() }}
-      onTouchStart={e => { if (e.target === overlayRef.current) onClose() }}
+      onPointerDown={e => { if (e.target === overlayRef.current) onClose() }}
       role="dialog"
       aria-modal="true"
       aria-label={`${substance.name} details`}
@@ -349,7 +350,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
           })}
         </div>
       </div>
-              {substance.interactions.length > 0 && (
+              {substance.interactions?.length > 0 && (
                 <InfoList title="Specific Interactions" items={substance.interactions} color="var(--orange)" icon="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
               )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

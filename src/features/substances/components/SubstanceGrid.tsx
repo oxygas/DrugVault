@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import type { Substance } from '@/lib/types'
 import SubstanceCard from './SubstanceCard'
 
@@ -8,7 +9,7 @@ interface SubstanceGridProps {
   onSubstanceClick: (substance: Substance) => void
 }
 
-export default function SubstanceGrid({ substances, onSubstanceClick }: SubstanceGridProps) {
+function SubstanceGridInner({ substances, onSubstanceClick }: SubstanceGridProps) {
   if (substances.length === 0) {
     return (
       <div className="text-center py-16 sm:py-24">
@@ -35,3 +36,5 @@ export default function SubstanceGrid({ substances, onSubstanceClick }: Substanc
     </div>
   )
 }
+
+export default memo(SubstanceGridInner)

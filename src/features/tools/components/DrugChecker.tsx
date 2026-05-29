@@ -38,12 +38,8 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
         setDropdownOpen(false)
       }
     }
-    document.addEventListener('mousedown', handleClick)
-    document.addEventListener('touchstart', handleClick)
-    return () => {
-      document.removeEventListener('mousedown', handleClick)
-      document.removeEventListener('touchstart', handleClick)
-    }
+    document.addEventListener('pointerdown', handleClick)
+    return () => document.removeEventListener('pointerdown', handleClick)
   }, [])
 
   const subComboMap = useMemo(() => {

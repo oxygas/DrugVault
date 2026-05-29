@@ -489,7 +489,7 @@ body::before {
 .glass-hover:hover {
   background: var(--surface-hover);
   border-color: var(--border2);
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .glass-strong {
@@ -1587,9 +1587,10 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
   }
 }
 
-  /* Vaporwave card — compact replacement for .substance-card */
 .vaporwave-card {
   contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 84px;
   display: block;
   padding: 12px 14px;
   max-width: 100%;

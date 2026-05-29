@@ -37,19 +37,22 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
-  const [isTouch, setIsTouch] = useState(false)
+  const [isTouch] = useState(() => typeof window !== 'undefined' && 'ontouchstart' in window)
   const [showShortcuts, setShowShortcuts] = useState(false)
 
   const searchInputRef = useRef<HTMLInputElement | null>(null)
+  const popupRef = useRef(popupSubstance)
   const { bodyWeight, weightUnit, userLevel, onboarded, toggleSettings, setSettingsOpen, hydrate: hydrateSettings } = useSettingsStore()
   const { toggleTheme, hydrate: hydrateTheme } = useThemeStore()
 
   const userLevelLabel = userLevel === 'new' ? 'New' : userLevel === 'common' ? 'Common' : 'Heavy'
-  const isMobile = isTouch
+  const isMobile = typeof window !== 'undefined' && 'ontouchstart' in window
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsTouch('ontouchstart' in window)
+    popupRef.current = popupSubstance
+  }, [popupSubstance])
+
+  useEffect(() => {
     hydrateTheme()
     hydrateSettings()
     requestAnimationFrame(() => setMounted(true))
@@ -91,6 +94,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
     if (isMobile) return
 
     const onKeyDown = (e: KeyboardEvent) => {
+      const ps = popupRef.current
       // Alt+1/2/3 for section switching
       if (e.altKey && e.key === '1') {
         e.preventDefault()
@@ -105,10 +109,10 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         handleSectionChange('tools')
       }
       // Escape to close popup or shortcuts modal
-      if (e.key === 'Escape' && popupSubstance) {
+      if (e.key === 'Escape' && ps) {
         setPopupSubstance(null)
       }
-      if (e.key === 'Escape' && !popupSubstance && showShortcuts) {
+      if (e.key === 'Escape' && !ps && showShortcuts) {
         setShowShortcuts(false)
       }
       // Ctrl+K or Cmd+K for search focus (if search exists)
@@ -125,12 +129,12 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
         toggleSettings()
       }
       // ? to toggle shortcuts modal
-      if (e.key === '?' && !popupSubstance && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)) {
+      if (e.key === '?' && !ps && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)) {
         e.preventDefault()
         setShowShortcuts(prev => !prev)
       }
       // / to focus search
-      if (e.key === '/' && !popupSubstance && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)) {
+      if (e.key === '/' && !ps && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)) {
         e.preventDefault()
         if (searchInputRef.current) {
           searchInputRef.current.focus()
@@ -141,7 +145,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isMobile, popupSubstance, showShortcuts, toggleSettings, handleSectionChange])
+  }, [isMobile, showShortcuts, toggleSettings, handleSectionChange])
 
   const toggleCategory = useCallback((cat: Category) => {
     setSelectedCategories(prev =>
@@ -179,12 +183,14 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
     });
   }, [substances]);
 
-  const sectionProps: Record<Section, Record<string, unknown>> = {
+  const onCategoryClear = useCallback(() => setSelectedCategories([]), [])
+
+  const sectionProps = useMemo((): Record<Section, Record<string, unknown>> => ({
     substances: {
       substances: sortedSubstances,
       selectedCategories,
       onCategoryToggle: toggleCategory,
-      onCategoryClear: () => setSelectedCategories([]),
+      onCategoryClear,
       onSubstanceClick: setPopupSubstance,
       searchInputRef,
     },
@@ -200,7 +206,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
       substanceCombos,
       onFindSubstance: findSubstance,
     },
-  }
+  }), [sortedSubstances, selectedCategories, toggleCategory, onCategoryClear, substances, comboMatrix, isMobile, substanceCombos, findSubstance])
 
   return (
     <div className={`flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px] ${isMobile ? 'pb-16' : ''}`}>

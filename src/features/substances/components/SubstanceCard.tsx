@@ -1,6 +1,6 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import Link from 'next/link'
 import type { Substance } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
@@ -16,6 +16,11 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
   const catColor = CATEGORY_COLORS[substance.category]
   const slug = slugify(substance.name)
 
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    onClick(substance)
+  }, [onClick, substance])
+
   const allEffects = substance.subjectiveEffects?.allEffects?.slice(0, 3).map(e => e.name)
   const mostLoved = substance.subjectiveEffects?.mostLoved?.slice(0, 3)
   const effects = allEffects?.length ? allEffects : mostLoved?.length ? mostLoved : []
@@ -27,7 +32,7 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
   return (
     <Link
       href={`/substances/${slug}`}
-      onClick={(e) => { e.preventDefault(); onClick(substance) }}
+      onClick={handleClick}
       className="vaporwave-card w-full"
       style={{ '--tube-c': catColor, ...style } as React.CSSProperties}
       aria-label={`View ${substance.name}`}
