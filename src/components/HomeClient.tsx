@@ -26,7 +26,7 @@ type Section = 'substances' | 'matrix' | 'tools'
 
 interface HomeClientProps {
   substances: Substance[]
-  stats: { total: number; avgHarm: number; avgAddiction: number; extremeCount: number; categories: number }
+  stats: { total: number; avgHarm: number; avgAddiction: number; avgOdRisk: number; avgWithdrawal: number; avgInteraction: number; avgDependence: number; extremeCount: number; categories: number }
   categories: CategoryMeta[]
   comboMatrix: Record<string, ComboLevel>
   substanceCombos?: SubstanceCombo[]
