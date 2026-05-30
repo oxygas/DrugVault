@@ -27,7 +27,6 @@ const nextConfig = {
       'framer-motion',
       'lucide-react',
       'zod',
-      'react-virtuoso',
     ],
   },
 }

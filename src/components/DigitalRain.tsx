@@ -73,6 +73,7 @@ export default function DigitalRain() {
 
       ctx!.clearRect(0, 0, w, h)
 
+      ctx!.font = '11px monospace'
       let ci = 0
       for (const drop of drops) {
         if (drop.delay > 0) {
@@ -98,7 +99,6 @@ export default function DigitalRain() {
           const isHead = i === 0
 
           if (isHead) {
-            ctx!.font = 'bold 12px monospace'
             ctx!.fillStyle = 'rgba(255, 0, 170, 0.9)'
             ctx!.shadowColor = 'rgba(255, 0, 170, 0.5)'
             ctx!.shadowBlur = 8
@@ -106,7 +106,6 @@ export default function DigitalRain() {
             ctx!.shadowBlur = 0
           } else {
             const alpha = 0.15 * (1 - i / drop.length)
-            ctx!.font = '11px monospace'
             ctx!.fillStyle = `rgba(207, 10, 110, ${alpha})`
             ctx!.fillText(char, drop.x, y)
           }

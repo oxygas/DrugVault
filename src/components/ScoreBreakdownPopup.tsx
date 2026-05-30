@@ -26,7 +26,8 @@ function getSeverityColor(score: number): string {
 }
 
 export default function ScoreBreakdownPopup({ substances }: ScoreBreakdownPopupProps) {
-  const { scoreBreakdown, closeScoreBreakdown } = useUIStore()
+  const scoreBreakdown = useUIStore(s => s.scoreBreakdown)
+  const closeScoreBreakdown = useUIStore(s => s.closeScoreBreakdown)
   const { isOpen, substanceName, scoreKey } = scoreBreakdown
   const overlayRef = useRef<HTMLDivElement>(null)
   const popupRef = useRef<HTMLDivElement>(null)

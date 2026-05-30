@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, memo } from 'react'
 import type { Substance, Category } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
 import { searchSubstances } from '@/lib/data'
@@ -8,6 +8,7 @@ import { playCategoryClick, playClick } from '@/lib/ui-sounds'
 
 const RECENT_SEARCHES_KEY = 'tripgem_recent_searches'
 const MAX_RECENT = 8
+const CATEGORY_ENTRIES = Object.entries(CATEGORY_COLORS) as [Category, string][]
 
 function getRecentSearches(): Substance['name'][] {
   if (typeof window === 'undefined') return []
@@ -37,7 +38,7 @@ interface SearchBarProps {
   externalInputRef?: React.RefObject<HTMLInputElement | null>
 }
 
-export default function SearchBar({ substances, onSelect, selectedCategories, onCategoryToggle, onCategoryClear, externalInputRef }: SearchBarProps) {
+function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryToggle, onCategoryClear, externalInputRef }: SearchBarProps) {
   const [query, setQuery] = useState('')
   const [focused, setFocused] = useState(false)
   const [results, setResults] = useState<Substance[]>([])
@@ -74,8 +75,6 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
     document.addEventListener('pointerdown', handleClick)
     return () => document.removeEventListener('pointerdown', handleClick)
   }, [inputRef, dropdownRef])
-
-  const categories = Object.entries(CATEGORY_COLORS) as [Category, string][]
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-3">
@@ -217,7 +216,7 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
       </div>
 
       <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
-      {categories.map(([cat, color]) => (
+      {CATEGORY_ENTRIES.map(([cat, color]) => (
         <button
           key={cat}
           onClick={() => { playCategoryClick(cat); onCategoryToggle(cat) }}
@@ -231,3 +230,5 @@ export default function SearchBar({ substances, onSelect, selectedCategories, on
     </div>
   )
 }
+
+export default memo(SearchBarInner)

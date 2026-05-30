@@ -315,15 +315,27 @@ let statsCache: {
 export function getSubstanceStats() {
   if (statsCache) return statsCache
   const total = substances.length
-  const avgHarm = Math.round(substances.reduce((s, d) => s + d.harmScore, 0) / total)
-  const avgAddiction = Math.round(substances.reduce((s, d) => s + d.addictionScore, 0) / total)
-  const avgOdRisk = Math.round(substances.reduce((s, d) => s + d.odRisk, 0) / total)
-  const avgWithdrawal = Math.round(substances.reduce((s, d) => s + d.withdrawalSeverity, 0) / total)
-  const avgInteraction = Math.round(substances.reduce((s, d) => s + d.interactionDanger, 0) / total)
-  const avgDependence = Math.round(substances.reduce((s, d) => s + d.dependenceLiability, 0) / total)
-  const extremeCount = substances.filter(s => s.harmLevel === 'extreme').length
-  const categories = byCategory.size
-  statsCache = { total, avgHarm, avgAddiction, avgOdRisk, avgWithdrawal, avgInteraction, avgDependence, extremeCount, categories }
+  let harm = 0, addiction = 0, odRisk = 0, withdrawal = 0, interaction = 0, dependence = 0, extreme = 0
+  for (const s of substances) {
+    harm += s.harmScore
+    addiction += s.addictionScore
+    odRisk += s.odRisk
+    withdrawal += s.withdrawalSeverity
+    interaction += s.interactionDanger
+    dependence += s.dependenceLiability
+    if (s.harmLevel === 'extreme') extreme++
+  }
+  statsCache = {
+    total,
+    avgHarm: Math.round(harm / total),
+    avgAddiction: Math.round(addiction / total),
+    avgOdRisk: Math.round(odRisk / total),
+    avgWithdrawal: Math.round(withdrawal / total),
+    avgInteraction: Math.round(interaction / total),
+    avgDependence: Math.round(dependence / total),
+    extremeCount: extreme,
+    categories: byCategory.size,
+  }
   return statsCache
 }
 

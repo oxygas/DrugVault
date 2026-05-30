@@ -431,10 +431,6 @@ body::before {
     var(--body-grad-4);
   animation: bg-shift 8s ease-in-out infinite alternate;
 }
-@media (prefers-reduced-motion: reduce) {
-  body::before { animation: none; }
-}
-
 .font-mono { font-family: var(--font-mono); }
 .font-display { font-family: var(--font-display, var(--font-inter)); }
 .skeleton-shimmer {
@@ -811,13 +807,6 @@ body::before {
 @keyframes scanlines-breathe {
   0%, 100% { opacity: 0.95; }
   50% { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .chromatic-overlay { display: none; }
-  .cyber-grid { opacity: 0.12; }
-  .vaporwave-scanlines { display: none; }
-  .digital-rain-canvas { display: none; }
 }
 
 .chemical-structure-container {

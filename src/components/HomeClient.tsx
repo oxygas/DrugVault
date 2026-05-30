@@ -5,15 +5,15 @@ import dynamic from 'next/dynamic'
 import type { Substance, Category, ComboLevel, CategoryMeta, SubstanceCombo } from '@/lib/types'
 import { FEATURES, type FeatureConfig } from '@/features/registry'
 import StatsBar from '@/components/StatsBar'
-import KeyboardShortcutsModal from '@/components/KeyboardShortcutsModal'
-import UserSettings from '@/components/UserSettings'
-import ThemeSelector from '@/components/ThemeSelector'
-import OnboardingModal from '@/components/OnboardingModal'
-import ScoreBreakdownPopup from '@/components/ScoreBreakdownPopup'
 import { useSettingsStore } from '@/stores/settings'
 import { useThemeStore } from '@/stores/theme'
-import { useUIStore } from '@/stores/ui'
 import { playClick, playHover, playOpen, playClose, playToggle, playSectionChange, playSearch, hydrateUIsounds, setUIsoundsEnabled } from '@/lib/ui-sounds'
+
+const KeyboardShortcutsModal = dynamic(() => import('@/components/KeyboardShortcutsModal'))
+const UserSettings = dynamic(() => import('@/components/UserSettings'))
+const ThemeSelector = dynamic(() => import('@/components/ThemeSelector'))
+const OnboardingModal = dynamic(() => import('@/components/OnboardingModal'))
+const ScoreBreakdownPopup = dynamic(() => import('@/components/ScoreBreakdownPopup'))
 
 const SubstancePopup = dynamic(() => import('@/features/substances/components/SubstancePopup'), {
   loading: () => (
@@ -45,8 +45,14 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const popupRef = useRef(popupSubstance)
-  const { bodyWeight, weightUnit, userLevel, onboarded, uiSounds, toggleSettings, setSettingsOpen, setUISounds, hydrate: hydrateSettings } = useSettingsStore()
-  const { toggleTheme, hydrate: hydrateTheme } = useThemeStore()
+  const bodyWeight = useSettingsStore(s => s.bodyWeight)
+  const weightUnit = useSettingsStore(s => s.weightUnit)
+  const userLevel = useSettingsStore(s => s.userLevel)
+  const uiSounds = useSettingsStore(s => s.uiSounds)
+  const toggleSettings = useSettingsStore(s => s.toggleSettings)
+  const hydrateSettings = useSettingsStore(s => s.hydrate)
+  const toggleTheme = useThemeStore(s => s.toggleTheme)
+  const hydrateTheme = useThemeStore(s => s.hydrate)
 
 
   const userLevelLabel = userLevel === 'new' ? 'New' : userLevel === 'common' ? 'Common' : 'Heavy'
@@ -99,11 +105,14 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const activeSectionRef = useRef(activeSection)
+  useEffect(() => { activeSectionRef.current = activeSection }, [activeSection])
+
   const handleSectionChange = useCallback((section: Section) => {
-    if (section === activeSection) return
+    if (section === activeSectionRef.current) return
     playSectionChange()
     setActiveSection(section)
-  }, [activeSection])
+  }, [])
 
   // Keyboard shortcuts for desktop
   useEffect(() => {
@@ -165,7 +174,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
 
   const toggleCategory = useCallback((cat: Category) => {
     setSelectedCategories(prev =>
-      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+      prev.length === 1 && prev[0] === cat ? [] : [cat]
     )
   }, [])
 
