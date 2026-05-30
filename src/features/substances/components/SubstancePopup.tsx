@@ -372,7 +372,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
                   <DurationTimeline substance={substance} />
                   <div>
                     <h4 className="text-sm font-semibold text-[var(--text2)] mb-2 font-display">Chemical Structure</h4>
-                    <div className="chemical-structure-container rounded-xl p-3 flex items-center justify-center relative min-h-[120px]">
+                    <div className="chemical-structure-container rounded-xl p-1 flex items-center justify-center relative">
                       <ChemicalStructureImage
                         substanceName={substance.name}
                         smiles={substance.smiles}
@@ -580,14 +580,14 @@ function ChemicalStructureImage({
   }
 
   if (source === 'sanity') {
-    return <Image src={imageUrl} alt={alt} width={width} height={height} className="chemical-structure-image max-h-40 sm:max-h-48 w-auto object-contain" onError={() => setError(true)} />
+    return <Image src={imageUrl} alt={alt} width={width} height={height} className="chemical-structure-image w-auto h-auto max-w-full max-h-96 object-contain" onError={() => setError(true)} />
   }
 
   return (
     <img
       src={imageUrl}
       alt={alt}
-      className="chemical-structure-image max-h-40 sm:max-h-48 w-auto"
+      className="chemical-structure-image w-auto h-auto max-w-full max-h-96"
       loading="lazy"
       onLoad={() => setLoading(false)}
       onError={() => {
