@@ -1148,6 +1148,23 @@ body::before {
   animation: heart-beat 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+@keyframes splash-fade-out {
+  0% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+.splash-overlay {
+  animation: splash-fade-out 0.6s ease-out 1.5s forwards;
+}
+
+@keyframes loading-bar-fill {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0%); }
+  100% { transform: translateX(100%); }
+}
+.loading-bar-fill {
+  animation: loading-bar-fill 1.8s ease-in-out infinite;
+}
+
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -2058,6 +2075,8 @@ transition: opacity 0.3s ease;
 .tripgem-logo { animation: none !important; }
 .tripgem-text-trip { animation: none !important; background: var(--neon-magenta, #cf0a6e); -webkit-text-fill-color: transparent; }
 .tripgem-text-gem { animation: none !important; text-shadow: 0 0 12px rgba(255,255,255,0.3); color: #fff; }
+.loading-bar-fill { animation: none !important; background: var(--text4); }
+.splash-overlay { animation: none !important; display: none; }
 }
 
 /* Mobile card overrides */

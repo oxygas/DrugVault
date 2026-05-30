@@ -7,6 +7,7 @@ import { QueryProvider } from '@/providers/query-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from 'sonner'
 import VisualEffects from '@/components/VisualEffects'
+import SplashScreen from '@/components/SplashScreen'
 import { DEFAULT_THEME } from '@/themes/config'
 import { Analytics } from "@vercel/analytics/next"
 
@@ -166,6 +167,7 @@ export default async function RootLayout({
                 `,
               }}
             />
+            <div id="splash-wrapper"><SplashScreen /></div>
             <div className="relative z-10 min-h-[100dvh] flex flex-col">{children}</div>
             <Analytics />
             <Toaster
