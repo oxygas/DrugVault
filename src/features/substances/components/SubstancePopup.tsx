@@ -12,6 +12,8 @@ import ToleranceSection from '@/components/ToleranceSection'
 import EffectsTabContent from '@/components/EffectsTabContent'
 import LegalStatusTabContent from '@/components/LegalStatusTabContent'
 import ScoreBadges from '@/components/ScoreBadges'
+import HarmReductionCard from '@/components/HarmReductionCard'
+import CategoryHarmReduction from '@/components/CategoryHarmReduction'
 
 const SubjectiveEffectsModal = lazy(() => import('@/components/SubjectiveEffectsModal'))
 
@@ -362,6 +364,8 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
           {tab === 'overview' && (
             <>
               <ScoreBadges substance={substance} className="mb-2" />
+              <HarmReductionCard substance={substance} />
+              <CategoryHarmReduction category={substance.category} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                 <RadarChart substance={substance} />
                 <div className="space-y-4">

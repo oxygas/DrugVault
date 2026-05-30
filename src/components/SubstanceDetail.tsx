@@ -14,6 +14,8 @@ import ToleranceSection from '@/components/ToleranceSection'
 import EffectsTabContent from '@/components/EffectsTabContent'
 import LegalStatusTabContent from '@/components/LegalStatusTabContent'
 import ScoreBadges from '@/components/ScoreBadges'
+import HarmReductionCard from '@/components/HarmReductionCard'
+import CategoryHarmReduction from '@/components/CategoryHarmReduction'
 import dynamic from 'next/dynamic'
 
 const SubjectiveEffectsModal = dynamic(
@@ -176,6 +178,8 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
         <div className="space-y-6 sm:space-y-8">
           {tab === 'overview' && (
             <>
+              <HarmReductionCard substance={substance} />
+              <CategoryHarmReduction category={substance.category} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <RadarChart substance={substance} />
                 <div className="space-y-4">

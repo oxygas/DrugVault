@@ -35,6 +35,7 @@ export const CATEGORY_REGISTRY: CategoryConfig[] = [
   { name: 'Antipsychotics', color: '#d946ef' },
   { name: 'Dopaminergics', color: '#0ea5e9' },
   { name: 'Supplements', color: '#84cc16' },
+  { name: 'Cathinones', color: '#d97706' },
 ]
 
 export const COMBO_LEVEL_REGISTRY: ComboLevelConfig[] = [
