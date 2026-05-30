@@ -33,26 +33,27 @@ export default function StatsBar({ stats, categories }: StatsBarProps) {
       {items.map((item, i) => (
         <div
           key={item.label}
-          className="metric-card group text-center p-3 sm:p-4 glass-aero relative transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:z-10 hover:shadow-2xl"
-          style={{ '--metric-c': item.color, animationDelay: `${i * 80}ms` } as React.CSSProperties}
+          className="metric-card group text-center p-3 sm:p-4 glass-aero relative transition-all duration-300"
+          style={{ '--metric-c': item.color, contain: 'none', animationDelay: `${i * 80}ms` } as React.CSSProperties}
         >
           {/* Subtle background glow on hover */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           
-          <div className="flex items-center justify-center gap-2 mb-3 relative z-10">
+          <div className="flex items-center justify-center mb-3 relative z-10">
             <div
-              className="w-9 h-9 lg:w-11 lg:h-11 rounded-lg flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:rotate-3 group-hover:scale-110 shadow-lg"
-              style={{ background: `color-mix(in srgb, ${item.color} 15%, transparent)`, border: `1px solid color-mix(in srgb, ${item.color} 25%, transparent)` }}
+              className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
+              style={{ background: `color-mix(in srgb, ${item.color} 12%, transparent)`, border: `1px solid color-mix(in srgb, ${item.color} 20%, transparent)` }}
             >
-              <svg className="w-4.5 h-4.5 lg:w-5.5 lg:h-5.5" style={{ color: item.color }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <svg className="w-5 h-5 lg:w-6 lg:h-6" style={{ color: item.color }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
               </svg>
             </div>
           </div>
-          <div className="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl font-display font-bold tracking-tight font-mono" style={{ color: item.color, animation: `count-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${i * 80 + 200}ms both` }}>
+          <div className="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl font-display font-bold tracking-tight font-mono leading-none mb-3" style={{ color: item.color, animation: `count-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${i * 80 + 200}ms both` }}>
             {item.value}
           </div>
-          <span className="text-[10px] lg:text-xs text-[var(--text3)] font-medium mt-1.5 block leading-tight">{item.label}</span>
+          <div className="w-8 h-px mx-auto mb-2 rounded-full opacity-30" style={{ background: `linear-gradient(90deg, transparent, ${item.color}, transparent)` }} />
+          <span className="text-[11px] lg:text-xs text-[var(--text3)] font-semibold block leading-tight tracking-wider uppercase">{item.label}</span>
         </div>
       ))}
     </div>

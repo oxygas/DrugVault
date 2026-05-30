@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import type { Substance } from '@/lib/types'
 import legalData from '@/data/legal-status.json'
 import { useGeo } from '@/lib/geo'
+import { StateFlagSvg } from '@/lib/state-flags'
 
 function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
@@ -43,13 +44,10 @@ function getStatusTier(status: string): 'green' | 'amber' | 'red' {
   return 'amber'
 }
 
-function StateFlag({ code, color }: { code: string; color: string }) {
+function StateFlag({ code }: { code: string }) {
   return (
-    <span
-      className="inline-flex items-center justify-center w-6 h-4 rounded-sm text-[7px] font-mono font-bold text-white flex-shrink-0"
-      style={{ background: color, boxShadow: `0 0 4px ${color}40`, letterSpacing: '0.03em' }}
-    >
-      {code}
+    <span className="inline-flex items-center justify-center w-8 h-6 rounded-[3px] overflow-hidden flex-shrink-0">
+      <StateFlagSvg code={code} />
     </span>
   )
 }
@@ -80,18 +78,18 @@ function StatusCard({
     >
       <div className="neon-stripe" style={{ background: sc }} />
       <div className="diagonal-shine" />
-      <div className="flex items-center gap-2.5 relative z-[1]">
-          {isState && stateCode ? <StateFlag code={stateCode} color={flag} /> : <span className="text-lg flex-shrink-0">{flag}</span>}
+      <div className="flex items-center gap-3 relative z-[1]">
+          {isState && stateCode ? <StateFlag code={stateCode} /> : <span className="text-xl flex-shrink-0">{flag}</span>}
         <div className="flex-1 min-w-0">
-          <div className="text-[11px] font-mono text-[var(--text4)] mb-0.5">{label}</div>
+          <div className="text-xs font-mono text-[var(--text4)] mb-0.5">{label}</div>
           <div
-            className="status-label text-sm font-semibold font-display"
+            className="status-label text-base font-semibold font-display"
             style={{ color: status ? sc : 'var(--text3)' }}
           >
             {status || 'Unknown / No data'}
           </div>
           {note && (
-            <div className="text-[10px] font-mono text-[var(--text5)] mt-0.5">{note}</div>
+            <div className="text-[11px] font-mono text-[var(--text5)] mt-0.5">{note}</div>
           )}
         </div>
       </div>
@@ -157,35 +155,38 @@ export default function LegalStatusTabContent({
           animationDelay: `${i * 30}ms`,
         } as React.CSSProperties}
       >
-        {s.code}
+        <span className="inline-flex items-center justify-center w-[28px] h-[19px] rounded-[2px] overflow-hidden flex-shrink-0 flag-hover">
+          <StateFlagSvg code={s.code} />
+        </span>
+        <span className="state-code">{s.code}</span>
       </button>
     )),
   [effectiveState, catColor])
 
   return (
-    <div className="legal-status-tab space-y-5">
+    <div className="legal-status-tab space-y-6">
       <div className="section-anim" style={{ animationDelay: '0ms' }}>
-        <h4 className="text-sm font-semibold mb-2.5 font-display text-[var(--text2)] flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full" style={{ background: catColor, boxShadow: `0 0 6px ${catColor}` }} />
+        <h4 className="text-base font-semibold mb-3 font-display text-[var(--text2)] flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full" style={{ background: catColor, boxShadow: `0 0 8px ${catColor}` }} />
           Select Jurisdiction
         </h4>
-        <div className="flex flex-wrap gap-2">{countryButtons}</div>
+        <div className="flex flex-wrap gap-2.5">{countryButtons}</div>
       </div>
 
       {isUS && (
         <div className="section-anim" style={{ animationDelay: '100ms' }}>
-          <h4 className="text-sm font-semibold mb-2.5 font-display text-[var(--text2)] flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: catColor, boxShadow: `0 0 6px ${catColor}` }} />
+          <h4 className="text-base font-semibold mb-3 font-display text-[var(--text2)] flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full" style={{ background: catColor, boxShadow: `0 0 8px ${catColor}` }} />
             US State
           </h4>
-          <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto state-grid">{stateButtons}</div>
+          <div className="flex flex-wrap gap-2.5 max-h-[75vh] overflow-y-auto state-grid">{stateButtons}</div>
         </div>
       )}
 
       {effectiveCountry && (
-        <div className="space-y-3 section-anim" style={{ animationDelay: isUS ? '200ms' : '100ms' }}>
-          <h4 className="text-sm font-semibold font-display text-[var(--text2)] flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: catColor, boxShadow: `0 0 6px ${catColor}` }} />
+        <div className="space-y-4 section-anim" style={{ animationDelay: isUS ? '200ms' : '100ms' }}>
+          <h4 className="text-base font-semibold font-display text-[var(--text2)] flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full" style={{ background: catColor, boxShadow: `0 0 8px ${catColor}` }} />
             Legal Status
           </h4>
 
@@ -213,7 +214,7 @@ export default function LegalStatusTabContent({
         <div className="disclaimer-card">
           <div className="relative z-[1] flex items-start gap-2.5">
             <span className="text-base flex-shrink-0">⚖️</span>
-            <p className="text-[11px] text-[var(--text4)] leading-relaxed">
+            <p className="text-xs text-[var(--text4)] leading-relaxed">
               Legal status information is for educational purposes only and may not reflect
               the most current laws. Always consult a qualified legal professional for advice.
               Laws vary by jurisdiction and change frequently.

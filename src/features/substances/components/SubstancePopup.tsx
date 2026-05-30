@@ -240,7 +240,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     >
       <div
         ref={popupRef}
-        className="glass-strong neon-popup-glow w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92dvh] sm:max-h-[85dvh] sm:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col"
+        className="glass-strong neon-popup-glow w-full sm:max-w-3xl md:max-w-5xl lg:max-w-6xl max-h-[92dvh] sm:max-h-[85dvh] sm:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col"
         style={{ animation: 'slideUp 0.3s cubic-bezier(0.16,1,0.3,1)', overscrollBehavior: 'contain' }}
       >
     <div className="popup-header sticky top-0 z-10 p-4 sm:p-5 lg:p-6">

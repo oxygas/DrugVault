@@ -1347,9 +1347,9 @@ opacity: 0;
 transition: opacity 0.3s ease;
 }
 .metric-card:hover {
-border-color: var(--border2);
-transform: translateY(-3px);
-box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric-c, var(--accent)) 8%, transparent), 0 0 80px color-mix(in srgb, var(--metric-c, var(--accent)) 4%, transparent);
+  border-color: var(--border2);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric-c, var(--accent)) 10%, transparent), 0 0 80px color-mix(in srgb, var(--metric-c, var(--accent)) 5%, transparent);
 }
 .metric-card:hover::before { opacity: 1; }
 
@@ -1776,10 +1776,10 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
 .country-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 10px;
+  padding: 10px 20px;
   border-radius: var(--radius);
-  font-size: 12px;
+  font-size: 14px;
   font-family: var(--font-mono);
   cursor: pointer;
   border: 1px solid var(--border);
@@ -1819,11 +1819,28 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
   line-height: 1;
 }
 
+/* State pill flag — float on hover */
+.state-pill .flag-hover {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.state-pill:hover .flag-hover {
+  transform: translateY(-2px) scale(1.15);
+}
+.state-pill.active .flag-hover {
+  animation: float 3s ease-in-out infinite;
+}
+.state-code {
+  line-height: 1;
+}
+
 /* State pill — smaller variant */
 .state-pill {
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 12px;
   font-family: var(--font-mono);
   cursor: pointer;
   border: 1px solid var(--border);
@@ -1846,7 +1863,7 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
 /* Vaporwave status card — mirrors .vaporwave-card pattern */
 .vaporwave-status-card {
   display: block;
-  padding: 14px 16px;
+  padding: 18px 22px;
   background: #0c0c1c;
   border-radius: var(--radius);
   position: relative;
@@ -1855,14 +1872,14 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
   border: 1px solid var(--border);
 }
 .vaporwave-status-card.state-card {
-  padding: 12px 14px;
+  padding: 16px 18px;
 }
 .vaporwave-status-card .neon-stripe {
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 5px;
   animation: tubePulse 2s ease-in-out infinite;
 }
 .vaporwave-status-card .neon-stripe::after {
@@ -1892,15 +1909,15 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 40px color-mix(in srgb, var(--metric
 
 /* State card smaller text */
 .vaporwave-status-card.state-card .status-label {
-  font-size: 13px;
+  font-size: 15px;
 }
 .vaporwave-status-card.state-card .neon-stripe {
-  width: 3px;
+  width: 4px;
 }
 
 /* Disclaimer card */
 .disclaimer-card {
-  padding: 14px 16px;
+  padding: 16px 20px;
   background: #0c0c1c;
   border-radius: var(--radius);
   border: 1px solid var(--border);
