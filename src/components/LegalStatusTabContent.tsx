@@ -26,27 +26,29 @@ function lookupStateStatus(substance: Substance, stateCode: string): string | un
   return stateDefaults[stateCode]?.[substance.category]
 }
 
-function statusColor(status: string): string {
-  const lower = status.toLowerCase()
-  const green = /^(legal|decriminalized|tolerated|unregulated)/
-  const amber = /^(prescription|controlled|schedule|class|medical|narcotic|regulated|age restricted)/
-  const red = /^(illegal|prohibited|stupéfiant)/
-  if (green.test(lower)) return '#4ade80'
-  if (red.test(lower)) return '#ef4444'
-  if (amber.test(lower)) return '#fbbf24'
-  return '#a78bfa'
-}
+const STATUS_LEVELS: { test: RegExp; color: string }[] = [
+  { test: /\b(illegal|prohibited|stupéfiant)\b/i, color: '#ef4444' },
+  { test: /\bnarcotic\b/i, color: '#f97316' },
+  { test: /\b(schedule|class|list|table)\b/i, color: '#fb923c' },
+  { test: /\bcontrolled\b/i, color: '#fb923c' },
+  { test: /\b(prescription|age restricted)\b/i, color: '#fbbf24' },
+  { test: /\bregulated\b/i, color: '#fbbf24' },
+  { test: /\bmedical\b/i, color: '#60a5fa' },
+  { test: /\b(decriminalized|tolerated)\b/i, color: '#2dd4bf' },
+  { test: /\b(legal|unregulated)\b/i, color: '#4ade80' },
+]
 
-function getStatusTier(status: string): 'green' | 'amber' | 'red' {
-  const lower = status.toLowerCase()
-  if (/^(legal|decriminalized|tolerated|unregulated)/.test(lower)) return 'green'
-  if (/^(illegal|prohibited|stupéfiant)/.test(lower)) return 'red'
-  return 'amber'
+function statusColor(status: string): string {
+  const primary = status.split('/')[0].trim()
+  for (const level of STATUS_LEVELS) {
+    if (level.test.test(primary)) return level.color
+  }
+  return '#a78bfa'
 }
 
 function StateFlag({ code }: { code: string }) {
   return (
-    <span className="inline-flex items-center justify-center w-8 h-6 rounded-[3px] overflow-hidden flex-shrink-0">
+    <span className="inline-flex items-center justify-center w-8 h-6 rounded-[3px] overflow-hidden flex-shrink-0 flag-shadow">
       <StateFlagSvg code={code} />
     </span>
   )
@@ -67,7 +69,6 @@ function StatusCard({
   isState: boolean
   stateCode?: string
 }) {
-  const tier = status ? getStatusTier(status) : 'amber'
   const sc = status ? statusColor(status) : 'var(--text4)'
   const note = statusNote
 
@@ -146,7 +147,7 @@ export default function LegalStatusTabContent({
         className={`state-pill ${effectiveState === s.code ? 'active' : ''}`}
         style={{
           '--state-color': s.flag,
-          borderLeft: `3px solid ${s.flag}`,
+          borderLeft: `4px solid ${s.flag}`,
           ...(effectiveState === s.code ? {
             '--pill-glow': `${catColor}30`,
             '--pill-border': `${catColor}60`,
@@ -155,7 +156,7 @@ export default function LegalStatusTabContent({
           animationDelay: `${i * 30}ms`,
         } as React.CSSProperties}
       >
-        <span className="inline-flex items-center justify-center w-[28px] h-[19px] rounded-[2px] overflow-hidden flex-shrink-0 flag-hover">
+        <span className="inline-flex items-center justify-center w-[28px] h-[19px] rounded-[2px] overflow-hidden flex-shrink-0 flag-shadow flag-hover">
           <StateFlagSvg code={s.code} />
         </span>
         <span className="state-code">{s.code}</span>
@@ -166,7 +167,7 @@ export default function LegalStatusTabContent({
   return (
     <div className="legal-status-tab space-y-6">
       <div className="section-anim" style={{ animationDelay: '0ms' }}>
-        <h4 className="text-base font-semibold mb-3 font-display text-[var(--text2)] flex items-center gap-2">
+        <h4 className="text-base font-bold mb-3 font-display text-[var(--text2)] flex items-center gap-2">
           <span className="w-2 h-2 rounded-full" style={{ background: catColor, boxShadow: `0 0 8px ${catColor}` }} />
           Select Jurisdiction
         </h4>
@@ -175,7 +176,7 @@ export default function LegalStatusTabContent({
 
       {isUS && (
         <div className="section-anim" style={{ animationDelay: '100ms' }}>
-          <h4 className="text-base font-semibold mb-3 font-display text-[var(--text2)] flex items-center gap-2">
+          <h4 className="text-base font-bold mb-3 font-display text-[var(--text2)] flex items-center gap-2">
             <span className="w-2 h-2 rounded-full" style={{ background: catColor, boxShadow: `0 0 8px ${catColor}` }} />
             US State
           </h4>
@@ -185,7 +186,7 @@ export default function LegalStatusTabContent({
 
       {effectiveCountry && (
         <div className="space-y-4 section-anim" style={{ animationDelay: isUS ? '200ms' : '100ms' }}>
-          <h4 className="text-base font-semibold font-display text-[var(--text2)] flex items-center gap-2">
+          <h4 className="text-base font-bold font-display text-[var(--text2)] flex items-center gap-2">
             <span className="w-2 h-2 rounded-full" style={{ background: catColor, boxShadow: `0 0 8px ${catColor}` }} />
             Legal Status
           </h4>
@@ -213,7 +214,7 @@ export default function LegalStatusTabContent({
       <div className="section-anim" style={{ animationDelay: '400ms' }}>
         <div className="disclaimer-card">
           <div className="relative z-[1] flex items-start gap-2.5">
-            <span className="text-base flex-shrink-0">⚖️</span>
+            <span className="text-lg flex-shrink-0">⚖️</span>
             <p className="text-xs text-[var(--text4)] leading-relaxed">
               Legal status information is for educational purposes only and may not reflect
               the most current laws. Always consult a qualified legal professional for advice.

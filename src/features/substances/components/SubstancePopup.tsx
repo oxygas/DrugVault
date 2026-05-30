@@ -240,8 +240,8 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
     >
       <div
         ref={popupRef}
-        className="glass-strong neon-popup-glow w-full sm:max-w-3xl md:max-w-5xl lg:max-w-6xl max-h-[92dvh] sm:max-h-[85dvh] sm:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col"
-        style={{ animation: 'slideUp 0.3s cubic-bezier(0.16,1,0.3,1)', overscrollBehavior: 'contain' }}
+        className="glass-strong neon-popup-glow w-full max-h-[92dvh] sm:max-h-[85dvh] sm:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col"
+        style={{ maxWidth: 'min(1100px,96vw)', animation: 'slideUp 0.3s cubic-bezier(0.16,1,0.3,1)', overscrollBehavior: 'contain' } as React.CSSProperties}
       >
     <div className="popup-header sticky top-0 z-10 p-4 sm:p-5 lg:p-6">
       <div className="flex items-start justify-between gap-3">
@@ -366,7 +366,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
               <ScoreBadges substance={substance} className="mb-2" />
               <HarmReductionCard substance={substance} />
               <CategoryHarmReduction category={substance.category} />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-[340px_1fr] gap-5 sm:gap-6">
                 <RadarChart substance={substance} />
                 <div className="space-y-4">
                   <DurationTimeline substance={substance} />

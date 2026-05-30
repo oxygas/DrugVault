@@ -189,7 +189,7 @@ export default memo(function RadarChart({ substance }: RadarChartProps) {
     if (!canvas) return
     const dpr = window.devicePixelRatio || 1
     const rect = canvas.getBoundingClientRect()
-    const size = rect.width
+    const size = Math.min(rect.width, rect.height)
     if (size === 0) return
     canvas.width = size * dpr
     canvas.height = size * dpr
@@ -212,14 +212,15 @@ export default memo(function RadarChart({ substance }: RadarChartProps) {
   }, [needsRedraw])
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="flex justify-center flex-shrink-0">
+      <div className="w-full max-w-[260px] sm:max-w-[300px] lg:max-w-[340px] aspect-square">
         <canvas
           ref={canvasRef}
           width={300}
           height={300}
-          className="w-full max-w-[260px] sm:max-w-[300px] lg:max-w-[340px]"
-          style={{ aspectRatio: '1' }}
+          className="w-full h-full block"
         />
+      </div>
     </div>
   )
 })

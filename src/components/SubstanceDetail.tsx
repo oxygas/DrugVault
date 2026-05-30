@@ -180,7 +180,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
             <>
               <HarmReductionCard substance={substance} />
               <CategoryHarmReduction category={substance.category} />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-[340px_1fr] gap-6">
                 <RadarChart substance={substance} />
                 <div className="space-y-4">
                   <DurationTimeline substance={substance} />
