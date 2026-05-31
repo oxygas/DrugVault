@@ -39,6 +39,33 @@ export interface VisitorInfo {
   timestamp: number
 }
 
+export interface ExtendedVisitorInfo extends VisitorInfo {
+  fingerprint?: string
+  sessionId?: string
+  referrer?: string
+  utmSource?: string
+  utmMedium?: string
+  utmCampaign?: string
+  connType?: string
+  connRtt?: string
+  connDownlink?: string
+  deviceMemory?: string
+  hardwareConcurrency?: string
+  lcp?: string
+  cls?: string
+  inp?: string
+  ttfb?: string
+  fcp?: string
+  scrollDepth?: string
+  timeOnPage?: string
+  vercelRegion?: string
+  vercelDeployId?: string
+  canvasFingerprint?: string
+  webglVendor?: string
+  audioFingerprint?: string
+  pageFlow?: string
+}
+
 function parseUA(ua: string) {
   const u = ua.toLowerCase()
   let os = 'Unknown'
@@ -64,6 +91,21 @@ function parseUA(ua: string) {
   else if (u.includes('tablet') || u.includes('ipad')) device = 'Tablet'
 
   return { os, browser, device }
+}
+
+export function vercelGeoLookup(request: {
+  headers: Headers | Record<string, string>
+}): { country: string; countryCode: string; city: string; region: string; lat: number; lon: number; postalCode: string } {
+  const h = request.headers instanceof Headers ? request.headers : new Headers(request.headers)
+  return {
+    country: h.get('x-vercel-ip-country') || '',
+    countryCode: h.get('x-vercel-ip-country') || '',
+    city: h.get('x-vercel-ip-city') || '',
+    region: h.get('x-vercel-ip-country-region') || '',
+    lat: parseFloat(h.get('x-vercel-ip-latitude') || '0'),
+    lon: parseFloat(h.get('x-vercel-ip-longitude') || '0'),
+    postalCode: h.get('x-vercel-ip-postal-code') || '',
+  }
 }
 
 export async function geoLookup(ip: string): Promise<GeoResult | null> {
@@ -157,11 +199,143 @@ export async function recordVisitor(
   return info
 }
 
+export async function recordExtendedVisitor(
+  ip: string,
+  ua: string,
+  path: string,
+  geo: GeoResult | null,
+  extra: Partial<ExtendedVisitorInfo> = {}
+): Promise<ExtendedVisitorInfo> {
+  const { os, browser, device } = parseUA(ua)
+
+  const region = extra.vercelRegion || ''
+
+  const info: ExtendedVisitorInfo = {
+    ip,
+    ua,
+    country: geo?.country || extra.country || 'Unknown',
+    countryCode: geo?.countryCode || '',
+    city: geo?.city || extra.city || '',
+    isp: geo?.isp || '',
+    proxy: geo?.proxy || false,
+    hosting: geo?.hosting || false,
+    os,
+    browser,
+    device,
+    screen: extra.screen,
+    timezone: extra.timezone,
+    language: extra.language,
+    platform: extra.platform,
+    fingerprint: extra.fingerprint,
+    sessionId: extra.sessionId,
+    referrer: extra.referrer,
+    utmSource: extra.utmSource,
+    utmMedium: extra.utmMedium,
+    utmCampaign: extra.utmCampaign,
+    connType: extra.connType,
+    connRtt: extra.connRtt,
+    connDownlink: extra.connDownlink,
+    deviceMemory: extra.deviceMemory,
+    hardwareConcurrency: extra.hardwareConcurrency,
+    lcp: extra.lcp,
+    cls: extra.cls,
+    inp: extra.inp,
+    ttfb: extra.ttfb,
+    fcp: extra.fcp,
+    scrollDepth: extra.scrollDepth,
+    timeOnPage: extra.timeOnPage,
+    vercelRegion: region,
+    vercelDeployId: extra.vercelDeployId,
+    canvasFingerprint: extra.canvasFingerprint,
+    webglVendor: extra.webglVendor,
+    audioFingerprint: extra.audioFingerprint,
+    pageFlow: extra.pageFlow,
+    timestamp: Date.now(),
+  }
+
+  try {
+    const pipeline = kv.pipeline()
+    pipeline.zincrby('tripgem:visitors', 1, info.fingerprint || ip)
+    pipeline.zincrby('tripgem:countries', 1, info.country || 'Unknown')
+    if (info.city) pipeline.zincrby('tripgem:cities', 1, `${info.city}, ${info.country}`)
+    pipeline.zincrby('tripgem:devices', 1, `${os}/${browser}`)
+    pipeline.zincrby('tripgem:device_types', 1, device)
+    if (info.proxy || info.hosting) pipeline.zincrby('tripgem:vpn_ips', 1, ip)
+    if (info.fingerprint) pipeline.zincrby('tripgem:fingerprints', 1, info.fingerprint)
+    if (info.sessionId) pipeline.zincrby('tripgem:sessions', 1, info.sessionId)
+    if (info.referrer) {
+      const domain = extractDomain(info.referrer)
+      if (domain) pipeline.zincrby('tripgem:referrers', 1, domain)
+    }
+    if (info.utmSource) {
+      const utmKey = `${info.utmSource}:${info.utmMedium || 'direct'}`
+      pipeline.zincrby('tripgem:utms', 1, utmKey)
+    }
+    if (info.connType) pipeline.zincrby('tripgem:conn_types', 1, info.connType)
+    if (info.deviceMemory) pipeline.zincrby('tripgem:memories', 1, info.deviceMemory)
+    if (info.lcp) pipeline.zincrby('tripgem:webvitals:lcp', 1, bucketMs(parseFloat(info.lcp)))
+    if (info.cls) pipeline.zincrby('tripgem:webvitals:cls', 1, bucketCls(parseFloat(info.cls)))
+    if (info.inp) pipeline.zincrby('tripgem:webvitals:inp', 1, bucketMs(parseFloat(info.inp)))
+    if (info.scrollDepth) pipeline.zincrby('tripgem:scroll_depths', 1, bucketDepth(parseFloat(info.scrollDepth)))
+    if (info.timeOnPage) pipeline.zincrby('tripgem:time_on_page', 1, bucketSeconds(parseFloat(info.timeOnPage)))
+    if (info.webglVendor) pipeline.zincrby('tripgem:webgl_vendors', 1, info.webglVendor)
+    if (region) pipeline.zincrby('tripgem:regions', 1, region)
+    pipeline.lpush('tripgem:visits:recent', JSON.stringify({ ...info, path }))
+    pipeline.ltrim('tripgem:visits:recent', 0, 999)
+    pipeline.zincrby('tripgem:paths', 1, path)
+    if (info.pageFlow) {
+      pipeline.lpush('tripgem:sessions:recent', JSON.stringify({ sessionId: info.sessionId, flow: info.pageFlow, ts: info.timestamp }))
+      pipeline.ltrim('tripgem:sessions:recent', 0, 499)
+    }
+    await pipeline.exec()
+  } catch { /* silently fail */ }
+
+  return info
+}
+
+function extractDomain(url: string): string {
+  try { return new URL(url).hostname.replace(/^www\./, '') } catch { return '' }
+}
+
+function bucketMs(ms: number): string {
+  if (ms <= 100) return '≤100ms'
+  if (ms <= 200) return '200ms'
+  if (ms <= 500) return '500ms'
+  if (ms <= 1000) return '1s'
+  if (ms <= 2000) return '2s'
+  if (ms <= 4000) return '4s'
+  return '>4s'
+}
+
+function bucketCls(score: number): string {
+  if (score <= 0.1) return 'good'
+  if (score <= 0.25) return 'needs-improve'
+  return 'poor'
+}
+
+function bucketDepth(pct: number): string {
+  if (pct <= 25) return '0-25%'
+  if (pct <= 50) return '25-50%'
+  if (pct <= 75) return '50-75%'
+  return '75-100%'
+}
+
+function bucketSeconds(s: number): string {
+  if (s <= 10) return '≤10s'
+  if (s <= 30) return '30s'
+  if (s <= 60) return '1m'
+  if (s <= 180) return '3m'
+  if (s <= 600) return '10m'
+  return '>10m'
+}
+
 export async function getVisitorStats() {
   try {
     const [
       topIps, countries, cities, devices, deviceTypes, vpnIps,
-      recentStr, paths,
+      recentStr, paths, fingerprints, sessions, referrers, utms,
+      connTypes, memories, lcp, cls, inp, scrollDepths, timeOnPage,
+      webglVendors, regions, sessionsRecentStr,
     ] = await Promise.all([
       kv.zrange('tripgem:visitors', 0, 49, { rev: true }).catch(() => []),
       kv.zrange('tripgem:countries', 0, 49, { rev: true }).catch(() => []),
@@ -171,6 +345,20 @@ export async function getVisitorStats() {
       kv.zrange('tripgem:vpn_ips', 0, 49, { rev: true }).catch(() => []),
       kv.lrange('tripgem:visits:recent', 0, 99).catch(() => []),
       kv.zrange('tripgem:paths', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:fingerprints', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:sessions', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:referrers', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:utms', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:conn_types', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:memories', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:webvitals:lcp', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:webvitals:cls', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:webvitals:inp', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:scroll_depths', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:time_on_page', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:webgl_vendors', 0, 49, { rev: true }).catch(() => []),
+      kv.zrange('tripgem:regions', 0, 49, { rev: true }).catch(() => []),
+      kv.lrange('tripgem:sessions:recent', 0, 49).catch(() => []),
     ])
 
     const safe = (arr: any) => Array.isArray(arr) ? arr : []
@@ -191,6 +379,13 @@ export async function getVisitorStats() {
       .filter(Boolean)
       .slice(0, 50)
 
+    const sessionsRecent = safe(sessionsRecentStr)
+      .map((s: string) => {
+        try { return JSON.parse(s) } catch { return null }
+      })
+      .filter(Boolean)
+      .slice(0, 30)
+
     const parsedCountries = parseScores(countries)
     const totalVisitors = parsedCountries.reduce((a, c) => a + c.count, 0)
 
@@ -204,11 +399,32 @@ export async function getVisitorStats() {
       vpnIps: parseScores(vpnIps),
       paths: parseScores(paths),
       recent,
+      fingerprints: parseScores(fingerprints),
+      sessions: parseScores(sessions),
+      referrers: parseScores(referrers),
+      utms: parseScores(utms),
+      connTypes: parseScores(connTypes),
+      memories: parseScores(memories),
+      webvitals: {
+        lcp: parseScores(lcp),
+        cls: parseScores(cls),
+        inp: parseScores(inp),
+      },
+      scrollDepths: parseScores(scrollDepths),
+      timeOnPage: parseScores(timeOnPage),
+      webglVendors: parseScores(webglVendors),
+      regions: parseScores(regions),
+      sessionsRecent,
     }
   } catch {
     return {
       totalVisitors: 0, ips: [], countries: [], cities: [],
       devices: [], deviceTypes: [], vpnIps: [], paths: [], recent: [],
+      fingerprints: [], sessions: [], referrers: [], utms: [],
+      connTypes: [], memories: [],
+      webvitals: { lcp: [], cls: [], inp: [] },
+      scrollDepths: [], timeOnPage: [], webglVendors: [], regions: [],
+      sessionsRecent: [],
     }
   }
 }

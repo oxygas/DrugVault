@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { validateToken } from '@/lib/admin-auth'
+import { geolocation, ipAddress } from '@vercel/functions'
 
 const BLOCKED_BOTS = [
   'GPTBot', 'CCBot', 'Google-Extended', 'anthropic-ai', 'Claude-Web', 'ClaudeBot',
@@ -21,7 +22,6 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Admin auth — skip login page and login API
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     const token = request.cookies.get('admin_token')?.value
     if (!token || !(await validateToken(token))) {
@@ -30,7 +30,23 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  return NextResponse.next()
+  const requestHeaders = new Headers(request.headers)
+
+  const geo = geolocation(request)
+  if (geo.city) requestHeaders.set('x-vercel-ip-city', geo.city)
+  if (geo.country) requestHeaders.set('x-vercel-ip-country', geo.country)
+  if (geo.countryRegion) requestHeaders.set('x-vercel-ip-country-region', geo.countryRegion)
+  if (geo.latitude) requestHeaders.set('x-vercel-ip-latitude', String(geo.latitude))
+  if (geo.longitude) requestHeaders.set('x-vercel-ip-longitude', String(geo.longitude))
+  if (geo.postalCode) requestHeaders.set('x-vercel-ip-postal-code', geo.postalCode)
+
+  const ip = ipAddress(request)
+  if (ip) requestHeaders.set('x-vercel-ip-address', ip)
+
+  const vercelId = request.headers.get('x-vercel-id')
+  if (vercelId) requestHeaders.set('x-vercel-deploy-region', vercelId.split(':')[0] || '')
+
+  return NextResponse.next({ request: { headers: requestHeaders } })
 }
 
 export const config = {

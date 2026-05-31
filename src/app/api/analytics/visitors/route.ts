@@ -12,6 +12,11 @@ export async function GET() {
     return Response.json({ visitors: {
       totalVisitors: 0, ips: [], countries: [], cities: [],
       devices: [], deviceTypes: [], vpnIps: [], paths: [], recent: [],
+      fingerprints: [], sessions: [], referrers: [], utms: [],
+      connTypes: [], memories: [],
+      webvitals: { lcp: [], cls: [], inp: [] },
+      scrollDepths: [], timeOnPage: [], webglVendors: [], regions: [],
+      sessionsRecent: [],
     }, analytics: null })
   }
 }

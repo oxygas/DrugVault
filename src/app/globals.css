@@ -2207,6 +2207,12 @@ transition: opacity 0.3s ease;
   .vaporwave-scanlines { display: none; }
   .mouse-glow { display: none; }
   .particles { display: none; }
+  .digital-rain-canvas { display: none; }
+  .vaporwave-horizon { animation: none; opacity: 0.3; }
+  .cyber-grid::before { animation: none; }
+  .cyber-grid { opacity: 0.08; }
+  .neon-stripe { animation: none; }
+  .grid-noise { opacity: 0.3; }
 }
 
 @theme inline {

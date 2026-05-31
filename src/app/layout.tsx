@@ -138,8 +138,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={cn("dark", inter.variable, mono.variable)} data-theme={DEFAULT_THEME} suppressHydrationWarning>
-      <head>
-        <script
+    <head>
+      <link rel="preconnect" href="https://media4.giphy.com" />
+      <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('tripgem-theme');if(t&&t!==document.documentElement.getAttribute('data-theme'))document.documentElement.setAttribute('data-theme',t)}catch(e){}})()`,
           }}

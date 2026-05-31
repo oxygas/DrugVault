@@ -9,13 +9,14 @@ const DigitalRain = dynamic(() => import('@/components/DigitalRain'), { ssr: fal
 export default function VisualEffects() {
   const pathname = usePathname()
   const isHome = pathname === '/'
+  const isTouch = typeof window !== 'undefined' && matchMedia('(pointer: coarse)').matches
   const [showDeferred, setShowDeferred] = useState(false)
 
   useEffect(() => {
-    if (!isHome) return
+    if (!isHome || isTouch) return
     const id = requestAnimationFrame(() => setShowDeferred(true))
     return () => cancelAnimationFrame(id)
-  }, [isHome])
+  }, [isHome, isTouch])
 
   return (
     <>
@@ -28,7 +29,7 @@ export default function VisualEffects() {
       <div className="grid-noise" />
       <div className="cyber-grid" aria-hidden="true" />
       <div className="vaporwave-horizon" aria-hidden="true" />
-      {isHome && <DigitalRain />}
+      {isHome && !isTouch && <DigitalRain />}
       {isHome && showDeferred && (
         <div className="chromatic-overlay" aria-hidden="true" />
       )}
