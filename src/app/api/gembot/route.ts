@@ -127,6 +127,8 @@ export async function POST(req: NextRequest) {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 25000)
 
+    const longQuery = /compare|difference|versus|vs\.?|both|and|mix|combination/i.test(message) && message.split(/\s+/).length > 4
+
     const nimRes = await fetch(`${NIM_BASE}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -137,8 +139,8 @@ export async function POST(req: NextRequest) {
         model: NIM_MODEL,
         messages,
         stream: true,
-        temperature: 0.5,
-        max_tokens: 600,
+        temperature: 0.7,
+        max_tokens: longQuery ? 1000 : 600,
         top_p: 0.95,
       }),
       signal: controller.signal,

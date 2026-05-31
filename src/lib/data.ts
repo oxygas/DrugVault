@@ -183,6 +183,20 @@ export function getSubstancesByCategory(category: Category): Substance[] {
   return byCategory.get(category) ?? []
 }
 
+const STOP_WORDS = new Set([
+  'the','a','an','is','it','in','on','at','to','for','of','by',
+  'and','or','but','not','so','if','as','be','do','does','did',
+  'are','was','were','been','being','have','has','had',
+  'what','how','why','when','where','who','which',
+  'this','that','these','those','its','their','your','our',
+  'about','with','without','from','into','through','after','before',
+  'all','each','every','some','any','no','none',
+  'can','will','would','could','should','may','might',
+  'very','just','than','then','also','well','here','there',
+  'up','down','out','off','over','under','again','further',
+  'once','only','own','same','too','more','most','much','many',
+])
+
 export function searchSubstances(query: string, limit = 20): Substance[] {
   const q = query.toLowerCase().trim()
   if (!q) return substances.slice(0, limit)
@@ -202,32 +216,42 @@ export function searchSubstances(query: string, limit = 20): Substance[] {
   if (!searchIndex) return substances.slice(0, limit)
 
   const scores = new Map<Substance, number>()
+  const tokens = q.split(/\s+/).map(t => t.replace(/[^a-z0-9-]/g, '')).filter(t => t.length > 0)
 
-  const tokens = q.split(/\s+/)
-  for (const token of tokens) {
-    const visited = new Set<Substance>()
-    for (let i = 0; i <= token.length - 2; i++) {
-      const bigram = token.slice(i, i + 2)
-      const matches = searchIndex.get(bigram)
-      if (matches) {
-        for (const s of matches) {
-          if (!visited.has(s)) {
-            visited.add(s)
-            scores.set(s, (scores.get(s) ?? 0) + 1)
-          }
+  for (const s of substances) {
+    const name = s.name.toLowerCase()
+    const aliases = s.aliases.map(a => a.toLowerCase())
+    let score = 0
+
+    for (const t of tokens) {
+      if (STOP_WORDS.has(t)) continue
+      if (name.includes(t)) score += 150
+      else if (aliases.some(a => a.includes(t))) score += 100
+
+      if (name.startsWith(t)) score += 75
+      else if (aliases.some(a => a.startsWith(t))) score += 50
+    }
+
+    const catName = s.category.toLowerCase()
+    const catMatchCount = tokens.filter(t => catName.includes(t) || t.includes(catName)).length
+    score += catMatchCount * 30
+
+    tokens.sort((a, b) => a.length - b.length)
+    const visited = new Set<string>()
+    for (const token of tokens) {
+      for (let i = 0; i <= token.length - 2; i++) {
+        const bigram = token.slice(i, i + 2)
+        if (visited.has(bigram)) continue
+        visited.add(bigram)
+        const matches = searchIndex.get(bigram)
+        if (matches && matches.has(s)) {
+          score += 1
         }
       }
     }
-  }
 
-  const exactMatch = byName.get(q)
-  if (exactMatch) {
-    scores.set(exactMatch, (scores.get(exactMatch) ?? 0) + 1000)
-  }
-
-  for (const s of substances) {
-    if (s.name.toLowerCase().startsWith(q)) {
-      scores.set(s, (scores.get(s) ?? 0) + 500)
+    if (score > 0) {
+      scores.set(s, score)
     }
   }
 
