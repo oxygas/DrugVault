@@ -35,6 +35,7 @@ function TypingIndicator() {
 export function GemBotOverlay() {
   const { isOpen, messages, close, addMessage, appendToLastBotMessage, clearHistory } = useGemBotStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
   const [streamingContent, setStreamingContent] = useState('')
@@ -53,13 +54,13 @@ export function GemBotOverlay() {
     close()
   }, [close])
 
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToBottom = useCallback((instant = false) => {
+    messagesEndRef.current?.scrollIntoView({ behavior: instant ? 'instant' : 'smooth' })
   }, [])
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages, streamingContent, scrollToBottom])
+    scrollToBottom(isLoading || !!streamingContent)
+  }, [messages, streamingContent, isLoading, scrollToBottom])
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -68,6 +69,26 @@ export function GemBotOverlay() {
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [isOpen, handleClose])
+
+  useEffect(() => {
+    if (!isOpen) return
+    if (!matchMedia('(pointer: coarse)').matches) return
+    const vv = window.visualViewport
+    if (!vv) return
+    const update = () => {
+      const el = overlayRef.current
+      if (!el) return
+      el.style.height = `${vv.height}px`
+      el.style.top = `${vv.offsetTop}px`
+    }
+    update()
+    vv.addEventListener('resize', update)
+    vv.addEventListener('scroll', update)
+    return () => {
+      vv.removeEventListener('resize', update)
+      vv.removeEventListener('scroll', update)
+    }
+  }, [isOpen])
 
   const handleSend = useCallback(async (text: string) => {
     setError(null)
@@ -164,6 +185,7 @@ export function GemBotOverlay() {
 
   return (
     <div
+      ref={overlayRef}
       className="
         fixed z-[9998] flex flex-col
         inset-0
@@ -171,6 +193,7 @@ export function GemBotOverlay() {
         sm:w-[480px]
         sm:h-[min(700px,calc(100dvh-120px))]
         gemot-overlay-enter
+        overscroll-contain
       "
     >
       <div className="
@@ -214,7 +237,7 @@ export function GemBotOverlay() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 py-3 scroll-smooth overscroll-contain gemot-scrollbar">
+        <div className="flex-1 overflow-y-auto px-3 py-3 overscroll-contain gemot-scrollbar gemot-scroll-area">
           {messages.length === 0 && (
             <div className="flex h-full flex-col items-center justify-center text-center px-6">
               <div className="mb-4 flex items-center justify-center">

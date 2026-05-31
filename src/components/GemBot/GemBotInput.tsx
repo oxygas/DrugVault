@@ -17,9 +17,11 @@ export function GemBotInput({ onSend, disabled }: Props) {
     if (!trimmed || disabled) return
     onSend(trimmed)
     setValue('')
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
-    }
+    requestAnimationFrame(() => {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto'
+      }
+    })
   }, [value, disabled, onSend])
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -37,7 +39,10 @@ export function GemBotInput({ onSend, disabled }: Props) {
   }
 
   return (
-    <div className="flex items-end gap-2 border-t border-[var(--border3)]/50 p-2.5 bg-[var(--bg2)]/30">
+    <div
+      className="flex items-end gap-2 border-t border-[var(--border3)]/50 p-2.5 bg-[var(--bg2)]/30 sm:pb-2.5"
+      style={{ paddingBottom: 'max(10px, env(safe-area-inset-bottom))' }}
+    >
       <div className="flex-1 flex items-center rounded-xl border border-[var(--border2)] bg-[var(--bg2)]/60 has-[:focus]:border-[var(--accent)]/40 has-[:focus]:ring-1 has-[:focus]:ring-[var(--accent)]/20 has-[:focus]:shadow-[0_0_12px_rgba(192,132,252,0.08)] transition-all">
         <textarea
           ref={textareaRef}
@@ -53,7 +58,7 @@ export function GemBotInput({ onSend, disabled }: Props) {
         <button
           onClick={handleSend}
           disabled={disabled || !value.trim()}
-          className="flex size-8 shrink-0 items-center justify-center rounded-lg mr-1.5 text-white transition-all hover:scale-105 active:scale-95 disabled:opacity-30 disabled:hover:scale-100"
+          className="flex size-10 sm:size-8 shrink-0 items-center justify-center rounded-lg mr-1.5 text-white transition-all hover:scale-105 active:scale-95 disabled:opacity-30 disabled:hover:scale-100 touch-manipulation"
           style={{
             background: value.trim() && !disabled
               ? 'linear-gradient(135deg, var(--accent), var(--pink))'
@@ -61,7 +66,7 @@ export function GemBotInput({ onSend, disabled }: Props) {
           }}
           aria-label="Send message"
         >
-          <Send size={14} />
+          <Send size={16} className="sm:!size-[14px]" />
         </button>
       </div>
     </div>
