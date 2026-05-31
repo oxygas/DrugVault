@@ -1,12 +1,49 @@
 import { NextRequest } from 'next/server'
-import { LRUCache } from 'lru-cache'
 import { buildSystemPrompt, enrichQueryWithSubstanceData } from '@/lib/gembot-prompt'
 
 export const dynamic = 'force-dynamic'
 
-// NOTE: In-process lru-cache; rate limiter resets on cold start (Vercel serverless).
+// In-memory cache with TTL expiration (replaces lru-cache which broke Turbopack bundling)
+class SimpleCache<K, V> {
+  private cache = new Map<K, { value: V; expiresAt: number }>()
+  private readonly defaultTtl: number
+  private readonly maxSize: number
+
+  constructor(options: { max: number; ttl?: number }) {
+    this.maxSize = options.max
+    this.defaultTtl = options.ttl ?? 60_000
+  }
+
+  get(key: K): V | undefined {
+    const entry = this.cache.get(key)
+    if (!entry) return undefined
+    if (Date.now() > entry.expiresAt) {
+      this.cache.delete(key)
+      return undefined
+    }
+    return entry.value
+  }
+
+  set(key: K, value: V): void {
+    if (this.cache.size >= this.maxSize) {
+      const firstKey = this.cache.keys().next().value
+      if (firstKey !== undefined) this.cache.delete(firstKey)
+    }
+    this.cache.set(key, { value, expiresAt: Date.now() + this.defaultTtl })
+  }
+
+  has(key: K): boolean {
+    return this.get(key) !== undefined
+  }
+
+  delete(key: K): boolean {
+    return this.cache.delete(key)
+  }
+}
+
+// In-process cache; rate limiter resets on cold start (Vercel serverless).
 // For production with multiple instances, use Vercel KV or similar external store.
-const rateLimit = new LRUCache<string, { count: number; resetAt: number }>({
+const rateLimit = new SimpleCache<string, { count: number; resetAt: number }>({
   max: 1000,
   ttl: 60_000,
 })
@@ -153,7 +190,6 @@ export async function POST(req: NextRequest) {
               try {
                 const parsed = JSON.parse(data)
                 const delta = parsed?.choices?.[0]?.delta
-                // Only send deltas that have actual string content
                 if (delta && typeof delta.content === 'string' && delta.content) {
                   controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: delta.content })}\n\n`))
                 }
