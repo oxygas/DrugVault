@@ -212,8 +212,8 @@ export default memo(function RadarChart({ substance }: RadarChartProps) {
   }, [needsRedraw])
 
   return (
-    <div className="flex justify-center flex-shrink-0">
-      <div className="w-full max-w-[260px] sm:max-w-[300px] lg:max-w-[340px] aspect-square">
+    <div className="flex justify-center">
+      <div className="w-full max-w-[400px] aspect-square">
         <canvas
           ref={canvasRef}
           width={300}

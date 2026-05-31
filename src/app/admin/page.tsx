@@ -209,11 +209,11 @@ export default function AdminPage() {
           <h2 className="text-lg font-semibold mb-4">Visitor Analytics</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
             <StatCard label="Total Visits" value={v.totalVisitors} />
-            <StatCard label="VPN/Proxy Hits" value={v.vpnIps.reduce((a, b) => a + b.count, 0)} />
-            <StatCard label="Unique Countries" value={v.countries.length} />
-            <StatCard label="Unique IPs" value={v.ips.length} />
-            <StatCard label="Devices" value={v.deviceTypes.reduce((a, b) => a + b.count, 0)} />
-            <StatCard label="Pages Tracked" value={v.paths.length} />
+            <StatCard label="VPN/Proxy Hits" value={(v.vpnIps||[]).reduce((a: number, b: any) => a + (b?.count||0), 0)} />
+            <StatCard label="Unique Countries" value={v.countries?.length||0} />
+            <StatCard label="Unique IPs" value={v.ips?.length||0} />
+            <StatCard label="Devices" value={(v.deviceTypes||[]).reduce((a: number, b: any) => a + (b?.count||0), 0)} />
+            <StatCard label="Pages Tracked" value={v.paths?.length||0} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">

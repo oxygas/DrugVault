@@ -173,25 +173,31 @@ export async function getVisitorStats() {
       kv.zrange('tripgem:paths', 0, 49, { rev: true }).catch(() => []),
     ])
 
-    const parseScores = (arr: any[]) => {
+    const safe = (arr: any) => Array.isArray(arr) ? arr : []
+
+    const parseScores = (arr: any) => {
+      const a = safe(arr)
       const result: { name: string; count: number }[] = []
-      for (let i = 0; i < arr.length; i += 2) {
-        result.push({ name: String(arr[i]), count: Number(arr[i + 1]) })
+      for (let i = 0; i < a.length; i += 2) {
+        result.push({ name: String(a[i]), count: Number(a[i + 1]) | 0 })
       }
       return result
     }
 
-    const recent = (Array.isArray(recentStr) ? recentStr : [])
+    const recent = safe(recentStr)
       .map((s: string) => {
         try { return JSON.parse(s) } catch { return null }
       })
       .filter(Boolean)
       .slice(0, 50)
 
+    const parsedCountries = parseScores(countries)
+    const totalVisitors = parsedCountries.reduce((a, c) => a + c.count, 0)
+
     return {
-      totalVisitors: countries.length > 0 ? countries.reduce((a: number, _: any, i: number) => a + (i % 2 === 0 ? 0 : Number(countries[i])), 0) : 0,
+      totalVisitors,
       ips: parseScores(topIps),
-      countries: parseScores(countries),
+      countries: parsedCountries,
       cities: parseScores(cities),
       devices: parseScores(devices),
       deviceTypes: parseScores(deviceTypes),

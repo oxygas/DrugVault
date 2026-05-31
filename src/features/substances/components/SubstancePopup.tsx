@@ -243,7 +243,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
         className="glass-strong neon-popup-glow w-full max-h-[92dvh] sm:max-h-[85dvh] sm:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col"
         style={{ maxWidth: 'min(1100px,96vw)', animation: 'slideUp 0.3s cubic-bezier(0.16,1,0.3,1)', overscrollBehavior: 'contain' } as React.CSSProperties}
       >
-    <div className="popup-header sticky top-0 z-10 p-4 sm:p-5 lg:p-6">
+        <div className="popup-header sticky top-0 z-10 p-3 sm:p-5 lg:p-6">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
       <div className="flex items-center gap-2.5 mb-1.5">
@@ -286,7 +286,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
             </span>
           </div>
           {substance.aliases.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2 ml-4">
+            <div className="hidden sm:flex sm:flex-wrap gap-1 mt-2 ml-4">
               {substance.aliases.map(a => (
                 <span key={a} className="text-[11px] lg:text-xs px-2 py-0.5 rounded-md bg-[rgba(255,255,255,0.04)] text-[var(--text4)] font-mono border border-[var(--border)]">
                   {a}
@@ -366,7 +366,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
               <ScoreBadges substance={substance} className="mb-2" />
               <HarmReductionCard substance={substance} />
               <CategoryHarmReduction category={substance.category} />
-              <div className="grid grid-cols-1 md:grid-cols-[340px_1fr] gap-5 sm:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
                 <RadarChart substance={substance} />
                 <div className="space-y-4">
                   <DurationTimeline substance={substance} />
@@ -378,8 +378,6 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
                         smiles={substance.smiles}
                         sanityUrl={sanityImageUrl}
                         alt={structureAlt}
-                        width={substance.chemicalStructure?.asset?.metadata?.dimensions?.width || 300}
-                        height={substance.chemicalStructure?.asset?.metadata?.dimensions?.height || 160}
                       />
                     </div>
                   </div>
@@ -512,8 +510,8 @@ function ChemicalStructureImage({
   smiles: string
   sanityUrl: string | null
   alt: string
-  width: number
-  height: number
+  width?: number
+  height?: number
 }) {
   const [imageUrl, setImageUrl] = useState<string | null>(sanityUrl)
   const [source, setSource] = useState<'sanity' | 'pubchem' | 'cactus' | null>(sanityUrl ? 'sanity' : null)
@@ -580,14 +578,14 @@ function ChemicalStructureImage({
   }
 
   if (source === 'sanity') {
-    return <Image src={imageUrl} alt={alt} width={width} height={height} className="chemical-structure-image w-auto h-auto max-w-full max-h-96 object-contain" onError={() => setError(true)} />
+    return <Image src={imageUrl} alt={alt} width={width || 400} height={height || 267} className="w-auto h-auto max-w-full max-h-64 object-contain" onError={() => setError(true)} />
   }
 
   return (
     <img
       src={imageUrl}
       alt={alt}
-      className="chemical-structure-image w-auto h-auto max-w-full max-h-96"
+      className="w-auto h-auto max-w-full max-h-64"
       loading="lazy"
       onLoad={() => setLoading(false)}
       onError={() => {

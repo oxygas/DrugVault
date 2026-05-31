@@ -108,7 +108,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
             </button>
           )}
           {(substance.brandNames.length > 0 || substance.streetNames.length > 0) && (
-            <div className="hidden xs:flex flex-wrap gap-1 flex-shrink-0">
+            <div className="hidden sm:flex flex-wrap gap-1 flex-shrink-0">
               {substance.brandNames.slice(0, 1).map(b => (
                 <span key={b} className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 font-mono">🏥 {b}</span>
               ))}
@@ -141,7 +141,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
               >
                 {substance.harmLevel}
               </span>
-              {substance.ld50 && <span className="text-[var(--text4)] font-mono hidden xs:inline">LD50: {substance.ld50}</span>}
+              {substance.ld50 && <span className="text-[var(--text4)] font-mono hidden sm:inline">LD50: {substance.ld50}</span>}
             </div>
           </div>
         </div>
@@ -180,20 +180,18 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
             <>
               <HarmReductionCard substance={substance} />
               <CategoryHarmReduction category={substance.category} />
-              <div className="grid grid-cols-1 md:grid-cols-[340px_1fr] gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <RadarChart substance={substance} />
                 <div className="space-y-4">
                   <DurationTimeline substance={substance} />
                   <div>
                     <h4 className="text-sm font-semibold text-[var(--text2)] mb-2 font-display">Chemical Structure</h4>
-                    <div className="chemical-structure-container rounded-xl p-1 flex items-center justify-center relative">
+                    <div className="chemical-structure-container rounded-xl p-1 flex items-center justify-center relative aspect-[3/2]">
                       <ChemicalStructureImage
                         substanceName={substance.name}
                         smiles={substance.smiles}
                         sanityUrl={sanityImageUrl}
                         alt={structureAlt}
-                        width={substance.chemicalStructure?.asset?.metadata?.dimensions?.width || 300}
-                        height={substance.chemicalStructure?.asset?.metadata?.dimensions?.height || 160}
                       />
                     </div>
                   </div>
@@ -370,8 +368,8 @@ function ChemicalStructureImage({
   smiles: string
   sanityUrl: string | null
   alt: string
-  width: number
-  height: number
+  width?: number
+  height?: number
 }) {
   const [imageUrl, setImageUrl] = useState<string | null>(sanityUrl)
   const [source, setSource] = useState<'sanity' | 'pubchem' | 'cactus' | null>(sanityUrl ? 'sanity' : null)
@@ -437,14 +435,14 @@ function ChemicalStructureImage({
   }
 
   if (source === 'sanity') {
-    return <Image src={imageUrl} alt={alt} width={width} height={height} className="chemical-structure-image w-auto h-auto max-w-full max-h-96 object-contain" onError={() => setError(true)} />
+    return <Image src={imageUrl} alt={alt} width={width || 400} height={height || 267} className="h-full w-full object-contain" onError={() => setError(true)} />
   }
 
   return (
     <img
       src={imageUrl}
       alt={alt}
-      className="chemical-structure-image w-auto h-auto max-w-full max-h-96"
+      className="h-full w-full object-contain"
       loading="lazy"
       onError={() => {
         if (source === 'pubchem' && smiles) {
