@@ -66,6 +66,10 @@ export function getComboLevelConfig(key: string): ComboLevelConfig {
   return COMBO_LEVEL_REGISTRY.find(c => c.key === key) ?? COMBO_LEVEL_REGISTRY[2]
 }
 
+export function getComboLevelByLabel(label: string): ComboLevelConfig {
+  return COMBO_LEVEL_REGISTRY.find(c => c.label.toLowerCase() === label.toLowerCase()) ?? COMBO_LEVEL_REGISTRY[2]
+}
+
 export function getHarmLevelConfig(key: string): HarmLevelConfig {
   return HARM_LEVEL_REGISTRY.find(h => h.key === key) ?? HARM_LEVEL_REGISTRY[0]
 }
