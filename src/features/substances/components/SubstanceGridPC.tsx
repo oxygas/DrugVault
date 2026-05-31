@@ -1,0 +1,40 @@
+'use client'
+
+import { memo } from 'react'
+import type { Substance } from '@/lib/types'
+import SubstanceCard from './SubstanceCard'
+
+interface SubstanceGridPCProps {
+  substances: Substance[]
+  onSubstanceClick: (substance: Substance) => void
+}
+
+function SubstanceGridPCInner({ substances, onSubstanceClick }: SubstanceGridPCProps) {
+  if (substances.length === 0) {
+    return (
+      <div className="text-center py-16 sm:py-24">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[rgba(255,255,255,0.03)] flex items-center justify-center">
+          <svg className="w-8 h-8 text-[var(--text4)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg>
+        </div>
+        <p className="text-[var(--text3)] text-sm">No substances found</p>
+        <p className="text-[var(--text4)] text-xs mt-1">Try adjusting your filters</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 justify-items-center vaporwave-grid">
+      {substances.map((substance) => (
+        <SubstanceCard
+          key={substance.name}
+          substance={substance}
+          onClick={onSubstanceClick}
+        />
+      ))}
+    </div>
+  )
+}
+
+export default memo(SubstanceGridPCInner)

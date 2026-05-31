@@ -72,7 +72,7 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
         setFocused(false)
       }
     }
-    document.addEventListener('pointerdown', handleClick)
+    document.addEventListener('pointerdown', handleClick, { passive: true })
     return () => document.removeEventListener('pointerdown', handleClick)
   }, [inputRef, dropdownRef])
 

@@ -16,6 +16,7 @@ import LegalStatusTabContent from '@/components/LegalStatusTabContent'
 import ScoreBadges from '@/components/ScoreBadges'
 import HarmReductionCard from '@/components/HarmReductionCard'
 import CategoryHarmReduction from '@/components/CategoryHarmReduction'
+import { useAnalytics } from '@/lib/use-analytics'
 import dynamic from 'next/dynamic'
 
 const SubjectiveEffectsModal = dynamic(
@@ -43,6 +44,8 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+  const { trackSubstance } = useAnalytics()
+  useEffect(() => { trackSubstance(slugify(substance.name)) }, [trackSubstance, substance.name])
   const catColor = CATEGORY_COLORS[substance.category]
   const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
   const sanityImageUrl = substance.chemicalStructure?.asset?.url || null
@@ -344,7 +347,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
       </footer>
 
       {effectsModalOpen && (
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm"><div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" /></div>}>
           <SubjectiveEffectsModal
             substance={substance}
             isOpen={effectsModalOpen}
@@ -435,7 +438,7 @@ function ChemicalStructureImage({
   }
 
   if (source === 'sanity') {
-    return <Image src={imageUrl} alt={alt} width={width || 400} height={height || 267} className="h-full w-full object-contain" onError={() => setError(true)} />
+    return <Image src={imageUrl} alt={alt} width={width || 400} height={height || 267} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px" className="h-full w-full object-contain" onError={() => setError(true)} />
   }
 
   return (

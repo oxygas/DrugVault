@@ -11,6 +11,8 @@ import { DEFAULT_THEME } from '@/themes/config'
 import { Analytics } from "@vercel/analytics/next"
 import { GemBotButton } from '@/components/GemBot'
 import LoadingScreen from '@/components/LoadingScreen'
+import { AnalyticsTracker } from '@/components/AnalyticsTracker'
+import { Suspense } from 'react'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -156,22 +158,25 @@ export default async function RootLayout({
             <script
               dangerouslySetInnerHTML={{
                 __html: `
-                  let mxTick = false
-                  document.addEventListener('mousemove', function(e) {
-                    if (mxTick) return
-                    mxTick = true
-                    requestAnimationFrame(function() {
-                      document.documentElement.style.setProperty('--mx', e.clientX + 'px')
-                      document.documentElement.style.setProperty('--my', e.clientY + 'px')
-                      mxTick = false
-                    })
-                  })
+                   let mxTick = false
+                   document.addEventListener('mousemove', function(e) {
+                     if (mxTick) return
+                     mxTick = true
+                     requestAnimationFrame(function() {
+                       document.documentElement.style.setProperty('--mx', e.clientX + 'px')
+                       document.documentElement.style.setProperty('--my', e.clientY + 'px')
+                       mxTick = false
+                     })
+                   }, { passive: true })
                 `,
               }}
             />
             <div className="relative z-10 min-h-[100dvh] flex flex-col">{children}</div>
             <GemBotButton />
             <Analytics />
+            <Suspense fallback={null}>
+              <AnalyticsTracker />
+            </Suspense>
             <Toaster
               position="bottom-center"
               toastOptions={{

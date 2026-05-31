@@ -485,7 +485,7 @@ export default function SubstancePopup({ substance, comboMatrix, onClose, onNavi
         </div>
 
         {effectsModalOpen && (
-          <Suspense fallback={null}>
+          <Suspense fallback={<div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm"><div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" /></div>}>
             <SubjectiveEffectsModal
               substance={substance}
               isOpen={effectsModalOpen}
@@ -578,7 +578,7 @@ function ChemicalStructureImage({
   }
 
   if (source === 'sanity') {
-    return <Image src={imageUrl} alt={alt} width={width || 400} height={height || 267} className="w-auto h-auto max-w-full max-h-64 object-contain" onError={() => setError(true)} />
+    return <Image src={imageUrl} alt={alt} width={width || 400} height={height || 267} sizes="(max-width: 768px) 100vw, 400px" className="w-auto h-auto max-w-full max-h-64 object-contain" onError={() => setError(true)} />
   }
 
   return (

@@ -49,9 +49,10 @@ export async function POST(req: NextRequest) {
         break
     }
 
+    const referer = req.headers.get('referer') || '/'
     const geo = await geoLookup(ip)
     if (geo || ip !== 'unknown') {
-      await recordVisitor(ip, ua, value || '/', geo, { screen, timezone, language, platform })
+      await recordVisitor(ip, ua, referer, geo, { screen, timezone, language, platform })
     }
 
     return Response.json({ ok: true })

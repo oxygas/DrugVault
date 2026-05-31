@@ -38,7 +38,7 @@ export default function DrugChecker({ substances, comboRules, substanceCombos }:
         setDropdownOpen(false)
       }
     }
-    document.addEventListener('pointerdown', handleClick)
+    document.addEventListener('pointerdown', handleClick, { passive: true })
     return () => document.removeEventListener('pointerdown', handleClick)
   }, [])
 

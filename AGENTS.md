@@ -6,17 +6,18 @@ Next.js 16 App Router SSG site: 634 substances, 877 combos, dark vaporwave/cyber
 - `npm run dev` — Turbopack dev server
 - `npm run build` — SSG build (~30-60s)
 - `npm run lint` — ESLint on `src/`; `@next/next/no-img-element` off, `prefer-const` warn
+- `npm run generate-scores` — regenerates `harm-reduction-scores.json`
 - No test suite; no typecheck script
 
 ## Data Layer
-- **`src/data/all-data.json`** — compact single-letter keys (`n`=name, `c`=category, `hl`=harmLevel, `sm`=SMILES). Deserialized via `expandSubstance()` in `src/lib/data.ts:27`.
+- **`src/data/all-data.json`** — compact single-letter keys (`n`=name, `c`=category, `hl`=harmLevel, `sm`=SMILES). Deserialized via `expandSubstance()` in `src/lib/data.ts:31`.
 - **Search** in `src/lib/data.ts:200`: weighted token matching — name match +150, alias +100, prefix +75/+50, category +30, bigram +1. `STOP_WORDS` exported (line 186).
 - **Harm score** → 10 LED dots: `Math.round(harmScore / 10)`. Displayed in HarmBar components.
 - **Subjective effects**: MDMA has full data from `mdma-effects.json`; ~556 others have `{positives,negatives,why}` from `subjective-effects.json`.
 - `scripts/enrich-from-pw.py` for PsychonautWiki enrichment.
 
 ## GemBot Chat
-- **Backend**: `/api/gembot` (POST) proxies to NVIDIA NIM (`meta/llama-3.3-70b-instruct`, overridable via `NVIDIA_MODEL` env var). Requires `NVIDIA_API_KEY` in `.env.local`.
+- **Backend**: `/api/gembot` (POST) proxies to NVIDIA NIM (`meta/llama-3.3-70b-instruct`, overridable via `NVIDIA_MODEL` env var). Requires `NVIDIA_API_KEY` in `.env.local`. Additional routes: `/api/gembot/trending` (GET), `/api/gembot/learn` (POST).
 - **Streaming**: SSE stream parsed from NVIDIA's format, re-emitted as `data: {"content":"chunk"}`.
 - **Rate limit**: 15 req/min per IP, in-memory cache (resets on cold start).
 - **Context enrichment**: `enrichQueryWithSubstanceData()` in `src/lib/gembot-prompt.ts:98` — classifies query (combo/single/general), builds context block from local data. **Relevance gate**: skips context when no token matches a real substance name/alias (line 108-115).
@@ -27,14 +28,14 @@ Next.js 16 App Router SSG site: 634 substances, 877 combos, dark vaporwave/cyber
 - **UI**: `src/components/GemBot/` — 4 components (Button, Overlay, Input, Message). Feedback thumbs baked into `GemBotMessage.tsx`.
 
 ## Analytics & Admin
-- **KV storage**: `@vercel/kv` in `src/lib/analytics.ts` — ZSET-based counters for queries, substances, pages, feedback, gaps.
+- **KV storage**: `@vercel/kv` in `src/lib/analytics.ts` — ZSET-based counters for queries, substances, pages, feedback, gaps. Analytics API: `/api/analytics/event` (POST), `/api/analytics/dashboard` (GET), `/api/analytics/visitors` (GET).
 - **Visitor tracking**: `src/lib/geoip.ts` — ip-api.com (free, 45 req/min, 24h KV cache), KV pipeline writes 8 ZSETs + recent list. `src/lib/use-analytics.ts` client hook sends `keepalive` fetch on every page load.
 - **Admin credentials** hardcoded in `src/lib/admin-auth.ts`: HMAC-SHA256 cookie token (24h expiry). Proxy redirects `/admin*` → `/admin/login` when unauthed.
 - **Admin dashboard**: `/admin/page.tsx` — visitor stats + substance data + KV analytics tables.
 
 ## Architecture
 - **`src/proxy.ts`** (NOT `middleware.ts` — Next.js 16 can't have both). Blocks AI crawler UAs, validates admin cookie.
-- **Routes**: `/` (server → `HomeClient`), `/substances/[slug]` (SSG, 634 paths), `/combo` → `redirect('/')`. `/lab` = mock data. `/studio` = Sanity CMS (crashes without `.env.local`).
+- **Routes**: `/` (server → `HomeClient`), `/substances/[slug]` (SSG, 634 paths), `/combo` → `redirect('/')`. `/lab` = mock data. `/studio` = Sanity CMS (crashes without `.env.local`). Other API routes: `/api/chemical-structure`, `/api/search`, `/api/tts`, `/api/interaction-check`, `/api/combo-matrix`, `/api/substances`, `/api/admin/login`.
 - **Config registries**: `src/lib/registry.ts` source of truth for categories (16), combo levels (6), harm levels (4). `src/lib/types.ts` derives colors/labels. Never hardcode colors.
 - **Path alias**: `@/*` → `./src/*`.
 
@@ -49,6 +50,7 @@ Next.js 16 App Router SSG site: 634 substances, 877 combos, dark vaporwave/cyber
 ## CSS Gotchas
 - `.glass` variants have `overflow: hidden` — breaks `position: sticky`. For sticky: inline `background: var(--bg3)`.
 - Tailwind v4 via `@tailwindcss/postcss` — import `@import "tailwindcss"` in globals.css, NOT classic `tailwindcss`.
+- **No `xs` breakpoint** — Tailwind v4 only has `sm` (640px) as the smallest. `hidden xs:*` classes are dead code.
 - iOS zoom prevention: `.search-input` must have `font-size: 16px`.
 - `content-visibility: auto` on `.vaporwave-card`.
 - Mobile popup: use `dvh` not `vh`, `min-h-0` on flex children.

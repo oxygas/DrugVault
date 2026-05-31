@@ -10,7 +10,7 @@ export function GemBotButton() {
     <>
       <button
         onClick={toggle}
-        className="fixed bottom-6 left-4 z-[10001] flex size-12 items-center justify-center rounded-full border-2 border-[var(--accent)]/50 bg-[var(--bg3)] backdrop-blur-sm shadow-lg shadow-[var(--accent)]/20 transition-all hover:scale-110 hover:border-[var(--accent)] hover:shadow-[var(--accent)]/40 active:scale-95"
+        className="fixed sm:bottom-6 bottom-[72px] left-3 z-[10001] flex size-12 items-center justify-center rounded-full border-2 border-[var(--accent)]/50 bg-[var(--bg3)] backdrop-blur-sm shadow-lg shadow-[var(--accent)]/20 transition-all hover:scale-110 hover:border-[var(--accent)] hover:shadow-[var(--accent)]/40 active:scale-95"
         style={{
           boxShadow: isOpen
             ? '0 0 20px var(--accent), 0 0 8px var(--accent)'

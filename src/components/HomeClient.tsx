@@ -279,7 +279,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
               {mounted ? <>
                 <span>{bodyWeight}{weightUnit}</span>
                 <span style={{ color: userLevel === 'new' ? '#10b981' : userLevel === 'common' ? '#f59e0b' : '#ef4444' }}>·</span>
-                <span className="hidden xs:inline">{userLevelLabel}</span>
+                <span className="hidden sm:inline">{userLevelLabel}</span>
               </> : <span className="h-3 w-16" />}
             </div>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -307,7 +307,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
   <header className="text-center py-8 sm:py-14 lg:py-18 relative">
     <div className="hero-glow" />
     <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
-          <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFkdHQzaHphODF6Y3Rlb2JnMTYybzlsaHVibG8zZXNpYjAybWc4NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Wt0zLr2PkDbDkfQOSo/giphy.gif" alt="TripGem" className="tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
+          <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFkdHQzaHphODF6Y3Rlb2JnMTYybzlsaHVibG8zZXNpYjAybWc4NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Wt0zLr2PkDbDkfQOSo/giphy.gif" alt="TripGem" fetchPriority="high" className="tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
           <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
             <span className="tripgem-text-trip">Trip</span><span className="tripgem-text-gem">Gem</span>
           </span>
