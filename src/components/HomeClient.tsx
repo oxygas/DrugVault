@@ -258,14 +258,13 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
                 <span className="hidden sm:inline">{feature.label}</span>
               </button>
             ))}
-            <div className="w-px h-5 bg-[var(--border)] mx-1 sm:mx-2" />
-      <button
-        onClick={() => { playToggle(); toggleTheme() }}
-        className="theme-btn p-2.5 rounded-xl"
-        aria-label="Theme"
-        title="Theme Select"
+            <button
+              onClick={() => { playToggle(); toggleTheme() }}
+              className="nav-tab flex items-center justify-center"
+              aria-label="Theme"
+              title="Theme Select"
             >
-              <svg className="w-5 h-5 text-[var(--accent)] hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
               </svg>
             </button>
@@ -386,16 +385,7 @@ export default function HomeClient({ substances, stats, categories, comboMatrix,
               <span className="text-xs font-medium">{feature.label}</span>
             </button>
           ))}
-      <button
-        onClick={() => { playToggle(); toggleTheme() }}
-        className="theme-btn flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg"
-        aria-label="Theme"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
-        </svg>
-        <span className="text-[10px] font-mono uppercase tracking-[0.12em]">Theme</span>
-      </button>
+
       <button
         onClick={() => { playClick(); toggleSettings() }}
         className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-all duration-300 text-[var(--text3)] hover:text-[var(--accent2)]"

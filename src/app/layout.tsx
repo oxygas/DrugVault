@@ -9,6 +9,8 @@ import { Toaster } from 'sonner'
 import VisualEffects from '@/components/VisualEffects'
 import { DEFAULT_THEME } from '@/themes/config'
 import { Analytics } from "@vercel/analytics/next"
+import { GemBotButton } from '@/components/GemBot'
+import LoadingScreen from '@/components/LoadingScreen'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -147,6 +149,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
+        <LoadingScreen />
         <QueryProvider>
           <TooltipProvider>
             <VisualEffects />
@@ -167,6 +170,7 @@ export default async function RootLayout({
               }}
             />
             <div className="relative z-10 min-h-[100dvh] flex flex-col">{children}</div>
+            <GemBotButton />
             <Analytics />
             <Toaster
               position="bottom-center"
