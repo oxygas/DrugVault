@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { buildSystemPrompt, enrichQueryWithSubstanceData } from '@/lib/gembot-prompt'
+import { buildSystemPrompt, enrichQueryWithSubstanceData, isGreeting } from '@/lib/gembot-prompt'
 
 export const dynamic = 'force-dynamic'
 
@@ -93,7 +93,27 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: 'bad_request', message: 'Message is required' }, { status: 400 })
     }
 
-    const enrichment = enrichQueryWithSubstanceData(message)
+    if (isGreeting(message)) {
+      const encoder = new TextEncoder()
+      const greeting = "Hey there! I'm GemBot — ask me about any substance, check combos, or compare effects. What can I help you with?"
+      const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(encoder.encode('data: ' + JSON.stringify({ content: greeting }) + '\n\n'))
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'))
+          controller.close()
+        },
+      })
+      return new Response(stream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+          'X-RateLimit-Remaining': String(remaining),
+        },
+      })
+    }
+
+    const enrichment = await enrichQueryWithSubstanceData(message)
     const systemPrompt = buildSystemPrompt()
 
     const systemContent = enrichment.contextBlock

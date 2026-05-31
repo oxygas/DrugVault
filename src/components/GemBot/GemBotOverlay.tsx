@@ -1,19 +1,31 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
-import { X, ChevronDown } from 'lucide-react'
+import { X, ChevronDown, Sparkles } from 'lucide-react'
 import { useGemBotStore } from '@/stores/gembot'
+import { useAnalytics } from '@/lib/use-analytics'
 import { GemBotMessage } from './GemBotMessage'
 import { GemBotInput } from './GemBotInput'
 
+function LogoImg({ className }: { className?: string }) {
+  return (
+    <img
+      src="/og-image.gif"
+      alt="TripGem logo"
+      className={className}
+      style={{ filter: 'drop-shadow(0 0 8px rgba(168,85,247,0.4))' }}
+    />
+  )
+}
+
 function TypingIndicator() {
   return (
-    <div className="flex justify-start mb-3">
-      <div className="max-w-[85%] sm:max-w-[90%] rounded-xl rounded-bl-md px-4 py-3 bg-[var(--bg3)]/80 border border-[var(--border2)]">
+    <div className="flex justify-start mb-3 gemot-msg-enter">
+      <div className="max-w-[85%] sm:max-w-[90%] rounded-xl rounded-bl-md px-4 py-3 bg-[var(--bg3)]/80 border border-[var(--border2)] border-l-[var(--cyan)]/40 border-l-2">
         <div className="flex items-center gap-1.5">
-          <span className="size-1.5 rounded-full bg-[var(--text4)] animate-bounce" style={{ animationDelay: '0ms' }} />
-          <span className="size-1.5 rounded-full bg-[var(--text4)] animate-bounce" style={{ animationDelay: '150ms' }} />
-          <span className="size-1.5 rounded-full bg-[var(--text4)] animate-bounce" style={{ animationDelay: '300ms' }} />
+          <span className="size-1.5 rounded-full bg-[var(--cyan)] animate-bounce" style={{ animationDelay: '0ms' }} />
+          <span className="size-1.5 rounded-full bg-[var(--cyan)] animate-bounce" style={{ animationDelay: '150ms' }} />
+          <span className="size-1.5 rounded-full bg-[var(--cyan)] animate-bounce" style={{ animationDelay: '300ms' }} />
         </div>
       </div>
     </div>
@@ -27,6 +39,8 @@ export function GemBotOverlay() {
   const abortRef = useRef<AbortController | null>(null)
   const [streamingContent, setStreamingContent] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const lastQueryRef = useRef('')
+  const { trackQuery, trackFeedback } = useAnalytics()
 
   const handleClose = useCallback(() => {
     if (abortRef.current) {
@@ -58,9 +72,11 @@ export function GemBotOverlay() {
   const handleSend = useCallback(async (text: string) => {
     setError(null)
     setStreamingContent('')
+    lastQueryRef.current = text
 
     addMessage({ role: 'user', content: text })
     setIsLoading(true)
+    trackQuery(text)
 
     const controller = new AbortController()
     abortRef.current = controller
@@ -125,6 +141,12 @@ export function GemBotOverlay() {
 
       if (botContent) {
         appendToLastBotMessage(botContent)
+        fetch('/api/gembot/learn', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ gap: text }),
+          keepalive: true,
+        }).catch(() => {})
       }
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return
@@ -136,7 +158,7 @@ export function GemBotOverlay() {
       setStreamingContent('')
       abortRef.current = null
     }
-  }, [addMessage, appendToLastBotMessage])
+  }, [addMessage, appendToLastBotMessage, trackQuery])
 
   if (!isOpen) return null
 
@@ -148,6 +170,7 @@ export function GemBotOverlay() {
         sm:inset-auto sm:bottom-20 sm:left-4
         sm:w-[480px]
         sm:h-[min(700px,calc(100dvh-120px))]
+        gemot-overlay-enter
       "
     >
       <div className="
@@ -156,23 +179,33 @@ export function GemBotOverlay() {
         bg-[var(--surface-elevated)] sm:backdrop-blur-xl sm:shadow-2xl
         border-t border-[var(--border2)] sm:border-t-0
       ">
-        <div className="flex items-center justify-between border-b border-[var(--border2)] px-4 py-3 shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-[var(--cyan)] shadow-[0_0_6px_var(--cyan)]" />
-            <span className="font-mono text-sm font-semibold text-[var(--text)]">GemBot</span>
-            <span className="hidden sm:inline text-[10px] font-mono text-[var(--text4)] ml-1">llama-3.3-70b</span>
+        <div className="flex items-center justify-between border-b border-[var(--border3)]/50 px-3 py-2.5 shrink-0 bg-[var(--bg2)]/40">
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center size-8 rounded-lg bg-gradient-to-br from-[var(--accent)]/20 to-[var(--pink)]/20 border border-[var(--accent)]/20">
+              <LogoImg className="size-6 rounded-md" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold leading-none bg-gradient-to-r from-[var(--accent)] to-[var(--pink)] bg-clip-text text-transparent">
+                TripGem
+              </span>
+              <span className="text-[10px] font-mono text-[var(--text4)] leading-tight mt-0.5 flex items-center gap-1">
+                <span className="size-1.5 rounded-full bg-[var(--cyan)] shadow-[0_0_4px_var(--cyan)] inline-block" style={{ animation: 'pulse-dot 2s ease-in-out infinite' }} />
+                <span className="lowercase">llama-3.3-70b</span>
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-1">
             <button
               onClick={clearHistory}
-              className="rounded-md px-2 py-1 text-xs text-[var(--text4)] hover:text-[var(--text3)] transition-colors"
+              className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-[var(--text4)] hover:text-[var(--text3)] hover:bg-[var(--bg2)]/60 transition-all"
               aria-label="Clear chat"
             >
+              <Sparkles size={12} />
               New Chat
             </button>
             <button
               onClick={handleClose}
-              className="flex size-7 items-center justify-center rounded-md text-[var(--text4)] hover:text-[var(--text)] hover:bg-[var(--bg2)] transition-colors"
+              className="flex size-7 items-center justify-center rounded-md text-[var(--text4)] hover:text-[var(--text)] hover:bg-[var(--bg2)]/60 transition-all"
               aria-label="Close GemBot"
             >
               <X size={16} className="hidden sm:block" />
@@ -181,33 +214,58 @@ export function GemBotOverlay() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 py-3 scroll-smooth overscroll-contain">
+        <div className="flex-1 overflow-y-auto px-3 py-3 scroll-smooth overscroll-contain gemot-scrollbar">
           {messages.length === 0 && (
-            <div className="flex h-full flex-col items-center justify-center text-center px-4">
-              <div className="mb-3 size-12 rounded-full bg-[var(--cyan)]/10 flex items-center justify-center">
-                <span className="text-2xl">💎</span>
+            <div className="flex h-full flex-col items-center justify-center text-center px-6">
+              <div className="mb-4 flex items-center justify-center">
+                <LogoImg className="size-16 rounded-lg" />
               </div>
-              <p className="text-sm font-medium text-[var(--text2)]">Hi, I&apos;m GemBot!</p>
-              <p className="mt-1 text-xs text-[var(--text4)] max-w-[280px] sm:max-w-[320px]">
-                Ask me about any substance, check combinations, or get harm reduction info — I have data on 634 substances.
+              <p className="text-sm font-semibold text-[var(--text2)]">
+                Hi, I&apos;m GemBot
               </p>
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
-                {['What is MDMA?', 'LSD + cannabis', 'Compare stimulants'].map(q => (
+              <p className="mt-1.5 text-xs text-[var(--text4)] leading-relaxed max-w-[280px] sm:max-w-[320px]">
+                Your harm reduction guide. Ask me about any substance, check combos, or compare effects — I have data on <span className="text-[var(--text3)] font-medium">634 substances</span>.
+              </p>
+
+              <div className="mt-5 flex flex-col gap-2 w-full max-w-[260px]">
+                {[
+                  { q: 'What is MDMA?', desc: 'Get harm profile & effects' },
+                  { q: 'LSD + cannabis', desc: 'Check combination safety' },
+                  { q: 'Compare stimulants', desc: 'Compare across substances' },
+                ].map(({ q, desc }) => (
                   <button
                     key={q}
                     onClick={() => handleSend(q)}
-                    className="rounded-full border border-[var(--border2)] px-3 py-1.5 text-xs text-[var(--text3)] hover:text-[var(--text)] hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/5 transition-all"
+                    className="group flex items-center justify-between gap-2 rounded-xl border border-[var(--border2)] px-4 py-2.5 text-left transition-all hover:border-[var(--accent)]/30 hover:bg-[var(--accent)]/5"
                   >
-                    {q}
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium text-[var(--text2)] group-hover:text-[var(--text)] transition-colors">{q}</span>
+                      <span className="text-[10px] text-[var(--text4)]">{desc}</span>
+                    </div>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text4)] group-hover:text-[var(--accent)] shrink-0 transition-colors">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
                   </button>
                 ))}
               </div>
             </div>
           )}
-          {messages.map((msg) => (
-            <GemBotMessage key={msg.id} message={msg} />
-          ))}
-          {isLoading && <TypingIndicator />}
+          <div className="flex flex-col">
+            {messages.map((msg, idx) => {
+              const userQuery = msg.role === 'assistant'
+                ? [...messages].slice(0, idx).reverse().find(m => m.role === 'user')?.content
+                : undefined
+              return (
+                <GemBotMessage
+                  key={msg.id}
+                  message={msg}
+                  query={userQuery}
+                  onFeedback={userQuery ? (positive) => trackFeedback(userQuery, positive) : undefined}
+                />
+              )
+            })}
+            {isLoading && <TypingIndicator />}
+          </div>
           <div ref={messagesEndRef} />
         </div>
 

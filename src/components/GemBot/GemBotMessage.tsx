@@ -2,10 +2,13 @@
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { ThumbsUp, ThumbsDown } from 'lucide-react'
 import type { Message } from '@/stores/gembot'
 
 interface Props {
   message: Message
+  query?: string
+  onFeedback?: (positive: boolean) => void
 }
 
 const COMBO_LEVEL_COLORS: Record<string, string> = {
@@ -110,13 +113,13 @@ function parseVisuals(content: string): React.ReactNode[] {
   return parts.length > 0 ? parts : [content]
 }
 
-export function GemBotMessage({ message }: Props) {
+export function GemBotMessage({ message, query, onFeedback }: Props) {
   const isUser = message.role === 'user'
 
   if (isUser) {
     return (
-      <div className="flex justify-end mb-3">
-        <div className="max-w-[85%] sm:max-w-[90%] rounded-xl rounded-br-md px-4 py-2.5 text-sm leading-relaxed bg-[var(--accent)]/20 text-[var(--text)]">
+      <div className="flex justify-end mb-3 gemot-msg-enter">
+        <div className="max-w-[85%] sm:max-w-[90%] rounded-xl rounded-br-md px-4 py-2.5 text-sm leading-relaxed bg-gradient-to-br from-[var(--accent)]/20 to-[var(--pink)]/10 text-[var(--text)] border border-[var(--accent)]/20">
           <p className="whitespace-pre-wrap break-words max-w-full">{message.content}</p>
         </div>
       </div>
@@ -124,8 +127,8 @@ export function GemBotMessage({ message }: Props) {
   }
 
   return (
-    <div className="flex justify-start mb-3">
-      <div className="max-w-[85%] sm:max-w-[90%] rounded-xl rounded-bl-md px-4 py-2.5 text-sm leading-relaxed bg-[var(--bg3)]/80 text-[var(--text)] border border-[var(--border2)]">
+    <div className="flex justify-start mb-3 gemot-msg-enter">
+      <div className="max-w-[85%] sm:max-w-[90%] rounded-xl rounded-bl-md px-4 py-2.5 text-sm leading-relaxed bg-[var(--bg3)]/90 text-[var(--text)] border border-[var(--border2)] border-l-2 border-l-[var(--accent)]/40">
         <div className="prose prose-sm prose-invert max-w-none
           prose-p:my-1 prose-ul:my-1 prose-li:my-0.5
           prose-code:text-[var(--cyan)] prose-code:bg-[var(--bg2)] prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:break-all
@@ -137,7 +140,7 @@ export function GemBotMessage({ message }: Props) {
           prose-th:text-[var(--accent)] prose-th:pr-3 prose-th:whitespace-nowrap
           prose-td:pr-3 prose-td:border-r prose-td:border-[var(--border2)]/50 prose-td:whitespace-nowrap
           prose-tr:border-b prose-tr:border-[var(--border2)]/30
-          break-words overflow-hidden"
+          break-words"
           style={{ color: 'var(--text)' }}
         >
           <ReactMarkdown
@@ -164,6 +167,25 @@ export function GemBotMessage({ message }: Props) {
             {message.content}
           </ReactMarkdown>
         </div>
+        {query && onFeedback && (
+          <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-[var(--border2)]/30">
+            <span className="text-[10px] text-[var(--text4)]">Helpful?</span>
+            <button
+              onClick={() => onFeedback(true)}
+              className="flex items-center justify-center size-6 rounded text-[var(--text4)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors"
+              aria-label="Thumbs up"
+            >
+              <ThumbsUp size={12} />
+            </button>
+            <button
+              onClick={() => onFeedback(false)}
+              className="flex items-center justify-center size-6 rounded text-[var(--text4)] hover:text-[var(--pink)] hover:bg-[var(--pink)]/10 transition-colors"
+              aria-label="Thumbs down"
+            >
+              <ThumbsDown size={12} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

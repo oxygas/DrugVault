@@ -1,65 +1,70 @@
 # TripGem — Agent Guide
 
-A Next.js 16 App Router SSG site: 618 substances, 619+ static pages, combo matrix, interaction checker, dosage guides. Dark vaporwave/cyberpunk theme, Tailwind v4.
+Next.js 16 App Router SSG site: 634 substances, 877 combos, dark vaporwave/cyberpunk theme, Tailwind v4.
 
 ## Commands
-- `npm run dev` — Next.js 16 Turbopack dev server
+- `npm run dev` — Turbopack dev server
 - `npm run build` — SSG build (~30-60s)
 - `npm run lint` — ESLint on `src/`; `@next/next/no-img-element` off, `prefer-const` warn
 - No test suite; no typecheck script
 
 ## Data Layer
-- **`src/data/all-data.json`** (~55K lines, 618 substances, 877 combos, 200 rules) uses compact single-letter keys: `n`=name, `c`=category, `hl`=harmLevel, `sm`=SMILES, etc. Deserialized via `expandSubstance()` in `src/lib/data.ts:27`. Cast as `RawData`.
-- **Subjective effects**: MDMA has full data from `mdma-effects.json`; ~50 others have `{positives,negatives,why}` from `subjective-effects.json`. Rest have none.
-- **Search**: bigram-based index built at import time. Exact match + prefix boosted. Min 2 chars. No API calls.
-- **Harm score**: 0-100 scaled to 10 LED dots (`Math.round(harmScore / 10)`).
-- `scripts/enrich-from-pw.py` for data enrichment from PsychonautWiki.
+- **`src/data/all-data.json`** — compact single-letter keys (`n`=name, `c`=category, `hl`=harmLevel, `sm`=SMILES). Deserialized via `expandSubstance()` in `src/lib/data.ts:27`.
+- **Search** in `src/lib/data.ts:200`: weighted token matching — name match +150, alias +100, prefix +75/+50, category +30, bigram +1. `STOP_WORDS` exported (line 186).
+- **Harm score** → 10 LED dots: `Math.round(harmScore / 10)`. Displayed in HarmBar components.
+- **Subjective effects**: MDMA has full data from `mdma-effects.json`; ~556 others have `{positives,negatives,why}` from `subjective-effects.json`.
+- `scripts/enrich-from-pw.py` for PsychonautWiki enrichment.
+
+## GemBot Chat
+- **Backend**: `/api/gembot` (POST) proxies to NVIDIA NIM (`meta/llama-3.3-70b-instruct`, overridable via `NVIDIA_MODEL` env var). Requires `NVIDIA_API_KEY` in `.env.local`.
+- **Streaming**: SSE stream parsed from NVIDIA's format, re-emitted as `data: {"content":"chunk"}`.
+- **Rate limit**: 15 req/min per IP, in-memory cache (resets on cold start).
+- **Context enrichment**: `enrichQueryWithSubstanceData()` in `src/lib/gembot-prompt.ts:98` — classifies query (combo/single/general), builds context block from local data. **Relevance gate**: skips context when no token matches a real substance name/alias (line 108-115).
+- **Greeting shortcut**: `isGreeting()` returns SSE response directly, no AI call (route.ts:96).
+- **Trending boost**: search results reordered by KV trending slugs (gembot-prompt.ts:117-131).
+- **System prompt**: relaxed to allow general-knowledge answers when context absent. Strict about using context numbers for harm bars.
+- **Max tokens**: 1000 for comparison queries, 600 otherwise. Temperature: 0.7.
+- **UI**: `src/components/GemBot/` — 4 components (Button, Overlay, Input, Message). Feedback thumbs baked into `GemBotMessage.tsx`.
+
+## Analytics & Admin
+- **KV storage**: `@vercel/kv` in `src/lib/analytics.ts` — ZSET-based counters for queries, substances, pages, feedback, gaps.
+- **Visitor tracking**: `src/lib/geoip.ts` — ip-api.com (free, 45 req/min, 24h KV cache), KV pipeline writes 8 ZSETs + recent list. `src/lib/use-analytics.ts` client hook sends `keepalive` fetch on every page load.
+- **Admin credentials** hardcoded in `src/lib/admin-auth.ts`: HMAC-SHA256 cookie token (24h expiry). Proxy redirects `/admin*` → `/admin/login` when unauthed.
+- **Admin dashboard**: `/admin/page.tsx` — visitor stats + substance data + KV analytics tables.
 
 ## Architecture
-- **Routes**: `/` (server → `HomeClient`), `/substances/[slug]` (SSG, 618 paths), `/combo` → `redirect('/')`. `/lab` is preview with mock data. `/studio` is Sanity CMS (crashes without `.env.local`).
-- **Config registries**: `src/lib/registry.ts` is source of truth for `CATEGORY_REGISTRY`, `COMBO_LEVEL_REGISTRY`, `HARM_LEVEL_REGISTRY`. `src/lib/types.ts` derives `CATEGORY_COLORS`, `COMBO_LEVEL_COLORS` etc. from it. Never hardcode colors. `src/features/registry.ts` is a separate feature registration system for dynamic section imports.
-- **Entry**: `HomeClient.tsx` orchestrates `StatsBar` + 3 feature sections; manages keyboard shortcuts.
+- **`src/proxy.ts`** (NOT `middleware.ts` — Next.js 16 can't have both). Blocks AI crawler UAs, validates admin cookie.
+- **Routes**: `/` (server → `HomeClient`), `/substances/[slug]` (SSG, 634 paths), `/combo` → `redirect('/')`. `/lab` = mock data. `/studio` = Sanity CMS (crashes without `.env.local`).
+- **Config registries**: `src/lib/registry.ts` source of truth for categories (16), combo levels (6), harm levels (4). `src/lib/types.ts` derives colors/labels. Never hardcode colors.
 - **Path alias**: `@/*` → `./src/*`.
-- **Keyboard shortcuts**: `Alt+1/2/3` sections, `Alt+S` settings, `/` or `Ctrl+K` search, `?` help, `Esc` close popup.
-- **15 categories, 6 combo levels, 4 harm levels** — all defined in `src/lib/registry.ts`.
-
-## Section Transition
-- Sections render in a `<div style={{ display: 'grid' }}>` with `gridRow: 1, gridColumn: 1` overlap. Inactive sections use `display: none`. Pure React state toggle — no crossfade animation between sections currently.
-- `.section-card` has `contain: content` in CSS — ALL sections override inline with `contain: none`. Never rely on the CSS class value.
-- Single `activeSection` state in `HomeClient`.
 
 ## State Management
-- **5 zustand stores**: `src/stores/bookmarks.ts`, `journal.ts`, `settings.ts`, `theme.ts`, `ui.ts`.
-- **Theme**: 9 themes from `src/themes/config.ts` via `data-theme` attribute on `<html>`, managed by `src/stores/theme.ts`.
+- **6 zustand stores**: `bookmarks.ts`, `journal.ts`, `settings.ts`, `theme.ts`, `ui.ts`, `gembot.ts`. All persist to localStorage via `persist` middleware except `ui.ts`. **GemBot store's `partialize` returns `{}`** — messages are in-memory only, lost on refresh.
 
 ## Performance (do not regress)
-- **DigitalRain.tsx**: RAF loop MUST pause when `document.hidden` and resume on `visibilitychange` — was running 24/7 on full-viewport canvas.
-- **layout.tsx**: Mousemove handler MUST be RAF-coalesced — was invalidating CSS vars on every pixel.
-- **RadarChart.tsx**: `useEffect` for redraw MUST have `[needsRedraw]` dep array — was running on every render.
+- **DigitalRain.tsx**: RAF loop MUST pause on `document.hidden`, resume on `visibilitychange`.
+- **layout.tsx**: Mousemove handler MUST be RAF-coalesced.
+- **RadarChart.tsx**: `useEffect` MUST have `[needsRedraw]` dep.
 
 ## CSS Gotchas
-- `.glass` variants have `overflow: hidden` — breaks `position: sticky`. For sticky headers (ComboMatrix): inline `background: var(--bg3)` with `position: sticky`, never `.glass`.
-- Tailwind v4 via `@tailwindcss/postcss` (import `@import "tailwindcss"` in globals.css, NOT classic `tailwindcss`).
+- `.glass` variants have `overflow: hidden` — breaks `position: sticky`. For sticky: inline `background: var(--bg3)`.
+- Tailwind v4 via `@tailwindcss/postcss` — import `@import "tailwindcss"` in globals.css, NOT classic `tailwindcss`.
 - iOS zoom prevention: `.search-input` must have `font-size: 16px`.
-- `content-visibility: auto` on `.vaporwave-card` for offscreen rendering perf.
-- Mobile popup: use `dvh` not `vh`, add `min-h-0` to flex children to prevent overflow.
-- `contain: content` is set on `.section-card`, `.metric-card`, and `.info-card` in CSS — always needs inline override when `position: sticky` is needed.
+- `content-visibility: auto` on `.vaporwave-card`.
+- Mobile popup: use `dvh` not `vh`, `min-h-0` on flex children.
+- `contain: content` on `.section-card`, `.metric-card`, `.info-card` — needs inline override when `position: sticky`.
 
-## Effects Layer (z-index stack, bottom→top)
-- `z-index: -2` — Body animated gradient
-- `z-index: 0` — Floating orbs, grid-noise SVG, cyberpunk perspective grid
-- `z-index: 1` — Particles, DigitalRain canvas
-- `z-index: 2` — Mouse-glow radial follower
-- `z-index: 99` — Chromatic aberration overlay
-- `z-index: 9999` — CRT scanlines + vignette
-- Reduced motion: `prefers-reduced-motion: reduce` kills all layers above z-2 via `display: none`.
+## Effects Layer (z-index bottom→top)
+-2: body gradient | 0: orbs, grid-noise, perspective grid | 1: particles, DigitalRain | 2: mouse-glow | 99: chromatic aberration | 9999: CRT scanlines+vignette. Reduced motion kills layers above z-2.
 
 ## Accessibility
-- SubstancePopup: `role="dialog"`, `aria-modal="true"`, focus trap.
-- SearchBar: `role="combobox"`, `role="listbox"`, `role="option"`, `aria-selected`.
-- SVGs: decorative (`aria-hidden="true"`) or wrapped in labeled buttons.
+- SubstancePopup: `role="dialog"`, `aria-modal`, focus trap.
+- SearchBar: `role="combobox"`/`listbox`/`option`, `aria-selected`.
+- SVGs: `aria-hidden="true"` or wrapped in labeled buttons.
 
 ## Environment & Setup
-- **Required**: `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` in `.env.local` (Sanity Studio crashes without them).
-- **Sentry**: configured in `next.config.mjs` with tunnel `/monitoring`. DSN in `sentry.server.config.ts`, `sentry.client.config.ts`, `sentry.edge.config.ts`. `@sentry/nextjs` in deps.
-- **Vercel deploy**: `vercel.json` sets `iad1` region, security headers, standard build.
+- **Required for dev**: `NVIDIA_API_KEY` in `.env.local` for GemBot. `NVIDIA_MODEL` optional (default `meta/llama-3.3-70b-instruct`, local override uses `meta/llama-3.1-8b-instruct`).
+- **KV required for analytics**: `KV_URL` and `KV_TOKEN` in `.env.local`.
+- **Sentry**: configured with tunnel `/monitoring`. DSN in `sentry.*.config.ts`. Requires `SENTRY_AUTH_TOKEN` for source maps.
+- **Sanity Studio**: crashes without `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET`.
+- **Vercel deploy**: `vercel.json` sets `iad1` region, security headers.

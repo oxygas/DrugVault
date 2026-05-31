@@ -183,7 +183,7 @@ export function getSubstancesByCategory(category: Category): Substance[] {
   return byCategory.get(category) ?? []
 }
 
-const STOP_WORDS = new Set([
+export const STOP_WORDS = new Set([
   'the','a','an','is','it','in','on','at','to','for','of','by',
   'and','or','but','not','so','if','as','be','do','does','did',
   'are','was','were','been','being','have','has','had',
