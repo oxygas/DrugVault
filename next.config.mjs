@@ -20,8 +20,10 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
+  devIndicators: false,
   poweredByHeader: false,
   reactStrictMode: true,
+  serverExternalPackages: ['lru-cache'],
   experimental: {
     optimizePackageImports: [
       'framer-motion',
