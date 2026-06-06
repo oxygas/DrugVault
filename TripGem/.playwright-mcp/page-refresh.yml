@@ -1,0 +1,137 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e7]:
+    - navigation [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - button "Substances" [ref=e11] [cursor=pointer]:
+            - img [ref=e12]
+            - generic [ref=e14]: Substances
+          - button "Matrix" [ref=e15] [cursor=pointer]:
+            - img [ref=e16]
+            - generic [ref=e18]: Matrix
+          - button "Tools" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+            - generic [ref=e22]: Tools
+          - button "Theme" [ref=e23] [cursor=pointer]:
+            - img [ref=e24]
+        - button "User settings" [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]: 70kg
+            - generic [ref=e171]: ·
+            - generic [ref=e172]: Common
+          - img [ref=e29]
+    - main [ref=e32]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - img "TripGem" [ref=e36]
+          - generic [ref=e37]: TripGem
+        - generic [ref=e38]: 634 substances indexed
+        - heading "Evidence-Based Harm Reduction" [level=1] [ref=e40]:
+          - text: Evidence-Based
+          - text: Harm Reduction
+        - paragraph [ref=e41]: Comprehensive database with interaction checking, combination risk matrix, and dosage guides.
+        - generic [ref=e42]: Educational resource only. Not medical advice. Always consult healthcare professionals.
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - img [ref=e49]
+          - generic [ref=e51]: "634"
+          - generic [ref=e53]: Substances
+        - generic [ref=e54]:
+          - img [ref=e58]
+          - generic [ref=e60]: "16"
+          - generic [ref=e62]: Categories
+        - generic [ref=e63]:
+          - img [ref=e67]
+          - generic [ref=e69]: "72"
+          - generic [ref=e71]: Extreme Risk
+        - generic [ref=e72]:
+          - img [ref=e76]
+          - generic [ref=e78]: "42"
+          - generic [ref=e80]: Avg Harm
+        - generic [ref=e81]:
+          - img [ref=e85]
+          - generic [ref=e87]: "32"
+          - generic [ref=e89]: Avg Addiction
+        - generic [ref=e90]:
+          - img [ref=e94]
+          - generic [ref=e96]: "31"
+          - generic [ref=e98]: Avg OD Risk
+        - generic [ref=e99]:
+          - img [ref=e103]
+          - generic [ref=e105]: "28"
+          - generic [ref=e107]: Avg Withdrawal
+        - generic [ref=e108]:
+          - img [ref=e112]
+          - generic [ref=e114]: "37"
+          - generic [ref=e116]: Avg Interaction
+        - generic [ref=e117]:
+          - img [ref=e121]
+          - generic [ref=e123]: "24"
+          - generic [ref=e125]: Avg Dependence
+      - generic [ref=e128]:
+        - generic [ref=e129]:
+          - generic [ref=e131]:
+            - button "Show all categories" [ref=e132]: All
+            - img
+            - combobox "Search substances" [ref=e133]
+            - generic [ref=e134]: /
+          - generic [ref=e135]:
+            - button "Depressants" [ref=e136] [cursor=pointer]
+            - button "Stimulants" [ref=e137] [cursor=pointer]
+            - button "Opioids" [ref=e138] [cursor=pointer]
+            - button "Psychedelics" [ref=e139] [cursor=pointer]
+            - button "Dissociatives" [ref=e140] [cursor=pointer]
+            - button "Entactogens" [ref=e141] [cursor=pointer]
+            - button "Cannabinoids" [ref=e142] [cursor=pointer]
+            - button "Inhalants" [ref=e143] [cursor=pointer]
+            - button "Deliriants" [ref=e144] [cursor=pointer]
+            - button "Gabapentionoids" [ref=e145] [cursor=pointer]
+            - button "Nootropics" [ref=e146] [cursor=pointer]
+            - button "Antidepressants" [ref=e147] [cursor=pointer]
+            - button "Antipsychotics" [ref=e148] [cursor=pointer]
+            - button "Dopaminergics" [ref=e149] [cursor=pointer]
+            - button "Supplements" [ref=e150] [cursor=pointer]
+            - button "Cathinones" [ref=e151] [cursor=pointer]
+        - status [ref=e152]:
+          - generic [ref=e153]: ╔══
+          - generic [ref=e154]: 634 substances
+          - generic [ref=e155]: ══╗
+        - generic [ref=e175]:
+          - button "View Fasoracetam" [ref=e177] [cursor=pointer]:
+            - generic [ref=e179]:
+              - heading "Fasoracetam" [level=3] [ref=e181]
+              - generic [ref=e193]:
+                - img [ref=e194]
+                - generic [ref=e197]: 10-45 minutes
+                - generic [ref=e198]: ·
+                - generic [ref=e199]: 4-8 hours
+          - button "View MDPV" [ref=e201] [cursor=pointer]:
+            - generic [ref=e203]:
+              - heading "MDPV" [level=3] [ref=e205]
+              - paragraph [ref=e217]: Auditory hallucination · Auditory distortion · Motivation enhancement
+              - generic [ref=e218]:
+                - img [ref=e219]
+                - generic [ref=e222]: 5-20 minutes
+                - generic [ref=e223]: ·
+                - generic [ref=e224]: 2-4 hours
+                - generic [ref=e225]: bath_salts, Bath Salts, NRG-1
+    - contentinfo [ref=e156]:
+      - paragraph [ref=e159]: Open-source harm reduction resource for educational purposes.
+      - paragraph [ref=e160]:
+        - text: "Data:"
+        - link "PsychonautWiki" [ref=e161] [cursor=pointer]:
+          - /url: https://psychonautwiki.org
+        - text: ·
+        - link "TripSit" [ref=e162] [cursor=pointer]:
+          - /url: https://tripsit.me
+        - text: · Erowid · WHO
+      - paragraph [ref=e163]:
+        - link "Source" [ref=e164] [cursor=pointer]:
+          - /url: https://github.com/oxygas/DrugVault
+        - text: · © 2026 · MIT
+    - button "Keyboard shortcuts" [ref=e165]:
+      - img [ref=e166]
+  - button "Open GemBot" [ref=e168]:
+    - img "TripGem" [ref=e169]
+  - region "Notifications alt+T"
+  - alert [ref=e170]
