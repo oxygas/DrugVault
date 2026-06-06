@@ -1,0 +1,8 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - img "TripGem" [ref=e4]
+    - generic [ref=e5]: TripGem
+  - button "Open GemBot" [ref=e53]:
+    - img "TripGem" [ref=e54]
+  - region "Notifications alt+T"
+  - alert [ref=e55]

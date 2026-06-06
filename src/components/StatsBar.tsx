@@ -1,0 +1,61 @@
+'use client'
+
+interface StatsBarProps {
+  stats: {
+    total: number
+    avgHarm: number
+    avgAddiction: number
+    avgOdRisk: number
+    avgWithdrawal: number
+    avgInteraction: number
+    avgDependence: number
+    extremeCount: number
+    categories: number
+  }
+  categories: { name: string; color: string; count: number }[]
+}
+
+export default function StatsBar({ stats, categories }: StatsBarProps) {
+  const items = [
+    { value: stats.total, label: 'Substances', color: 'var(--accent)', icon: 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.25 12.75h3.75m-3.75 0H5.625' },
+    { value: stats.categories, label: 'Categories', color: 'var(--cyan)', icon: 'M9.568 3H5.25A2.25 2.25 0 003 5.25v4.568m0 4.432v4.5A2.25 2.25 0 005.25 21h4.568M14.432 21h4.318A2.25 2.25 0 0021 18.75v-4.318M21 9.75V5.25A2.25 2.25 0 0018.75 3h-4.318' },
+    { value: stats.extremeCount, label: 'Extreme Risk', color: 'var(--red)', icon: 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z' },
+    { value: Math.round(stats.avgHarm * 10) / 10, label: 'Avg Harm', color: 'var(--orange)', icon: 'M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z' },
+    { value: Math.round(stats.avgAddiction * 10) / 10, label: 'Avg Addiction', color: 'var(--pink)', icon: 'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z' },
+    { value: Math.round(stats.avgOdRisk * 10) / 10, label: 'Avg OD Risk', color: 'var(--red)', icon: 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z' },
+    { value: Math.round(stats.avgWithdrawal * 10) / 10, label: 'Avg Withdrawal', color: 'var(--yellow)', icon: 'M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941' },
+    { value: Math.round(stats.avgInteraction * 10) / 10, label: 'Avg Interaction', color: 'var(--purple)', icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' },
+    { value: Math.round(stats.avgDependence * 10) / 10, label: 'Avg Dependence', color: 'var(--blue)', icon: 'M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm0 15a5.25 5.25 0 110-10.5 5.25 5.25 0 010 10.5z' },
+  ]
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 sm:gap-4 lg:gap-3">
+      {items.map((item, i) => (
+        <div
+          key={item.label}
+          className="metric-card group text-center p-3 sm:p-4 glass-aero relative transition-all duration-300"
+          style={{ '--metric-c': item.color, contain: 'none', animationDelay: `${i * 80}ms` } as React.CSSProperties}
+        >
+          {/* Subtle background glow on hover */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          <div className="flex items-center justify-center mb-3 relative z-10">
+            <div
+              className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
+              style={{ background: `color-mix(in srgb, ${item.color} 12%, transparent)`, border: `1px solid color-mix(in srgb, ${item.color} 20%, transparent)` }}
+            >
+              <svg className="w-5 h-5 lg:w-6 lg:h-6" style={{ color: item.color }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+              </svg>
+            </div>
+          </div>
+          <div className="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl font-display font-bold tracking-tight font-mono leading-none mb-3" style={{ color: item.color, animation: `count-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${i * 80 + 200}ms both` }}>
+            {item.value}
+          </div>
+          <div className="w-8 h-px mx-auto mb-2 rounded-full opacity-30" style={{ background: `linear-gradient(90deg, transparent, ${item.color}, transparent)` }} />
+          <span className="text-[11px] lg:text-xs text-[var(--text3)] font-semibold block leading-tight tracking-wider uppercase">{item.label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
