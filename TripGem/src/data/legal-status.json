@@ -1,0 +1,741 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-06",
+  "countries": [
+    { "code": "US", "name": "United States", "flag": "🇺🇸" },
+    { "code": "UK", "name": "United Kingdom", "flag": "🇬🇧" },
+    { "code": "CA", "name": "Canada", "flag": "🇨🇦" },
+    { "code": "AU", "name": "Australia", "flag": "🇦🇺" },
+    { "code": "DE", "name": "Germany", "flag": "🇩🇪" },
+    { "code": "NL", "name": "Netherlands", "flag": "🇳🇱" },
+    { "code": "FR", "name": "France", "flag": "🇫🇷" },
+    { "code": "BR", "name": "Brazil", "flag": "🇧🇷" },
+    { "code": "JP", "name": "Japan", "flag": "🇯🇵" },
+    { "code": "SE", "name": "Sweden", "flag": "🇸🇪" },
+    { "code": "PT", "name": "Portugal", "flag": "🇵🇹" },
+    { "code": "NZ", "name": "New Zealand", "flag": "🇳🇿" },
+    { "code": "ES", "name": "Spain", "flag": "🇪🇸" },
+    { "code": "IT", "name": "Italy", "flag": "🇮🇹" },
+    { "code": "CH", "name": "Switzerland", "flag": "🇨🇭" },
+    { "code": "MX", "name": "Mexico", "flag": "🇲🇽" },
+    { "code": "ZA", "name": "South Africa", "flag": "🇿🇦" },
+    { "code": "IE", "name": "Ireland", "flag": "🇮🇪" },
+    { "code": "IN", "name": "India", "flag": "🇮🇳" },
+    { "code": "NO", "name": "Norway", "flag": "🇳🇴" }
+  ],
+  "usStates": [
+    { "code": "AL", "name": "Alabama" },
+    { "code": "AK", "name": "Alaska" },
+    { "code": "AZ", "name": "Arizona" },
+    { "code": "AR", "name": "Arkansas" },
+    { "code": "CA", "name": "California" },
+    { "code": "CO", "name": "Colorado" },
+    { "code": "CT", "name": "Connecticut" },
+    { "code": "DE", "name": "Delaware" },
+    { "code": "DC", "name": "Washington DC" },
+    { "code": "FL", "name": "Florida" },
+    { "code": "GA", "name": "Georgia" },
+    { "code": "HI", "name": "Hawaii" },
+    { "code": "ID", "name": "Idaho" },
+    { "code": "IL", "name": "Illinois" },
+    { "code": "IN", "name": "Indiana" },
+    { "code": "IA", "name": "Iowa" },
+    { "code": "KS", "name": "Kansas" },
+    { "code": "KY", "name": "Kentucky" },
+    { "code": "LA", "name": "Louisiana" },
+    { "code": "ME", "name": "Maine" },
+    { "code": "MD", "name": "Maryland" },
+    { "code": "MA", "name": "Massachusetts" },
+    { "code": "MI", "name": "Michigan" },
+    { "code": "MN", "name": "Minnesota" },
+    { "code": "MS", "name": "Mississippi" },
+    { "code": "MO", "name": "Missouri" },
+    { "code": "MT", "name": "Montana" },
+    { "code": "NE", "name": "Nebraska" },
+    { "code": "NV", "name": "Nevada" },
+    { "code": "NH", "name": "New Hampshire" },
+    { "code": "NJ", "name": "New Jersey" },
+    { "code": "NM", "name": "New Mexico" },
+    { "code": "NY", "name": "New York" },
+    { "code": "NC", "name": "North Carolina" },
+    { "code": "ND", "name": "North Dakota" },
+    { "code": "OH", "name": "Ohio" },
+    { "code": "OK", "name": "Oklahoma" },
+    { "code": "OR", "name": "Oregon" },
+    { "code": "PA", "name": "Pennsylvania" },
+    { "code": "RI", "name": "Rhode Island" },
+    { "code": "SC", "name": "South Carolina" },
+    { "code": "SD", "name": "South Dakota" },
+    { "code": "TN", "name": "Tennessee" },
+    { "code": "TX", "name": "Texas" },
+    { "code": "UT", "name": "Utah" },
+    { "code": "VT", "name": "Vermont" },
+    { "code": "VA", "name": "Virginia" },
+    { "code": "WA", "name": "Washington" },
+    { "code": "WV", "name": "West Virginia" },
+    { "code": "WI", "name": "Wisconsin" },
+    { "code": "WY", "name": "Wyoming" }
+  ],
+  "usStateDecrim": {
+    "lsd": {
+      "CO": "Decriminalized (some cities)",
+      "OR": "Decriminalized (small amounts)",
+      "DC": "Decriminalized (Initiative 81)",
+      "MA": "Decriminalized (some cities)",
+      "MI": "Decriminalized (some cities)"
+    },
+    "psilocybin": {
+      "CO": "Regulated (healing centers)",
+      "OR": "Regulated (licensed facilitators)",
+      "DC": "Decriminalized",
+      "MI": "Decriminalized (some cities)",
+      "MA": "Decriminalized (some cities)"
+    },
+    "psilocybin-mushrooms": {
+      "CO": "Regulated (healing centers)",
+      "OR": "Regulated (licensed facilitators)",
+      "DC": "Decriminalized",
+      "MI": "Decriminalized (some cities)",
+      "MA": "Decriminalized (some cities)"
+    },
+    "mdma": {
+      "OR": "Decriminalized (small amounts)",
+      "DC": "Decriminalized (Initiative 81)",
+      "CO": "Decriminalized (some cities)"
+    },
+    "cannabis": {
+      "CA": "Legal (regulated)",
+      "CO": "Legal (regulated)",
+      "OR": "Legal (regulated)",
+      "WA": "Legal (regulated)",
+      "NY": "Legal (regulated)",
+      "MI": "Legal (regulated)",
+      "MA": "Legal (regulated)",
+      "AZ": "Legal (regulated)",
+      "IL": "Legal (regulated)",
+      "NV": "Legal (regulated)",
+      "AK": "Legal (regulated)",
+      "DC": "Legal (regulated)",
+      "FL": "Medical Only",
+      "TX": "Medical Only (limited)",
+      "PA": "Medical Only",
+      "OH": "Medical Only",
+      "HI": "Medical Only",
+      "LA": "Medical Only",
+      "AL": "Medical Only",
+      "NC": "Illegal (medical pending)"
+    },
+    "kratom": {
+      "AL": "Illegal",
+      "LA": "Illegal",
+      "OR": "Legal (regulated)",
+      "CO": "Legal (regulated)",
+      "IL": "Legal (regulated)",
+      "MI": "Legal (regulated)",
+      "OH": "Legal (regulated)",
+      "AZ": "Legal (regulated)",
+      "FL": "Legal (regulated)",
+      "WA": "Legal (regulated)"
+    },
+    "salvia": {
+      "AL": "Illegal",
+      "CA": "Illegal",
+      "FL": "Illegal",
+      "IL": "Illegal",
+      "LA": "Illegal",
+      "NC": "Illegal",
+      "NY": "Illegal",
+      "OH": "Illegal",
+      "PA": "Illegal",
+      "TX": "Illegal",
+      "VA": "Illegal"
+    }
+  },
+  "schedules": {
+    "US": {
+      "system": "DEA Controlled Substances Act",
+      "statute": "21 U.S.C. § 812",
+      "tiers": [
+        { "tier": "Schedule I", "color": "#ef4444", "description": "No currently accepted medical use, high abuse potential" },
+        { "tier": "Schedule II", "color": "#f97316", "description": "Medical use, high abuse potential (may lead to severe dependence)" },
+        { "tier": "Schedule III", "color": "#fb923c", "description": "Medical use, moderate-to-low abuse potential" },
+        { "tier": "Schedule IV", "color": "#fbbf24", "description": "Medical use, low abuse potential" },
+        { "tier": "Schedule V", "color": "#a3e635", "description": "Medical use, lowest abuse potential (limited quantities of narcotics)" }
+      ]
+    },
+    "UK": {
+      "system": "Misuse of Drugs Act 1971",
+      "statute": "MDA 1971, c. 38",
+      "tiers": [
+        { "tier": "Class A", "color": "#ef4444", "description": "Most harmful — penalties up to life imprisonment / unlimited fine" },
+        { "tier": "Class B", "color": "#f97316", "description": "Up to 5 years imprisonment / unlimited fine" },
+        { "tier": "Class C", "color": "#fbbf24", "description": "Up to 2 years imprisonment / unlimited fine" }
+      ]
+    },
+    "CA": {
+      "system": "Controlled Drugs and Substances Act",
+      "statute": "S.C. 1996, c. 19",
+      "tiers": [
+        { "tier": "Schedule I", "color": "#ef4444", "description": "Most restrictive — opiates, hallucinogens, stimulants" },
+        { "tier": "Schedule II", "color": "#f97316", "description": "Cannabis and derivatives (pre-Cannabis Act 2018)" },
+        { "tier": "Schedule III", "color": "#fb923c", "description": "Amphetamines, hallucinogens, some sedatives" },
+        { "tier": "Schedule IV", "color": "#fbbf24", "description": "Controlled substances with established medical use" }
+      ]
+    },
+    "AU": {
+      "system": "SUSMP — Standard for the Uniform Scheduling of Medicines and Poisons",
+      "statute": "Therapeutic Goods Act 1989",
+      "tiers": [
+        { "tier": "Schedule 9", "color": "#ef4444", "description": "Prohibited substance — manufacture, possession, sale or use unlawful" },
+        { "tier": "Schedule 8", "color": "#f97316", "description": "Controlled Drug — strict controls, prescription required" },
+        { "tier": "Schedule 4", "color": "#fbbf24", "description": "Prescription Only Medicine" },
+        { "tier": "Schedule 3", "color": "#a3e635", "description": "Pharmacist Only Medicine" },
+        { "tier": "Schedule 2", "color": "#a3e635", "description": "Pharmacy Medicine" }
+      ]
+    },
+    "DE": {
+      "system": "Betäubungsmittelgesetz (BtMG)",
+      "statute": "BtMG, Anlage I–III",
+      "tiers": [
+        { "tier": "Anlage I", "color": "#ef4444", "description": "No medical use, no commercial traffic permitted" },
+        { "tier": "Anlage II", "color": "#f97316", "description": "Tradeable but not prescribable" },
+        { "tier": "Anlage III", "color": "#fb923c", "description": "Prescribable narcotics" }
+      ]
+    },
+    "NL": {
+      "system": "Opiumwet",
+      "statute": "Opiumwet 1976",
+      "tiers": [
+        { "tier": "List I", "color": "#ef4444", "description": "Hard drugs — no tolerance for trade or possession" },
+        { "tier": "List II", "color": "#f97316", "description": "Soft drugs (cannabis, truffles) — gedoogbeleid tolerance policy" }
+      ]
+    },
+    "FR": {
+      "system": "Code de la Santé Publique",
+      "statute": "Article L. 5132-1 et seq.",
+      "tiers": [
+        { "tier": "Stupéfiant", "color": "#ef4444", "description": "Narcotic — most restrictive, prescription banned" },
+        { "tier": "Liste I", "color": "#f97316", "description": "Prescription Only — non-narcotic (white list)" },
+        { "tier": "Liste II", "color": "#fbbf24", "description": "Prescription restricted (yellow list)" }
+      ]
+    },
+    "BR": {
+      "system": "Portaria SVS/MS",
+      "statute": "Portaria 344/98",
+      "tiers": [
+        { "tier": "List A", "color": "#ef4444", "description": "Narcotics subject to special control (A1–A3)" },
+        { "tier": "List B", "color": "#f97316", "description": "Psychotropics subject to control (B1–B2)" },
+        { "tier": "List C", "color": "#fbbf24", "description": "Other controlled substances (C1–C5)" },
+        { "tier": "List D", "color": "#a3e635", "description": "Precursor substances" },
+        { "tier": "List E", "color": "#a3e635", "description": "Plants that can originate narcotic substances" },
+        { "tier": "List F", "color": "#ef4444", "description": "Prohibited substances" }
+      ]
+    },
+    "JP": {
+      "system": "Narcotics and Psychotropics Control Act",
+      "statute": "覚せい剤取締法 / 麻薬及び向精神薬取締法",
+      "tiers": [
+        { "tier": "Narcotic", "color": "#ef4444", "description": "Opium, coca, cannabis, psychotropics — possession prohibited" },
+        { "tier": "Stimulants", "color": "#f97316", "description": "Methamphetamine, MDMA — separate stricter law" },
+        { "tier": "Cannabis", "color": "#f97316", "description": "Cannabis and derivatives (separate law)" }
+      ]
+    },
+    "SE": {
+      "system": "Narkotikastrafflag",
+      "statute": "SFS 1968:64",
+      "tiers": [
+        { "tier": "Narcotic", "color": "#ef4444", "description": "All scheduled drugs — possession, use, sale, manufacture prohibited" },
+        { "tier": "Goods dangerous to health", "color": "#f97316", "description": "Substances not classified as narcotics but restricted" }
+      ]
+    },
+    "PT": {
+      "system": "Decreto-Lei n.º 15/93",
+      "statute": "DL 15/93 + Lei 30/2000",
+      "tiers": [
+        { "tier": "Tabela I-A", "color": "#ef4444", "description": "Hard drugs (opiates, cocaine, synthetic drugs)" },
+        { "tier": "Tabela I-B", "color": "#f97316", "description": "Cannabis and derivatives" },
+        { "tier": "Tabela I-C", "color": "#fb923c", "description": "Psychotropics (stimulants, sedatives)" },
+        { "tier": "Tabela II-A", "color": "#fbbf24", "description": "Prescription psychotropics" },
+        { "tier": "Tabela II-B", "color": "#fbbf24", "description": "Lesser psychotropics" },
+        { "tier": "Tabela II-C", "color": "#a3e635", "description": "Free sale (but tracked)" },
+        { "tier": "Tabela III", "color": "#a3e635", "description": "Exempt preparations" },
+        { "tier": "Tabela IV", "color": "#a3e635", "description": "Precursors" }
+      ]
+    },
+    "NZ": {
+      "system": "Misuse of Drugs Act 1975",
+      "statute": "MDA 1975, NZ",
+      "tiers": [
+        { "tier": "Class A", "color": "#ef4444", "description": "Most serious — manufacturing, supplying, dealing" },
+        { "tier": "Class B", "color": "#f97316", "description": "Moderate penalties" },
+        { "tier": "Class C", "color": "#fbbf24", "description": "Lower penalties" }
+      ]
+    },
+    "ES": {
+      "system": "Ley Orgánica 1/2002",
+      "statute": "LO 1/2002",
+      "tiers": [
+        { "tier": "Tabla I", "color": "#ef4444", "description": "Hard narcotics — most severe penalties" },
+        { "tier": "Tabla II", "color": "#f97316", "description": "Stimulants and other psychotropics" },
+        { "tier": "Tabla III", "color": "#fbbf24", "description": "Pharmaceutical preparations" },
+        { "tier": "Tabla IV", "color": "#a3e635", "description": "Precursors" }
+      ]
+    },
+    "IT": {
+      "system": "Testo Unico sugli Stupefacenti",
+      "statute": "DPR 309/90, Tabelle I–IV",
+      "tiers": [
+        { "tier": "Tabella I", "color": "#ef4444", "description": "Hard drugs — opiates, cocaine, hallucinogens" },
+        { "tier": "Tabella II", "color": "#f97316", "description": "Cannabis (medical use only since 2007)" },
+        { "tier": "Tabella III", "color": "#fb923c", "description": "Barbiturates and other sedatives" },
+        { "tier": "Tabella IV", "color": "#fbbf24", "description": "Psychotropics subject to control" }
+      ]
+    },
+    "CH": {
+      "system": "Bundesgesetz über die Betäubungsmittel (BetmG)",
+      "statute": "BetmG 812.121",
+      "tiers": [
+        { "tier": "List A", "color": "#ef4444", "description": "Verbotene Betäubungsmittel — prohibited" },
+        { "tier": "List B", "color": "#f97316", "description": "Verbotene Betäubungsmittel — also prohibited, different penalties" },
+        { "tier": "List C", "color": "#fbbf24", "description": "Psychotrope Stoffe — controlled, prescription required" },
+        { "tier": "List D", "color": "#a3e635", "description": "Vorläuferstoffe — precursors" },
+        { "tier": "List E", "color": "#a3e635", "description": "Pflanzen und Pilze mit psychoaktiven Stoffen" }
+      ]
+    },
+    "MX": {
+      "system": "Ley General de Salud",
+      "statute": "LGS, Art. 234–245",
+      "tiers": [
+        { "tier": "Fracción I", "color": "#ef4444", "description": "Estupefacientes — narcotics" },
+        { "tier": "Fracción II", "color": "#f97316", "description": "Psicotrópicos — psychotropics" },
+        { "tier": "Fracción III", "color": "#fbbf24", "description": "Prepared medications with controlled substances" }
+      ]
+    },
+    "ZA": {
+      "system": "Medicines and Related Substances Act",
+      "statute": "Act 101 of 1965",
+      "tiers": [
+        { "tier": "Schedule 6", "color": "#f97316", "description": "High risk — controlled by medical practitioner" },
+        { "tier": "Schedule 7", "color": "#ef4444", "description": "Prohibited — may not be sold or used" },
+        { "tier": "Schedule 8", "color": "#f97316", "description": "Habit-forming substances" },
+        { "tier": "Schedule 5", "color": "#fbbf24", "description": "Prescription Only Medicine" }
+      ]
+    },
+    "IE": {
+      "system": "Misuse of Drugs Act 1977",
+      "statute": "MDA 1977, S.I. 173/2009",
+      "tiers": [
+        { "tier": "Schedule 1", "color": "#ef4444", "description": "Most restrictive — criminal possession and trafficking" },
+        { "tier": "Schedule 2", "color": "#f97316", "description": "Controlled — prescription required" },
+        { "tier": "Schedule 3", "color": "#fb923c", "description": "Psychotropics — controlled supply" },
+        { "tier": "Schedule 4", "color": "#fbbf24", "description": "Prescription Only Medicine" },
+        { "tier": "Schedule 5", "color": "#a3e635", "description": "Pharmacy-only — small amounts exempt" }
+      ]
+    },
+    "IN": {
+      "system": "Narcotic Drugs and Psychotropic Substances Act",
+      "statute": "NDPS Act 1985",
+      "tiers": [
+        { "tier": "Schedule H", "color": "#f97316", "description": "Prescription Only — pharmacist retains prescription" },
+        { "tier": "Schedule H1", "color": "#ef4444", "description": "Antibiotics and higher control prescriptions" },
+        { "tier": "Schedule X", "color": "#ef4444", "description": "Narcotic psychotropics — extremely tight control" }
+      ]
+    },
+    "NO": {
+      "system": "Legemiddelloven / Rusmiddelforskriften",
+      "statute": "LOV-1992-12-04-132",
+      "tiers": [
+        { "tier": "Class A", "color": "#ef4444", "description": "Narcotics — strictest penalties" },
+        { "tier": "Class B", "color": "#f97316", "description": "Narcotics / prescription" },
+        { "tier": "Class C", "color": "#fbbf24", "description": "Prescription only, lower control" }
+      ]
+    }
+  },
+  "countryNotes": {
+    "US": "Cannabis remains federally Schedule I, but 24+ states have legalized recreational or medical use. State schedules below.",
+    "UK": "Most psychedelics are Class A. Fresh psilocybin mushrooms were ruled non-prohibited in 2005 (cultivated/dried still is).",
+    "CA": "BC has decriminalized possession of up to 2.5g of opioids, cocaine, methamphetamine, MDMA (2023). Cannabis was legalized in 2018.",
+    "AU": "MDMA and psilocybin rescheduled for prescription use in 2023 for PTSD/treatment-resistant depression.",
+    "DE": "Cannabis partially legalized April 2024 (Anlage I/II removed). Possession of up to 25g for personal use decriminalized; home cultivation of 3 plants allowed.",
+    "NL": "Truffles (sclerotia) remain legal; psilocybin mushrooms illegal since 2008. Cannabis tolerated under gedoogbeleid.",
+    "PT": "All drugs decriminalized for personal possession since 2001 (Law 30/2000). Trafficking remains criminal.",
+    "NZ": "Psychoactive Substances Act 2013 provides for regulated 'legal highs' after testing.",
+    "CH": "Psilocybin mushrooms, cannabis, and Salvia divinorum have legal possession for personal use in low amounts (regulated at cantonal level).",
+    "MX": "Possession of small amounts (5g marijuana, 500mg cocaine, 50mg heroin) decriminalized 2009.",
+    "JP": "Extremely strict — possession of small amounts can lead to years of imprisonment. Kratom banned since 2025.",
+    "IN": "Bhang (cannabis preparation) exempted culturally/religiously; charas/ganga criminalized. NDPS Act enforcement varies by state.",
+    "DE": "Cannabis partially legalized April 2024. Possession of up to 25g for personal use decriminalized; home cultivation of 3 plants allowed."
+  },
+  "categories": {
+    "Depressants": {
+      "US": "Schedule IV", "UK": "Class C", "CA": "Schedule IV", "AU": "Schedule 4",
+      "DE": "Anlage III", "NL": "List II", "FR": "Liste I", "BR": "List B1",
+      "JP": "Prescription", "SE": "Prescription", "PT": "Tabela II-C",
+      "NZ": "Class C", "ES": "Tabla III", "IT": "Tabella IV", "CH": "List C",
+      "MX": "Fracción III", "ZA": "Schedule 5", "IE": "Schedule 4",
+      "IN": "Schedule H", "NO": "Class C"
+    },
+    "Stimulants": {
+      "US": "Schedule II", "UK": "Class B", "CA": "Schedule I", "AU": "Schedule 8",
+      "DE": "Anlage III", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Stimulants", "SE": "Narcotic", "PT": "Tabela I-C",
+      "NZ": "Class A", "ES": "Tabla II", "IT": "Tabella IV", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 2",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "Opioids": {
+      "US": "Schedule II", "UK": "Class A", "CA": "Schedule I", "AU": "Schedule 8",
+      "DE": "Anlage III", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción I", "ZA": "Schedule 7", "IE": "Schedule 2",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "Psychedelics": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "Dissociatives": {
+      "US": "Schedule III", "UK": "Class B", "CA": "Schedule I", "AU": "Schedule 8",
+      "DE": "Anlage III", "NL": "List II", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class C", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 6", "IE": "Schedule 3",
+      "IN": "Schedule H", "NO": "Class A"
+    },
+    "Entactogens": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Stimulants", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "Cannabinoids": {
+      "US": "Schedule I", "UK": "Class B", "CA": "Schedule II", "AU": "Schedule 8",
+      "DE": "Anlage II", "NL": "List II", "FR": "Stupéfiant", "BR": "List E",
+      "JP": "Cannabis", "SE": "Narcotic", "PT": "Tabela I-B",
+      "NZ": "Class C", "ES": "Tabla I", "IT": "Tabella II", "CH": "List B",
+      "MX": "Fracción I", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class B"
+    },
+    "Inhalants": {
+      "US": "Legal (age restricted)", "UK": "Legal (under 18 restricted)", "CA": "Legal (age restricted)", "AU": "Legal (age restricted)",
+      "DE": "Legal (age restricted)", "NL": "Legal (age restricted)", "FR": "Legal (age restricted)", "BR": "Legal (age restricted)",
+      "JP": "Legal (age restricted)", "SE": "Legal (age restricted)", "PT": "Legal (age restricted)",
+      "NZ": "Legal (age restricted)", "ES": "Legal (age restricted)", "IT": "Legal (age restricted)", "CH": "Legal (age restricted)",
+      "MX": "Legal (age restricted)", "ZA": "Legal (age restricted)", "IE": "Legal (age restricted)",
+      "IN": "Legal (age restricted)", "NO": "Legal (age restricted)"
+    },
+    "Deliriants": {
+      "US": "Schedule I / Legal", "UK": "Class A / Legal", "CA": "Schedule I / Legal", "AU": "Schedule 9 / Legal",
+      "DE": "Anlage I / Legal", "NL": "List I / Legal", "FR": "Stupéfiant / Legal", "BR": "List F / Legal",
+      "JP": "Narcotic / Legal", "SE": "Narcotic / Legal", "PT": "Tabela I-A / Legal",
+      "NZ": "Class A / Legal", "ES": "Tabla I / Legal", "IT": "Tabella I / Legal", "CH": "List A / Legal",
+      "MX": "Fracción I / Legal", "ZA": "Schedule 7 / Legal", "IE": "Schedule 1 / Legal",
+      "IN": "Schedule X / Legal", "NO": "Class A / Legal"
+    },
+    "Gabapentionoids": {
+      "US": "Schedule V", "UK": "Class C", "CA": "Prescription Only", "AU": "Schedule 4",
+      "DE": "Prescription Only", "NL": "Prescription Only", "FR": "Liste I", "BR": "List B1",
+      "JP": "Prescription Only", "SE": "Prescription Only", "PT": "Tabela II-C",
+      "NZ": "Prescription Only", "ES": "Prescription Only", "IT": "Tabella IV", "CH": "List C",
+      "MX": "Fracción III", "ZA": "Schedule 5", "IE": "Schedule 4",
+      "IN": "Schedule H", "NO": "Class C"
+    },
+    "Nootropics": {
+      "US": "Legal (unregulated)", "UK": "Legal (unregulated)", "CA": "Legal (unregulated)", "AU": "Schedule 4",
+      "DE": "Legal (unregulated)", "NL": "Legal (unregulated)", "FR": "Legal (unregulated)", "BR": "Legal (unregulated)",
+      "JP": "Legal (unregulated)", "SE": "Legal / Narcotic", "PT": "Legal (unregulated)",
+      "NZ": "Legal (unregulated)", "ES": "Legal (unregulated)", "IT": "Legal (unregulated)", "CH": "Legal (unregulated)",
+      "MX": "Legal (unregulated)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Legal / Narcotic"
+    },
+    "Antidepressants": {
+      "US": "Prescription Only", "UK": "Prescription Only", "CA": "Prescription Only", "AU": "Schedule 4",
+      "DE": "Prescription Only", "NL": "Prescription Only", "FR": "Liste I", "BR": "List C1",
+      "JP": "Prescription Only", "SE": "Prescription Only", "PT": "Tabela II-B",
+      "NZ": "Prescription Only", "ES": "Prescription Only", "IT": "Tabella IV", "CH": "List C",
+      "MX": "Fracción III", "ZA": "Schedule 5", "IE": "Prescription Only",
+      "IN": "Schedule H", "NO": "Class C"
+    },
+    "Antipsychotics": {
+      "US": "Prescription Only", "UK": "Prescription Only", "CA": "Prescription Only", "AU": "Schedule 4",
+      "DE": "Prescription Only", "NL": "Prescription Only", "FR": "Liste I", "BR": "List C1",
+      "JP": "Prescription Only", "SE": "Prescription Only", "PT": "Tabela II-B",
+      "NZ": "Prescription Only", "ES": "Prescription Only", "IT": "Tabella IV", "CH": "List C",
+      "MX": "Fracción III", "ZA": "Schedule 5", "IE": "Prescription Only",
+      "IN": "Schedule H", "NO": "Class C"
+    },
+    "Dopaminergics": {
+      "US": "Prescription Only", "UK": "Prescription Only", "CA": "Prescription Only", "AU": "Schedule 4",
+      "DE": "Prescription Only", "NL": "Prescription Only", "FR": "Liste I", "BR": "List C1",
+      "JP": "Prescription Only", "SE": "Prescription Only", "PT": "Tabela II-B",
+      "NZ": "Prescription Only", "ES": "Prescription Only", "IT": "Tabella IV", "CH": "List C",
+      "MX": "Fracción III", "ZA": "Schedule 5", "IE": "Prescription Only",
+      "IN": "Schedule H", "NO": "Class C"
+    },
+    "Supplements": {
+      "US": "Legal (unregulated)", "UK": "Legal (unregulated)", "CA": "Legal (regulated)", "AU": "Legal (regulated)",
+      "DE": "Legal (unregulated)", "NL": "Legal (unregulated)", "FR": "Legal (unregulated)", "BR": "Legal (unregulated)",
+      "JP": "Legal (unregulated)", "SE": "Legal (unregulated)", "PT": "Legal (unregulated)",
+      "NZ": "Legal (regulated)", "ES": "Legal (unregulated)", "IT": "Legal (unregulated)", "CH": "Legal (unregulated)",
+      "MX": "Legal (unregulated)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Legal (unregulated)"
+    }
+  },
+  "overrides": {
+    "alcohol": {
+      "US": "Legal (21+)", "UK": "Legal (18+)", "CA": "Legal (19+)", "AU": "Legal (18+)",
+      "DE": "Legal (16+/18+)", "NL": "Legal (18+)", "FR": "Legal (18+)", "BR": "Legal (18+)",
+      "JP": "Legal (20+)", "SE": "Legal (18+)", "PT": "Legal (18+)",
+      "NZ": "Legal (18+)", "ES": "Legal (18+)", "IT": "Legal (18+)", "CH": "Legal (16+/18+)",
+      "MX": "Legal (18+)", "ZA": "Legal (18+)", "IE": "Legal (18+)",
+      "IN": "Legal (21+ varies by state)", "NO": "Legal (18+ for <22% ABV)"
+    },
+    "caffeine": {
+      "US": "Legal (unregulated)", "UK": "Legal (unregulated)", "CA": "Legal (unregulated)", "AU": "Legal (unregulated)",
+      "DE": "Legal (unregulated)", "NL": "Legal (unregulated)", "FR": "Legal (unregulated)", "BR": "Legal (unregulated)",
+      "JP": "Legal (unregulated)", "SE": "Legal (unregulated)", "PT": "Legal (unregulated)",
+      "NZ": "Legal (unregulated)", "ES": "Legal (unregulated)", "IT": "Legal (unregulated)", "CH": "Legal (unregulated)",
+      "MX": "Legal (unregulated)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Legal (unregulated)"
+    },
+    "nicotine": {
+      "US": "Legal (21+)", "UK": "Legal (18+)", "CA": "Legal (18+)", "AU": "Prescription Only (vapes regulated)",
+      "DE": "Legal (18+)", "NL": "Legal (18+)", "FR": "Legal (18+)", "BR": "Legal (18+)",
+      "JP": "Legal (20+)", "SE": "Legal (18+)", "PT": "Legal (18+)",
+      "NZ": "Legal (18+)", "ES": "Legal (18+)", "IT": "Legal (18+)", "CH": "Legal (16+)",
+      "MX": "Legal (18+)", "ZA": "Legal (18+)", "IE": "Legal (18+)",
+      "IN": "Illegal (vapes banned)", "NO": "Legal (18+)"
+    },
+    "kratom": {
+      "US": "Legal (varies by state)", "UK": "Legal (unregulated)", "CA": "Legal (varies by province)", "AU": "Schedule 9",
+      "DE": "Legal (unregulated)", "NL": "Legal (unregulated)", "FR": "Illegal", "BR": "Legal (unregulated)",
+      "JP": "Legal (unregulated)", "SE": "Narcotic", "PT": "Decriminalized",
+      "NZ": "Schedule 1", "ES": "Legal (unregulated)", "IT": "Legal (unregulated)", "CH": "Legal (unregulated)",
+      "MX": "Legal (unregulated)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Illegal"
+    },
+    "lsd": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "psilocybin": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "psilocybin-mushrooms": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "Legal (truffles)", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "dmt": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F (religious use exempt)",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "mdma": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Stimulants", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "ketamine": {
+      "US": "Schedule III", "UK": "Class B", "CA": "Schedule I (prescription exempt)", "AU": "Schedule 8",
+      "DE": "Anlage III", "NL": "List II", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class C", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 6", "IE": "Schedule 3",
+      "IN": "Schedule H", "NO": "Class A"
+    },
+    "dxm": {
+      "US": "Legal (age restricted)", "UK": "Legal (pharmacy only)", "CA": "Legal (pharmacy only)", "AU": "Schedule 2",
+      "DE": "Legal (pharmacy only)", "NL": "Legal (pharmacy only)", "FR": "Liste I", "BR": "List C1",
+      "JP": "Legal (pharmacy only)", "SE": "Prescription Only", "PT": "Legal (pharmacy only)",
+      "NZ": "Legal (pharmacy only)", "ES": "Legal (pharmacy only)", "IT": "Legal (pharmacy only)", "CH": "Legal (pharmacy only)",
+      "MX": "Fracción III", "ZA": "Schedule 2", "IE": "Legal (pharmacy only)",
+      "IN": "Legal (pharmacy only)", "NO": "Prescription Only"
+    },
+    "nitrous": {
+      "US": "Legal (not for inhalation)", "UK": "Legal (not for inhalation)", "CA": "Legal (not for inhalation)", "AU": "Legal (regulated)",
+      "DE": "Legal (not for inhalation)", "NL": "Legal (not for inhalation)", "FR": "Legal (not for inhalation)", "BR": "Legal (not for inhalation)",
+      "JP": "Legal (not for inhalation)", "SE": "Legal (not for inhalation)", "PT": "Legal (not for inhalation)",
+      "NZ": "Legal (regulated)", "ES": "Legal (not for inhalation)", "IT": "Legal (not for inhalation)", "CH": "Legal (not for inhalation)",
+      "MX": "Legal (not for inhalation)", "ZA": "Legal (not for inhalation)", "IE": "Legal (not for inhalation)",
+      "IN": "Unregulated", "NO": "Legal (not for inhalation)"
+    },
+    "ghb": {
+      "US": "Schedule I", "UK": "Class C", "CA": "Schedule I", "AU": "Schedule 8",
+      "DE": "Anlage III", "NL": "List II", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class B", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "cannabis": {
+      "US": "Schedule I (varies by state)", "UK": "Class B", "CA": "Schedule II (legal since 2018)", "AU": "Schedule 8",
+      "DE": "Anlage II (legal since 2024)", "NL": "List II (tolerated)", "FR": "Stupéfiant (medical exceptions)", "BR": "List E (medical only)",
+      "JP": "Cannabis", "SE": "Narcotic", "PT": "Tabela I-B (decriminalized)",
+      "NZ": "Class C (medical)", "ES": "Tabla I (private clubs)", "IT": "Tabella II (medical)", "CH": "List B (<1% THC legal)",
+      "MX": "Fracción I (decriminalized)", "ZA": "Schedule 7 (private use)", "IE": "Schedule 1 (medical pending)",
+      "IN": "Schedule X (bhang exempted)", "NO": "Class B (medical exceptions)"
+    },
+    "phenibut": {
+      "US": "Legal (unregulated)", "UK": "Legal (unregulated)", "CA": "Legal (unregulated)", "AU": "Schedule 4",
+      "DE": "Prescription Only", "NL": "Legal (unregulated)", "FR": "Illegal", "BR": "Legal (unregulated)",
+      "JP": "Legal (unregulated)", "SE": "Narcotic", "PT": "Legal (unregulated)",
+      "NZ": "Legal (unregulated)", "ES": "Legal (unregulated)", "IT": "Prescription Only", "CH": "Legal (unregulated)",
+      "MX": "Legal (unregulated)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Prescription Only"
+    },
+    "cocaine": {
+      "US": "Schedule II", "UK": "Class A", "CA": "Schedule I", "AU": "Schedule 8",
+      "DE": "Anlage III", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción I", "ZA": "Schedule 7", "IE": "Schedule 2",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "heroin": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule I", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A (diamorphine program)",
+      "MX": "Fracción I", "ZA": "Schedule 8", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "mescaline": {
+      "US": "Schedule I (cactus exempt)", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "salvia": {
+      "US": "Schedule I (varies by state)", "UK": "Class A", "CA": "Schedule IV", "AU": "Schedule 9",
+      "DE": "Legal (unregulated)", "NL": "List II", "FR": "Stupéfiant", "BR": "Legal (unregulated)",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Regulated", "IT": "Controlled", "CH": "List E",
+      "MX": "Fracción II (traditional use exempt)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Narcotic"
+    },
+    "kava": {
+      "US": "Legal (dietary supplement)", "UK": "Legal (regulated)", "CA": "Legal (regulated)", "AU": "Legal (regulated)",
+      "DE": "Legal (regulated)", "NL": "Legal (unregulated)", "FR": "Legal (regulated)", "BR": "Legal (unregulated)",
+      "JP": "Legal (unregulated)", "SE": "Legal (unregulated)", "PT": "Legal (unregulated)",
+      "NZ": "Legal (cultural use protected)", "ES": "Legal (unregulated)", "IT": "Legal (unregulated)", "CH": "Legal (unregulated)",
+      "MX": "Legal (unregulated)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Legal (unregulated)"
+    },
+    "modafinil": {
+      "US": "Schedule IV", "UK": "Prescription Only", "CA": "Prescription Only", "AU": "Schedule 4",
+      "DE": "Prescription Only", "NL": "Prescription Only", "FR": "Liste I", "BR": "List C1",
+      "JP": "Prescription Only", "SE": "Prescription Only", "PT": "Tabela II-C",
+      "NZ": "Prescription Only", "ES": "Prescription Only", "IT": "Tabella IV", "CH": "List C",
+      "MX": "Fracción III", "ZA": "Schedule 5", "IE": "Schedule 4",
+      "IN": "Schedule H", "NO": "Class C"
+    },
+    "poppers": {
+      "US": "Legal (sold as 'room odorizer')", "UK": "Legal (not for human consumption)", "CA": "Legal (not for human consumption)", "AU": "Legal (restricted)",
+      "DE": "Legal (not for human consumption)", "NL": "Legal (not for human consumption)", "FR": "Illegal (since 1995)", "BR": "Legal (restricted)",
+      "JP": "Legal (restricted)", "SE": "Illegal", "PT": "Legal (restricted)",
+      "NZ": "Legal (restricted)", "ES": "Legal (restricted)", "IT": "Legal (restricted)", "CH": "Legal (restricted)",
+      "MX": "Legal (restricted)", "ZA": "Legal (restricted)", "IE": "Legal (not for human consumption)",
+      "IN": "Legal (restricted)", "NO": "Illegal"
+    },
+    "cbd": {
+      "US": "Legal (Farm Bill 2018)", "UK": "Legal (regulated)", "CA": "Legal (regulated)", "AU": "Schedule 4",
+      "DE": "Legal (regulated)", "NL": "Legal (regulated)", "FR": "Legal (<0.3% THC)", "BR": "Medical Only",
+      "JP": "Legal (unregulated)", "SE": "Legal (regulated)", "PT": "Legal (unregulated)",
+      "NZ": "Legal (unregulated)", "ES": "Legal (unregulated)", "IT": "Legal (unregulated)", "CH": "Legal",
+      "MX": "Legal (unregulated)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Prescription Only"
+    },
+    "ayahuasca": {
+      "US": "Schedule I (religious exemption)", "UK": "Class A", "CA": "Schedule III (religious exemption)", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F (religious use legal)",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I (religious exemption)", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "methamphetamine": {
+      "US": "Schedule II", "UK": "Class A", "CA": "Schedule I", "AU": "Schedule 8",
+      "DE": "Anlage III", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Stimulants", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 2",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "2c-b": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "nbome": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "5-meo-dmt": {
+      "US": "Schedule I", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "lsa": {
+      "US": "Schedule III", "UK": "Class A", "CA": "Schedule III", "AU": "Schedule 9",
+      "DE": "Anlage I", "NL": "List I", "FR": "Stupéfiant", "BR": "List F",
+      "JP": "Narcotic", "SE": "Narcotic", "PT": "Tabela I-A",
+      "NZ": "Class A", "ES": "Tabla I", "IT": "Tabella I", "CH": "List A",
+      "MX": "Fracción II", "ZA": "Schedule 7", "IE": "Schedule 1",
+      "IN": "Schedule X", "NO": "Class A"
+    },
+    "morning-glory-seeds": {
+      "US": "Legal (unregulated)", "UK": "Legal (unregulated)", "CA": "Legal (unregulated)", "AU": "Legal (unregulated)",
+      "DE": "Legal (unregulated)", "NL": "Legal (unregulated)", "FR": "Legal (unregulated)", "BR": "Legal (unregulated)",
+      "JP": "Legal (unregulated)", "SE": "Legal (unregulated)", "PT": "Legal (unregulated)",
+      "NZ": "Legal (unregulated)", "ES": "Legal (unregulated)", "IT": "Legal (unregulated)", "CH": "Legal (unregulated)",
+      "MX": "Legal (unregulated)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Legal (unregulated)"
+    },
+    "hawaian-baby-woodrose-seeds": {
+      "US": "Legal (unregulated)", "UK": "Legal (unregulated)", "CA": "Legal (unregulated)", "AU": "Legal (unregulated)",
+      "DE": "Legal (unregulated)", "NL": "Legal (unregulated)", "FR": "Legal (unregulated)", "BR": "Legal (unregulated)",
+      "JP": "Legal (unregulated)", "SE": "Legal (unregulated)", "PT": "Legal (unregulated)",
+      "NZ": "Legal (unregulated)", "ES": "Legal (unregulated)", "IT": "Legal (unregulated)", "CH": "Legal (unregulated)",
+      "MX": "Legal (unregulated)", "ZA": "Legal (unregulated)", "IE": "Legal (unregulated)",
+      "IN": "Legal (unregulated)", "NO": "Legal (unregulated)"
+    }
+  }
+}

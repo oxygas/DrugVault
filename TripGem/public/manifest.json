@@ -1,0 +1,17 @@
+{
+  "name": "TripGem Harm Reduction",
+  "short_name": "TripGem",
+  "description": "Evidence-based harm reduction database, drug interactions, and dosage guides.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0820",
+  "theme_color": "#0c0820",
+  "icons": [
+    {
+      "src": "/og-image.png",
+      "sizes": "396x372",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
