@@ -12132,9 +12132,20 @@
     "why": "Users seek dissociatives for the escape from physical reality, the unique hole experience of complete detachment, and the psychedelic-like philosophical insights. The ability to disconnect from pain makes them both recreationally and medicinally appealing."
   },
   "olanzapine": {
-    "positives": [],
-    "negatives": [],
-    "why": "Users take antidepressants under medical supervision to treat clinical depression and anxiety disorders. They are not typically used recreationally — the primary motivation is symptom relief and functional recovery."
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
   },
   "opium": {
     "positives": [
@@ -14463,5 +14474,597 @@
     "positives": [],
     "negatives": [],
     "why": "Users seek stimulants for productivity enhancement, social energy, and the confident euphoric rush they provide. The drive to maintain the high and avoid the comedown often leads to compulsive redosing cycles."
+  },
+  "aripiprazole": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "haloperidol": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "clozapine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "risperidone": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "paliperidone": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "ziprasidone": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "lurasidone": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "chlorpromazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "fluphenazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "perphenazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "thioridazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "trifluoperazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "amisulpride": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "asenapine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "loxapine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "sulpiride": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "droperidol": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "pimozide": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "cariprazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "brexpiprazole": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "iloperidone": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "lumateperone": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "molindone": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "thiothixene": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "flupentixol": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "zuclopenthixol": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "levomepromazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "prochlorperazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "sertindole": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "pimavanserin": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "chlorprothixene": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "amoxapine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "Second-generation (atypical) antipsychotics modulate both dopamine and serotonin receptors. They are clinically used for schizophrenia, bipolar mania, and treatment-resistant depression. Because of their powerful tranquilizing properties, they are frequently referenced in drug communities as effective tools to mitigate or completely abort difficult psychedelic experiences (trip killers)."
+  },
+  "clotiapine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "perazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "fluspirilene": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "penfluridol": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "mesoridazine": {
+    "positives": [
+      "Anxiety suppression",
+      "Sedation",
+      "Nausea suppression"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Dry mouth",
+      "Akathisia",
+      "Cognitive fatigue",
+      "Weight gain",
+      "Perception of bodily heaviness"
+    ],
+    "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
   }
 }
