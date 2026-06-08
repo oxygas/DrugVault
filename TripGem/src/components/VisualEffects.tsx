@@ -1,16 +1,45 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
 const DigitalRain = dynamic(() => import('@/components/DigitalRain'), { ssr: false })
+
+interface Particle {
+  x: number
+  y: number
+  size: number
+  speedY: number
+  driftSpeed: number
+  driftPhase: number
+  colorIndex: number
+  isSparkle: boolean
+  pulseSpeed: number
+  pulsePhase: number
+}
+
+function getGlowColor(color: string, opacityHex: string = '20'): string {
+  const trimmed = color.trim()
+  if (trimmed.startsWith('#')) {
+    return trimmed + opacityHex
+  }
+  if (trimmed.startsWith('rgb')) {
+    const matches = trimmed.match(/\d+/g)
+    if (matches && matches.length >= 3) {
+      const opacityDecimal = parseInt(opacityHex, 16) / 255
+      return `rgba(${matches[0]}, ${matches[1]}, ${matches[2]}, ${opacityDecimal})`
+    }
+  }
+  return trimmed
+}
 
 export default function VisualEffects() {
   const pathname = usePathname()
   const isHome = pathname === '/'
   const [isTouch, setIsTouch] = useState(false)
   const [showDeferred, setShowDeferred] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
     const r = requestAnimationFrame(() => {
@@ -25,6 +54,44 @@ export default function VisualEffects() {
     }
     document.addEventListener('visibilitychange', handleVisibility)
     return () => document.removeEventListener('visibilitychange', handleVisibility)
+  }, [])
+
+  useEffect(() => {
+    let scrollTimeout: ReturnType<typeof setTimeout>
+    const handleScroll = () => {
+      if (!document.body.classList.contains('is-scrolling')) {
+        document.body.classList.add('is-scrolling')
+      }
+    }
+    const handleScrollEnd = () => {
+      document.body.classList.remove('is-scrolling')
+    }
+
+    const hasScrollEnd = 'onscrollend' in window
+
+    const fallbackScroll = () => {
+      if (hasScrollEnd) return
+      clearTimeout(scrollTimeout)
+      scrollTimeout = setTimeout(() => {
+        handleScrollEnd()
+      }, 150)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('scrollend', handleScrollEnd, { passive: true })
+    
+    if (!hasScrollEnd) {
+      window.addEventListener('scroll', fallbackScroll, { passive: true })
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scrollend', handleScrollEnd)
+      if (!hasScrollEnd) {
+        window.removeEventListener('scroll', fallbackScroll)
+        clearTimeout(scrollTimeout)
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -53,42 +120,148 @@ export default function VisualEffects() {
     return () => cancelAnimationFrame(id)
   }, [isHome, isTouch])
 
-  // Scroll detection to temporarily disable hover styles for scroll performance
+
+
+  // Canvas particle system
   useEffect(() => {
-    let scrollTimeout: any = null
-    const body = document.body
+    if (!isHome || isTouch || !showDeferred) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
-    const onScrollStart = () => {
-      body.classList.add('is-scrolling')
+    let animId = 0
+    let lastTime = performance.now()
+    const frameInterval = 1000 / 45 // Target 45 fps
+
+    // Resize canvas
+    const handleResize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
     }
+    window.addEventListener('resize', handleResize, { passive: true })
+    handleResize()
 
-    const onScrollEnd = () => {
-      body.classList.remove('is-scrolling')
+    // Query theme colors
+    let colors: string[] = []
+    function refreshColors() {
+      const style = getComputedStyle(document.documentElement)
+      colors = [
+        style.getPropertyValue('--accent').trim() || '#a855f7',
+        style.getPropertyValue('--accent2').trim() || '#ec4899',
+        style.getPropertyValue('--accent3').trim() || '#3b82f6',
+        style.getPropertyValue('--laser-cyan').trim() || '#06b6d4',
+        style.getPropertyValue('--amber-glow').trim() || '#f59e0b',
+        style.getPropertyValue('--neon-magenta').trim() || '#d946ef',
+      ]
     }
+    refreshColors()
 
-    const handleScroll = () => {
-      if (!body.classList.contains('is-scrolling')) {
-        onScrollStart()
+    // Watch for theme changes dynamically
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.attributeName === 'data-theme') {
+          refreshColors()
+        }
       }
-      if (scrollTimeout) clearTimeout(scrollTimeout)
-      scrollTimeout = setTimeout(onScrollEnd, 150)
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+
+    // Generate particles
+    const particleCount = 45
+    const particles: Particle[] = []
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: 1.2 + Math.random() * 2.8,
+        speedY: -(0.3 + Math.random() * 0.7), // floating upwards
+        driftSpeed: 0.12 + Math.random() * 0.28,
+        driftPhase: Math.random() * Math.PI * 2,
+        colorIndex: i % 6,
+        isSparkle: i >= 35, // top 10 are sparkles
+        pulseSpeed: 0.04 + Math.random() * 0.04,
+        pulsePhase: Math.random() * Math.PI * 2,
+      })
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    const drawAndUpdate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    if ('onscrollend' in window) {
-      window.addEventListener('scrollend', onScrollEnd, { passive: true })
+      // Update and draw particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i]
+
+        p.y += p.speedY
+        p.driftPhase += 0.008
+        p.x += Math.sin(p.driftPhase) * p.driftSpeed
+
+        // Wrap boundaries
+        if (p.y < -20) {
+          p.y = canvas.height + 20
+          p.x = Math.random() * canvas.width
+        } else if (p.y > canvas.height + 20) {
+          p.y = -20
+          p.x = Math.random() * canvas.width
+        }
+
+        if (p.x < -20) {
+          p.x = canvas.width + 20
+        } else if (p.x > canvas.width + 20) {
+          p.x = -20
+        }
+
+        // Draw particle
+        let currentSize = p.size
+        const baseColor = colors[p.colorIndex]
+
+        if (p.isSparkle) {
+          p.pulsePhase += p.pulseSpeed
+          currentSize = p.size * (0.6 + Math.abs(Math.sin(p.pulsePhase)) * 0.8)
+
+          // Outer aura glow
+          ctx.beginPath()
+          ctx.arc(p.x, p.y, currentSize * 2.2, 0, Math.PI * 2)
+          ctx.fillStyle = getGlowColor(baseColor, '20')
+          ctx.fill()
+
+          // Inner spark
+          ctx.beginPath()
+          ctx.arc(p.x, p.y, currentSize, 0, Math.PI * 2)
+          ctx.fillStyle = baseColor
+          ctx.fill()
+        } else {
+          ctx.beginPath()
+          ctx.arc(p.x, p.y, currentSize, 0, Math.PI * 2)
+          ctx.fillStyle = baseColor
+          ctx.fill()
+        }
+      }
     }
+
+    const render = (time: number) => {
+      // Pause drawing loop if tab is hidden or Solid State Mode is active
+      if (document.hidden || document.documentElement.classList.contains('lo-fi-mode')) {
+        animId = requestAnimationFrame(render)
+        return
+      }
+
+      const elapsed = time - lastTime
+      if (elapsed >= frameInterval) {
+        lastTime = time - (elapsed % frameInterval)
+        drawAndUpdate()
+      }
+      animId = requestAnimationFrame(render)
+    }
+
+    animId = requestAnimationFrame(render)
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-      if ('onscrollend' in window) {
-        window.removeEventListener('scrollend', onScrollEnd)
-      }
-      if (scrollTimeout) clearTimeout(scrollTimeout)
-      body.classList.remove('is-scrolling')
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', handleResize)
+      observer.disconnect()
     }
-  }, [])
+  }, [isHome, isTouch, showDeferred])
 
   return (
     <>
@@ -108,52 +281,7 @@ export default function VisualEffects() {
         <div className="chromatic-overlay" aria-hidden="true" />
       )}
       {isHome && showDeferred && !isTouch && (
-        <div className="particles" aria-hidden="true">
-          {Array.from({ length: 25 }).map((_, i) => {
-            const seed = i * 137.5
-            const frac = (s: number) => Math.abs(Math.sin(seed * (s + 1)))
-            const isSparkle = i >= 20
-            const colors = [
-              'var(--accent)',
-              'var(--accent2)',
-              'var(--accent3)',
-              'var(--laser-cyan)',
-              'var(--amber-glow)',
-              'var(--neon-magenta)',
-            ]
-            if (isSparkle) {
-              return (
-                <div
-                  key={i}
-                  className="particle-sparkle"
-                  style={{
-                    '--x': `${5 + frac(1) * 90}%`,
-                    '--d': `${14 + frac(2) * 16}s`,
-                    '--delay': `${frac(3) * 25}s`,
-                    '--s': `${3 + frac(4) * 3}px`,
-                    '--drift': `${-80 + frac(5) * 160}px`,
-                    '--c': colors[i % 6],
-                  } as React.CSSProperties}
-                />
-              )
-            }
-            return (
-              <div
-                key={i}
-                className="particle"
-                style={{
-                  '--x': `${5 + frac(1) * 90}%`,
-                  '--d': `${8 + frac(2) * 16}s`,
-                  '--delay': `${frac(3) * 22}s`,
-                  '--s': `${1.5 + frac(4) * 4}px`,
-                  '--drift': `${-70 + frac(5) * 140}px`,
-                  '--glow-blur': `${4 + frac(6) * 6}px`,
-                  '--c': colors[i % 6],
-                } as React.CSSProperties}
-              />
-            )
-          })}
-        </div>
+        <canvas ref={canvasRef} className="particles-canvas particles" aria-hidden="true" />
       )}
       <div className="mouse-glow" />
     </>

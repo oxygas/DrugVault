@@ -87,7 +87,7 @@ export default function DigitalRain() {
 
     function draw(now: number) {
       animId = requestAnimationFrame(draw)
-      if (document.hidden) return
+      if (document.hidden || document.documentElement.classList.contains('lo-fi-mode')) return
       const elapsed = now - lastFrame
       if (elapsed < frameInterval) return
       lastFrame = now - (elapsed % frameInterval)

@@ -2264,6 +2264,30 @@ body.is-scrolling .tab-btn {
   .hero-glow { animation: none; }
 }
 
+/* Solid State Mode (Lo-Fi Mode) overrides to maximize performance */
+.lo-fi-mode .orb,
+.lo-fi-mode .digital-rain-canvas,
+.lo-fi-mode .particles,
+.lo-fi-mode .particles-canvas,
+.lo-fi-mode .particle,
+.lo-fi-mode .particle-sparkle,
+.lo-fi-mode .chromatic-overlay,
+.lo-fi-mode .vaporwave-scanlines,
+.lo-fi-mode .mouse-glow,
+.lo-fi-mode .vaporwave-horizon,
+.lo-fi-mode .grid-noise,
+.lo-fi-mode .cyber-grid,
+.lo-fi-mode .hero-glow,
+.lo-fi-mode .neon-stripe {
+  display: none !important;
+  animation: none !important;
+  background: none !important;
+}
+
+.lo-fi-mode body::before {
+  animation: none !important;
+}
+
 /* Pause all persistent animations when tab/page is hidden (prevents GPU compositing and catch-up burst) */
 .page-hidden body::before,
 .page-hidden .hero-glow,

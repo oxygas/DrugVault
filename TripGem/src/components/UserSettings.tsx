@@ -4,22 +4,23 @@ import { useState, useEffect, useRef } from 'react'
 import { useSettingsStore } from '@/stores/settings'
 import type { UserLevel } from '@/lib/types'
 import { USER_LEVEL_INFO } from '@/lib/user-level'
+import { setUIsoundsEnabled, playToggle, playClick, playClose } from '@/lib/ui-sounds'
 
 export default function UserSettings() {
   const {
-  bodyWeight,
-  weightUnit,
-  userLevel,
-  settingsOpen,
-  uiSounds,
-  loFiMode,
-  setBodyWeight,
-  setWeightUnit,
-  setUserLevel,
-  setSettingsOpen,
-  setOnboarded,
-  setUISounds,
-  setLoFiMode,
+    bodyWeight,
+    weightUnit,
+    userLevel,
+    settingsOpen,
+    uiSounds,
+    loFiMode,
+    setBodyWeight,
+    setWeightUnit,
+    setUserLevel,
+    setSettingsOpen,
+    setOnboarded,
+    setUISounds,
+    setLoFiMode,
   } = useSettingsStore()
 
   const [weightInput, setWeightInput] = useState(String(bodyWeight))
@@ -104,11 +105,29 @@ export default function UserSettings() {
 
   if (!settingsOpen) return null
 
+  const handleToggleUISounds = () => {
+    const next = !uiSounds
+    if (next) {
+      setUIsoundsEnabled(true)
+      playToggle()
+    } else {
+      playToggle()
+      setUIsoundsEnabled(false)
+    }
+    setUISounds(next)
+  }
+
+  const handleToggleLoFiMode = () => {
+    const next = !loFiMode
+    playToggle()
+    setLoFiMode(next)
+  }
+
   return (
     <div
       className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center backdrop-blur-sm"
       style={{ background: 'rgba(0,0,0,0.6)', animation: 'fadeIn 0.2s ease-out' }}
-      onClick={(e) => { if (e.target === e.currentTarget) setSettingsOpen(false) }}
+      onClick={(e) => { if (e.target === e.currentTarget) { playClose(); setSettingsOpen(false) } }}
       role="dialog"
       aria-modal="true"
       aria-label="User settings"
@@ -132,7 +151,7 @@ export default function UserSettings() {
             <h2 className="text-lg font-display font-bold text-white">User Settings</h2>
           </div>
           <button
-            onClick={() => setSettingsOpen(false)}
+            onClick={() => { playClose(); setSettingsOpen(false) }}
             className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text4)] hover:text-white"
             aria-label="Close"
           >
@@ -167,7 +186,7 @@ export default function UserSettings() {
               />
               <div className="flex rounded-xl overflow-hidden border border-[var(--border2)] bg-[rgba(10,10,30,0.5)]">
                 <button
-                  onClick={() => setWeightUnit('kg')}
+                  onClick={() => { playClick(); setWeightUnit('kg') }}
                   className={`px-4 py-3 text-sm font-mono font-bold tracking-wider transition-all ${
                     weightUnit === 'kg' ? 'text-blue-400 bg-blue-500/10' : 'text-[var(--text4)] hover:text-white'
                   }`}
@@ -175,7 +194,7 @@ export default function UserSettings() {
                   KG
                 </button>
                 <button
-                  onClick={() => setWeightUnit('lb')}
+                  onClick={() => { playClick(); setWeightUnit('lb') }}
                   className={`px-4 py-3 text-sm font-mono font-bold tracking-wider transition-all ${
                     weightUnit === 'lb' ? 'text-blue-400 bg-blue-500/10' : 'text-[var(--text4)] hover:text-white'
                   }`}
@@ -198,7 +217,7 @@ export default function UserSettings() {
               {(Object.entries(USER_LEVEL_INFO) as [UserLevel, typeof USER_LEVEL_INFO['new']][]).map(([key, info]) => (
                 <button
                   key={key}
-                  onClick={() => setUserLevel(key)}
+                  onClick={() => { playClick(); setUserLevel(key) }}
                   className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${
                     userLevel === key
                       ? 'border-[rgba(var(--accent-rgb),0.4)] bg-[rgba(var(--accent-rgb),0.08)]'
@@ -221,63 +240,59 @@ export default function UserSettings() {
                 </button>
               ))}
             </div>
-                  </div>
+          </div>
 
           {/* UI Sounds */}
-          <div className="space-y-3">
-            <label className="flex items-center gap-2 text-sm font-mono text-[var(--text4)] uppercase tracking-[0.15em]">
-              <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
-              </svg>
-              UI Sounds
-            </label>
+          <div className="flex items-center justify-between p-3.5 rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.02)] hover:border-[var(--border2)] transition-all">
+            <div className="flex-1 min-w-0 pr-4">
+              <div className="flex items-center gap-2 text-sm font-mono text-[var(--text4)] uppercase tracking-[0.15em] mb-1">
+                <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                </svg>
+                UI Sounds
+              </div>
+              <div className="text-xs text-[var(--text4)] leading-normal">Retro synth click & interaction sounds</div>
+            </div>
             <button
-              onClick={() => setUISounds(!uiSounds)}
-              className={`flex items-center gap-3 w-full p-3 rounded-xl border transition-all text-left ${
-                uiSounds
-                  ? 'border-[rgba(6,182,212,0.4)] bg-[rgba(6,182,212,0.08)]'
-                  : 'border-[var(--border)] hover:border-[var(--border2)] bg-[rgba(255,255,255,0.02)]'
+              role="switch"
+              aria-checked={uiSounds}
+              onClick={handleToggleUISounds}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 ${
+                uiSounds ? 'bg-[var(--accent2)] shadow-[0_0_8px_var(--accent2)]' : 'bg-slate-700'
               }`}
             >
-              <span className={`w-3 h-3 rounded-full flex-shrink-0`} style={{ background: uiSounds ? '#06b6d4' : '#475569' }} />
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-white">{uiSounds ? 'On' : 'Off'}</div>
-                <div className="text-xs text-[var(--text4)] mt-0.5">Retro synth click & interaction sounds</div>
-              </div>
-              {uiSounds && (
-                <svg className="w-4 h-4 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-              )}
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                  uiSounds ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
             </button>
           </div>
 
           {/* Solid State / Lo-Fi Mode */}
-          <div className="space-y-3">
-            <label className="flex items-center gap-2 text-sm font-mono text-[var(--text4)] uppercase tracking-[0.15em]">
-              <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-              </svg>
-              Solid State Mode (Lo-Fi)
-            </label>
+          <div className="flex items-center justify-between p-3.5 rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.02)] hover:border-[var(--border2)] transition-all">
+            <div className="flex-1 min-w-0 pr-4">
+              <div className="flex items-center gap-2 text-sm font-mono text-[var(--text4)] uppercase tracking-[0.15em] mb-1">
+                <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                </svg>
+                Solid State Mode
+              </div>
+              <div className="text-xs text-[var(--text4)] leading-normal">Disables ambient orbs, grid scrolling, digital rain, and filters for maximum performance</div>
+            </div>
             <button
-              onClick={() => setLoFiMode(!loFiMode)}
-              className={`flex items-center gap-3 w-full p-3 rounded-xl border transition-all text-left ${
-                loFiMode
-                  ? 'border-[rgba(var(--accent-rgb),0.4)] bg-[rgba(var(--accent-rgb),0.08)]'
-                  : 'border-[var(--border)] hover:border-[var(--border2)] bg-[rgba(255,255,255,0.02)]'
+              role="switch"
+              aria-checked={loFiMode}
+              onClick={handleToggleLoFiMode}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 ${
+                loFiMode ? 'bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]' : 'bg-slate-700'
               }`}
             >
-              <span className={`w-3 h-3 rounded-full flex-shrink-0`} style={{ background: loFiMode ? 'var(--accent)' : '#475569' }} />
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-white">{loFiMode ? 'On' : 'Off'}</div>
-                <div className="text-xs text-[var(--text4)] mt-0.5">Disables ambient orbs, grid scrolling, digital rain, and filters for maximum performance</div>
-              </div>
-              {loFiMode && (
-                <svg className="w-4 h-4 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-              )}
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                  loFiMode ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
             </button>
           </div>
 
@@ -287,7 +302,7 @@ export default function UserSettings() {
               Body weight helps calculate mg/kg ratios. Experience level adjusts suggested starting doses and risk warnings.
             </p>
             <button
-              onClick={() => { setOnboarded(false); setSettingsOpen(false) }}
+              onClick={() => { playClick(); setOnboarded(false); setSettingsOpen(false) }}
               className="text-[11px] font-mono text-[var(--text4)] hover:text-[var(--accent2)] transition-colors underline underline-offset-2 decoration-dotted"
             >
               Show welcome guide again

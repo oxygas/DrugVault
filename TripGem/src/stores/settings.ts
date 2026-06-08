@@ -116,6 +116,13 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   setLoFiMode: (on) => {
     set({ loFiMode: on })
     saveToStorage({ loFiMode: on })
+    if (typeof document !== 'undefined') {
+      if (on) {
+        document.documentElement.classList.add('lo-fi-mode')
+      } else {
+        document.documentElement.classList.remove('lo-fi-mode')
+      }
+    }
   },
   hydrate: () => {
     if (get().hydrated) return

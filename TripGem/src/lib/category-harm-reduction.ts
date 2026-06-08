@@ -30,7 +30,7 @@ export const CATEGORY_HARM_REDUCTION: Record<string, HarmReductionInfo> = {
   Psychedelics: {
     description: 'Serotonergic (5-HT2A) agonists producing altered perception, cognition, and sense of self. Very low physiological toxicity but significant psychological risks.',
     risks: ['Psychological distress — "bad trip" panic', 'HPPD — persistent visual disturbances', 'Psychosis in predisposed individuals', 'Accidents from impaired perception', "Hazardous behavior without insight"],
-    practices: ["Test your substance with reagent kits (Ehrlich, Marquis)", 'Set and setting — comfortable, familiar, sober sitter', "Start low (e.g., 50-75ÃŽÂ¼g LSD, 1-1.5g cubensis)", "Sitter should be sober, experienced, and calm", 'Have benzodiazepines as a "trip killer" for emergencies'],
+    practices: ["Test your substance with reagent kits (Ehrlich, Marquis)", 'Set and setting — comfortable, familiar, sober sitter', "Start low (e.g., 50-75µg LSD, 1-1.5g cubensis)", "Sitter should be sober, experienced, and calm", 'Have benzodiazepines as a "trip killer" for emergencies'],
     avoid: 'Avoid if you have personal/family history of schizophrenia or bipolar. Lithium + psychedelics = seizure risk. SSRIs reduce effects significantly.'
   },
 
@@ -105,9 +105,9 @@ export const CATEGORY_HARM_REDUCTION: Record<string, HarmReductionInfo> = {
   },
 
   Cathinones: {
-    description: 'Synthetic cathinones (bath salts) potent SNDRI releasing agents similar to methamphetamine, with serotonergic activity varying by structure. Pyrrolidine derivatives (MDPV, Î±-PVP) are among the most compulsive and dangerous.',
+    description: 'Synthetic cathinones (bath salts) potent SNDRI releasing agents similar to methamphetamine, with serotonergic activity varying by structure. Pyrrolidine derivatives (MDPV, α-PVP) are among the most compulsive and dangerous.',
     risks: ['Severe cardiovascular strain — hypertension, tachycardia, stroke', 'Hyperthermia and rhabdomyolysis', 'Psychosis, paranoia, and violent behavior (especially pyrrolidines)', 'Extreme compulsive redosing — pyrrolidines are highly addictive', 'Serotonin syndrome with serotonergic cathinones (mephedrone, methylone)'],
-    practices: ['Never redose — pyrrolidine cathinones trigger compulsive re-dosing loops', 'Hydrate with electrolytes, cool down actively', 'Use benzodiazepines to manage agitation/overstimulation', "Test every batch — purity varies wildly in unregulated supply", 'DANGEROUS: pyrrolidines (Î±-PVP, MDPV) are orders of magnitude more addictive than mephedrone'],
+    practices: ['Never redose — pyrrolidine cathinones trigger compulsive re-dosing loops', 'Hydrate with electrolytes, cool down actively', 'Use benzodiazepines to manage agitation/overstimulation', "Test every batch — purity varies wildly in unregulated supply", 'DANGEROUS: pyrrolidines (α-PVP, MDPV) are orders of magnitude more addictive than mephedrone'],
     avoid: 'NEVER mix with stimulants, MAOIs, or antidepressants (serotonin syndrome). Avoid with MDMA/entactogens (cardiac strain + serotonin overload). Avoid alcohol — masks toxicity. DANGEROUS: combo with other stimulants can cause cardiac arrest.'
   },
 

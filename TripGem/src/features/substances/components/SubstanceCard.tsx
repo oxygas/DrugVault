@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useCallback, useMemo, useRef } from 'react'
 import type { Substance } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
 import { playCategoryClick } from '@/lib/ui-sounds'
@@ -13,6 +13,7 @@ interface SubstanceCardProps {
 
 function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
   const catColor = CATEGORY_COLORS[substance.category]
+  const rectRef = useRef<DOMRect | null>(null)
 
   const handleClick = useCallback(() => {
     playCategoryClick(substance.category)
@@ -27,8 +28,15 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
     }
   }, [onClick, substance])
 
+  const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    rectRef.current = e.currentTarget.getBoundingClientRect()
+  }, [])
+
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
+    if (!rectRef.current) {
+      rectRef.current = e.currentTarget.getBoundingClientRect()
+    }
+    const rect = rectRef.current
     e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`)
     e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`)
   }, [])
@@ -57,6 +65,7 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
     <div
       onClick={handleClick}
       onKeyDown={handleKeyDown}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       className="substance-card vaporwave-card w-full cursor-pointer relative overflow-hidden group"
       style={{ '--tube-c': catColor, ...style } as React.CSSProperties}
