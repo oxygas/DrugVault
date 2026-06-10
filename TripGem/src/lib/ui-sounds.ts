@@ -4,11 +4,25 @@ const STORAGE_KEY = 'tripgem-ui-sounds'
 
 let ctx: AudioContext | null = null
 let _enabled = true
+let _initListenersAdded = false
 
-function getCtx(): AudioContext {
-  if (!ctx) ctx = new AudioContext()
-  if (ctx.state === 'suspended') ctx.resume()
-  return ctx
+function getCtx(autoResume = true): AudioContext | null {
+  if (typeof window === 'undefined') return null
+  try {
+    if (!ctx) {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+      if (AudioContextClass) {
+        ctx = new AudioContextClass()
+      }
+    }
+    if (autoResume && ctx && ctx.state === 'suspended') {
+      ctx.resume().catch(() => {})
+    }
+    return ctx
+  } catch (e) {
+    console.warn('Web Audio API not supported or failed to initialize:', e)
+    return null
+  }
 }
 
 function makeLofiReverb(c: AudioContext): ConvolverNode {
@@ -16,9 +30,11 @@ function makeLofiReverb(c: AudioContext): ConvolverNode {
   const buf = c.createBuffer(2, len, c.sampleRate)
   for (let ch = 0; ch < 2; ch++) {
     const d = buf.getChannelData(ch)
+    let env = 1.0
+    const decay = Math.exp(-1 / (c.sampleRate * 0.25))
     for (let i = 0; i < len; i++) {
-      const env = Math.exp(-i / (c.sampleRate * 0.25))
       d[i] = (Math.random() * 2 - 1) * env
+      env *= decay
     }
   }
   const n = c.createConvolver()
@@ -52,6 +68,52 @@ export function hydrateUIsounds() {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw !== null) _enabled = JSON.parse(raw)
   } catch {}
+
+  // Pre-warm the audio context and reverb bus in the background 
+  // so the first user click doesn't suffer a massive lag spike.
+  if (typeof window !== 'undefined') {
+    setTimeout(() => {
+      const c = getCtx(false)
+      if (c && !_reverbBus) {
+        getReverbBus(c)
+      }
+    }, 500)
+  }
+
+  // Auto-unlock AudioContext on first user interaction (safeguard for iOS/mobile)
+  if (typeof window !== 'undefined' && !_initListenersAdded) {
+    _initListenersAdded = true
+    const unlock = async () => {
+      try {
+        const c = getCtx(false)
+        if (!c) return
+
+        if (c.state === 'suspended') {
+          await c.resume()
+        }
+        
+        // Only remove listeners if the context successfully unlocked
+        if (c.state === 'running') {
+          // Play a silent buffer to warm up / force Audio Context state change
+          const buffer = c.createBuffer(1, 1, 22050)
+          const source = c.createBufferSource()
+          source.buffer = buffer
+          source.connect(c.destination)
+          source.start(0)
+
+          window.removeEventListener('click', unlock)
+          window.removeEventListener('touchstart', unlock)
+          window.removeEventListener('touchend', unlock)
+        }
+      } catch (e) {
+        // If it fails (e.g., iOS Safari rejecting touchstart), do not unbind.
+        // It will retry on the next touchend or click.
+      }
+    }
+    window.addEventListener('click', unlock, { passive: true })
+    window.addEventListener('touchstart', unlock, { passive: true })
+    window.addEventListener('touchend', unlock, { passive: true })
+  }
 }
 
 function chime(
@@ -193,6 +255,7 @@ const CATEGORY_SOUNDS: Record<string, (c: AudioContext, t: number, dest: AudioNo
 export function playCategoryClick(category: Category) {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   const fn = CATEGORY_SOUNDS[category]
@@ -203,6 +266,7 @@ export function playCategoryClick(category: Category) {
 export function playClick() {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   chimeChord(c, [523.25, 783.99], t, 0.1, 0.22, c.destination, b.node)
@@ -211,6 +275,7 @@ export function playClick() {
 export function playHover() {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   chime(c, 587.33 * 1.02, t, 0.08, 0.05, c.destination)
 }
@@ -218,6 +283,7 @@ export function playHover() {
 export function playOpen() {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   chimeChord(c, [329.63, 523.25], t, 0.14, 0.2, c.destination, b.node)
@@ -226,6 +292,7 @@ export function playOpen() {
 export function playClose() {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   chimeChord(c, [261.63, 440], t, 0.12, 0.18, c.destination, b.node)
@@ -234,6 +301,7 @@ export function playClose() {
 export function playToggle() {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   chimeChord(c, [440, 659.25], t, 0.1, 0.18, c.destination, b.node)
@@ -242,6 +310,7 @@ export function playToggle() {
 export function playTab() {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   chime(c, 523.25, t, 0.08, 0.18, c.destination, b.node)
@@ -276,6 +345,7 @@ const TAB_SOUNDS: Record<PopupTab, (c: AudioContext, t: number, dest: AudioNode,
 export function playPopupTab(tab: string) {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   const fn = TAB_SOUNDS[tab as PopupTab]
@@ -286,6 +356,7 @@ export function playPopupTab(tab: string) {
 export function playSearch() {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   chimeChord(c, [392, 622.25], t, 0.08, 0.19, c.destination, b.node)
@@ -294,6 +365,7 @@ export function playSearch() {
 export function playFavorite() {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   chimeChord(c, [349.23, 523.25, 783.99], t, 0.18, 0.2, c.destination, b.node)
@@ -302,6 +374,7 @@ export function playFavorite() {
 export function playSectionChange() {
   if (!_enabled) return
   const c = getCtx()
+  if (!c) return
   const t = c.currentTime + 0.003
   const b = getReverbBus(c)
   chimeChord(c, [261.63, 392, 523.25], t, 0.16, 0.2, c.destination, b.node)

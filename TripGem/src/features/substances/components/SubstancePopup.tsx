@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect, Suspense, lazy } from 'react'
+import { useState, useRef, useEffect, Suspense, lazy, useMemo } from 'react'
 import Image from 'next/image'
+import { Skull } from 'lucide-react'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
 import { playClick, playFavorite, playPopupTab } from '@/lib/ui-sounds'
@@ -144,13 +145,20 @@ function hexToHsl(hex: string): { h: number; s: number; h2?: number; l: number }
 
 function getShiftingGradient(hexColor: string): string {
   const hsl = hexToHsl(hexColor)
-  const clampedS = Math.max(75, hsl.s)
-  const clampedL = Math.max(48, Math.min(80, hsl.l))
-  
-  const color1 = `hsl(${(hsl.h - 30 + 360) % 360}, ${clampedS}%, ${clampedL}%)`
-  const color2 = `hsl(${hsl.h}, ${clampedS}%, ${clampedL}%)`
-  const color3 = `hsl(${(hsl.h + 30) % 360}, ${clampedS}%, ${clampedL}%)`
-  return `linear-gradient(90deg, ${color1}, ${color2}, ${color3}, ${color2}, ${color1})`
+  const h = hsl.h
+  // Ensure the base saturation and lightness are vibrant and readable
+  const baseS = Math.max(hsl.s, 80)
+  const baseL = Math.max(55, Math.min(hsl.l, 70))
+
+  // Shift only slightly around the base color to create a shimmering effect 
+  // using shades/tones of the theme color, never escaping to other colors.
+  const c0 = `hsl(${(h - 10 + 360) % 360}, ${baseS}%, ${baseL}%)`
+  const c1 = `hsl(${h}, ${baseS - 12}%, ${baseL + 15}%)`
+  const c2 = `hsl(${(h + 10) % 360}, ${baseS}%, ${baseL + 5}%)`
+  const c3 = `hsl(${h}, ${baseS - 15}%, ${baseL + 20}%)`
+
+  // 1000% wide looping gradient with duplicated stops for a seamless transition
+  return `linear-gradient(90deg, ${c0}, ${c1}, ${c2}, ${c3}, ${c0}, ${c1}, ${c2}, ${c3}, ${c0})`
 }
 
 
@@ -178,11 +186,12 @@ interface SubstancePopupProps {
   onClose: () => void
   onNavigate: (substance: Substance) => void
   allSubstances: Substance[]
+  setStatModal?: (label: string) => void
 }
 
 type Tab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interactions' | 'legal'
 
-export default function SubstancePopup({ substance: initialSubstance, comboMatrix, onClose, onNavigate, allSubstances }: SubstancePopupProps) {
+export default function SubstancePopup({ substance: initialSubstance, comboMatrix, onClose, onNavigate, allSubstances, setStatModal }: SubstancePopupProps) {
   const [tab, setTab] = useState<Tab>('overview')
   const [animKey, setAnimKey] = useState(0)
   const [effectsModalOpen, setEffectsModalOpen] = useState(false)
@@ -204,6 +213,18 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
   const [prevName, setPrevName] = useState(initialSubstance.name)
   const [detailedSubstance, setDetailedSubstance] = useState<Substance | null>(null)
   const [loadingDetails, setLoadingDetails] = useState(true)
+
+  const [comboSubstanceName, setComboSubstanceName] = useState<string>('')
+  const [comboDropdownOpen, setComboDropdownOpen] = useState(false)
+  
+  const selectedComboSub = useMemo(() => 
+    allSubstances.find(s => s.name === comboSubstanceName)
+  , [comboSubstanceName, allSubstances])
+
+  const comboLevel = useMemo(() => {
+    if (!selectedComboSub) return null
+    return comboMatrix[`${initialSubstance.category}+${selectedComboSub.category}`] || comboMatrix[`${selectedComboSub.category}+${initialSubstance.category}`] || 'caution'
+  }, [selectedComboSub, initialSubstance, comboMatrix])
 
   if (initialSubstance.name !== prevName) {
     setPrevName(initialSubstance.name)
@@ -392,8 +413,9 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
     >
       <div
         ref={popupRef}
-        className={`bg-[var(--bg)] border border-[var(--border)] w-full flex flex-col${isMobile ? ' h-[100dvh]' : ' neon-popup-glow h-[92dvh] sm:h-[85dvh] sm:rounded-lg rounded-t-lg'}`}
+        className={`border border-[var(--border)] w-full flex flex-col${isMobile ? ' h-[100dvh]' : ' neon-popup-glow h-[92dvh] sm:h-[85dvh] sm:rounded-lg rounded-t-lg'}`}
         style={{
+          background: `linear-gradient(180deg, color-mix(in srgb, ${catColor} 25%, var(--bg)) 0%, color-mix(in srgb, ${catColor} 5%, var(--bg)) 25%, var(--bg) 100%)`,
           overflow: 'clip',
           ...(!isMobile ? {
             maxWidth: 'min(1100px,96vw)',
@@ -414,23 +436,26 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
         <div className="min-w-0 flex-1">
       <div className="flex items-center gap-2.5 mb-1.5">
                 <div className="w-1.5 h-6 lg:h-7 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
-                <h2
-                  className="text-xl sm:text-2xl lg:text-3xl font-display font-bold truncate substance-title-dynamic"
-                  style={{
-                    backgroundImage: getShiftingGradient(catColor),
-                    ['--glow-color' as any]: `${catColor}55`,
-                  }}
-                >
-                  {substance.name}
-                </h2>
+                <div style={{ filter: `drop-shadow(0 0 8px ${catColor}66)` }}>
+                  <h2
+                    className="text-xl sm:text-2xl lg:text-3xl font-display font-bold truncate substance-title-dynamic"
+                    style={{
+                      backgroundImage: getShiftingGradient(catColor),
+                    }}
+                  >
+                    {substance.name}
+                  </h2>
+                </div>
                 {substance.harmLevel === 'extreme' && (
-                  <svg className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 skull-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 2C7.58 2 4 5.58 4 10c0 2.5 1.17 4.73 3 6.2V18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-1.8c1.83-1.47 3-3.7 3-6.2 0-4.42-3.58-8-8-8zM9 22h6M10 18v4M14 18v4" />
-                    <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor" />
-                    <circle cx="14.5" cy="9.5" r="1.5" fill="currentColor" />
-                    <path strokeLinecap="round" d="M10.5 14.5h3M12 14.5v2" strokeWidth={1.2} />
-                  </svg>
+                  <button 
+                    onClick={() => { playClick(); setStatModal?.('Extreme Danger') }}
+                    className="group relative flex-shrink-0"
+                    title="Extreme Harm Risk - Click for details"
+                  >
+                    <Skull className="w-6 h-6 sm:w-7 sm:h-7 skull-icon transition-transform group-hover:scale-110" />
+                  </button>
                 )}
+
                 <button
                   onClick={() => speakSubstanceName(substance.name)}
                   className="p-1.5 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors flex-shrink-0 text-[var(--text4)] hover:text-[var(--cyan)]"
@@ -476,22 +501,7 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
           )}
         </div>
           <div className="flex items-center gap-1">
-            {hasEffects && (
-              <button
-                onClick={(e) => { e.stopPropagation(); playPopupTab('effects'); setTab('effects') }}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-display font-semibold transition-all"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15))',
-                  color: '#a78bfa',
-                  border: '1px solid rgba(139,92,246,0.25)',
-                }}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-                Effects
-              </button>
-            )}
+
             <button
               onClick={() => {
                 const { setMatrixCategory, setActiveSection } = useUIStore.getState()
@@ -574,6 +584,78 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
               <ScoreBadges substance={substance} className="mb-2" />
               <HarmReductionCard substance={substance} />
               <CategoryHarmReduction category={substance.category} />
+              
+              <div className="glass rounded-xl p-4 sm:p-5 border border-[var(--border2)] relative group mb-5">
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--border)] to-transparent opacity-10 pointer-events-none rounded-xl" />
+                <h4 className="text-base sm:text-lg font-bold font-display text-[var(--text)] mb-3 flex items-center gap-2 relative z-10">
+                  <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                  </svg>
+                  Quick Combo Checker
+                </h4>
+                <div className="flex flex-col gap-3">
+                    <div className="w-full relative">
+                      <input
+                        type="text"
+                        inputMode="search"
+                        autoComplete="off"
+                        placeholder="Search substance to mix..."
+                        className={`w-full bg-[var(--bg2)] text-[var(--text)] text-base sm:text-sm font-semibold font-display border border-[var(--border3)] py-2.5 px-3 pr-10 focus:outline-none focus:border-[var(--accent)] transition-all ${comboDropdownOpen ? 'rounded-t-lg rounded-b-none border-b-0 border-[var(--accent)]' : 'rounded-lg'}`}
+                        value={comboSubstanceName}
+                        onChange={(e) => { setComboSubstanceName(e.target.value); setComboDropdownOpen(true) }}
+                        onFocus={() => setComboDropdownOpen(true)}
+                        onBlur={() => setTimeout(() => setComboDropdownOpen(false), 150)}
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text4)]">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    {comboDropdownOpen && (() => {
+                      const filtered = allSubstances
+                        .filter(s => s.name !== substance.name && s.name.toLowerCase().includes(comboSubstanceName.toLowerCase()))
+                        .slice(0, 30)
+                      return (
+                        <div className="-mt-3 max-h-[200px] overflow-y-auto substance-popup-scroll bg-[var(--bg2)] border border-[var(--accent)] border-t-0 rounded-b-lg">
+                          {filtered.length > 0 ? filtered.map(s => (
+                            <button
+                              key={s.name}
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={() => {
+                                setComboSubstanceName(s.name)
+                                setComboDropdownOpen(false)
+                              }}
+                              className="w-full text-left px-4 py-2.5 text-sm hover:bg-[var(--surface-hover)] active:bg-[var(--border)] transition-colors border-t border-[var(--border)] first:border-t-0"
+                            >
+                              <div className="font-semibold text-[var(--text)]">{s.name}</div>
+                              <div className="text-[10px] text-[var(--text4)] uppercase tracking-wider">{s.category}</div>
+                            </button>
+                          )) : (
+                            <div className="p-4 text-center text-sm text-[var(--text4)]">No substances found.</div>
+                          )}
+                        </div>
+                      )
+                    })()}
+                </div>
+
+                {selectedComboSub && comboLevel && (
+                  <div className="mt-4 pt-4 border-t border-[var(--border)] animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full shadow-[0_0_8px_currentColor]" style={{ color: COMBO_LEVEL_COLORS[comboLevel], backgroundColor: COMBO_LEVEL_COLORS[comboLevel] }} />
+                        <span className="text-base sm:text-lg font-bold font-mono tracking-tight" style={{ color: COMBO_LEVEL_COLORS[comboLevel] }}>
+                          {COMBO_LEVEL_LABELS[comboLevel]}
+                        </span>
+                      </div>
+                      <p className="text-sm text-[var(--text2)] leading-relaxed bg-[var(--bg)]/50 p-3 rounded-lg border border-[var(--border)]">
+                        <span className="font-semibold text-white">{substance.name}</span> + <span className="font-semibold text-white">{selectedComboSub.name}</span>: {COMBO_DESCRIPTIONS[comboLevel]}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
                 <RadarChart substance={substance} />
                 <div className="space-y-4">

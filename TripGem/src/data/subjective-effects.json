@@ -15066,5 +15066,272 @@
       "Perception of bodily heaviness"
     ],
     "why": "First-generation (typical) antipsychotics are dopamine receptor antagonists primarily used to treat acute psychosis, schizophrenia, and severe agitation. In harm reduction contexts, they are occasionally used to abort intense psychedelic trips (known as trip killers), though they carry a significant risk of extrapyramidal motor symptoms."
+  },
+  "apomorphine": {
+    "positives": [
+      "Erectile dysfunction relief",
+      "Parkinson's symptom relief",
+      "Motor control enhancement",
+      "Spontaneous bodily sensations"
+    ],
+    "negatives": [
+      "Nausea",
+      "Vomiting",
+      "Dizziness",
+      "Drowsiness",
+      "Yawning",
+      "Sweating"
+    ],
+    "why": "Apomorphine is a non-ergoline dopamine agonist used primarily to treat off episodes in Parkinson's disease and historically for erectile dysfunction."
+  },
+  "levodopa": {
+    "positives": [
+      "Motor control enhancement",
+      "Mood lift",
+      "Focus enhancement",
+      "Motivation enhancement"
+    ],
+    "negatives": [
+      "Dyskinesia",
+      "Nausea",
+      "Anxiety",
+      "Insomnia",
+      "Hallucinations"
+    ],
+    "why": "Levodopa is the precursor to dopamine and is considered the gold standard treatment for Parkinson's disease, providing significant relief from motor symptoms."
+  },
+  "carbidopa": {
+    "positives": [
+      "Prevents levodopa breakdown",
+      "Increases levodopa efficacy",
+      "Reduces nausea"
+    ],
+    "negatives": [
+      "Dizziness",
+      "Stomach upset",
+      "Dry mouth"
+    ],
+    "why": "Carbidopa is administered with levodopa to prevent its premature conversion to dopamine outside the brain, reducing side effects and increasing effectiveness."
+  },
+  "pramipexole": {
+    "positives": [
+      "Parkinson's symptom relief",
+      "Restless leg syndrome relief",
+      "Motivation enhancement",
+      "Mood lift"
+    ],
+    "negatives": [
+      "Nausea",
+      "Dizziness",
+      "Fatigue",
+      "Impulse control disorders",
+      "Sleep attacks",
+      "Hallucinations"
+    ],
+    "why": "Pramipexole is a dopamine agonist that stimulates dopamine receptors directly, used for Parkinson's disease and severe restless legs syndrome."
+  },
+  "ropinirole": {
+    "positives": [
+      "Motor control enhancement",
+      "Restless leg syndrome relief"
+    ],
+    "negatives": [
+      "Nausea",
+      "Drowsiness",
+      "Dizziness",
+      "Impulse control disorders",
+      "Sudden sleep onset"
+    ],
+    "why": "Ropinirole acts as a dopamine agonist, widely prescribed for Parkinson's disease and restless legs syndrome."
+  },
+  "rotigotine": {
+    "positives": [
+      "Continuous dopamine stimulation",
+      "Motor control enhancement",
+      "Restless leg syndrome relief"
+    ],
+    "negatives": [
+      "Application site reactions",
+      "Nausea",
+      "Drowsiness",
+      "Dizziness"
+    ],
+    "why": "Rotigotine is uniquely delivered via a transdermal patch, providing continuous dopaminergic stimulation for Parkinson's and RLS."
+  },
+  "bromocriptine": {
+    "positives": [
+      "Prolactin reduction",
+      "Motor control enhancement",
+      "Menstrual cycle regulation"
+    ],
+    "negatives": [
+      "Nausea",
+      "Headache",
+      "Dizziness",
+      "Fatigue",
+      "Nasal congestion"
+    ],
+    "why": "Bromocriptine is an ergot-derivative dopamine agonist used for Parkinson's disease, hyperprolactinemia, and acromegaly."
+  },
+  "cabergoline": {
+    "positives": [
+      "Prolactin reduction",
+      "Motivation enhancement",
+      "Increased libido",
+      "Motor control enhancement"
+    ],
+    "negatives": [
+      "Nausea",
+      "Headache",
+      "Dizziness",
+      "Fatigue",
+      "Heart valve issues"
+    ],
+    "why": "Cabergoline is a long-acting ergot dopamine agonist, favored for its once or twice weekly dosing in hyperprolactinemia."
+  },
+  "amantadine": {
+    "positives": [
+      "Dyskinesia reduction",
+      "Fatigue reduction",
+      "Mild stimulation",
+      "Motor control enhancement"
+    ],
+    "negatives": [
+      "Livedo reticularis",
+      "Insomnia",
+      "Dizziness",
+      "Hallucinations",
+      "Dry mouth",
+      "Constipation"
+    ],
+    "why": "Amantadine is a unique antiviral agent that also acts as an NMDA receptor antagonist and promotes dopamine release, useful for Parkinson's dyskinesia."
+  },
+  "selegiline": {
+    "positives": [
+      "Stimulation",
+      "Mood lift",
+      "Focus enhancement",
+      "Neuroprotection",
+      "Motivation enhancement"
+    ],
+    "negatives": [
+      "Insomnia",
+      "Dizziness",
+      "Nausea",
+      "Dry mouth",
+      "Anxiety"
+    ],
+    "why": "Selegiline is an MAO-B inhibitor that prevents dopamine breakdown in the brain, extending the action of levodopa and providing mild stimulation."
+  },
+  "rasagiline": {
+    "positives": [
+      "Motor control enhancement",
+      "Neuroprotection",
+      "Mood lift"
+    ],
+    "negatives": [
+      "Headache",
+      "Joint pain",
+      "Indigestion",
+      "Depression"
+    ],
+    "why": "Rasagiline is a potent, irreversible MAO-B inhibitor used as monotherapy in early Parkinson's or as an adjunct in advanced stages."
+  },
+  "entacapone": {
+    "positives": [
+      "Extends levodopa duration",
+      "Reduces off time"
+    ],
+    "negatives": [
+      "Urine discoloration",
+      "Dyskinesia",
+      "Nausea",
+      "Diarrhea",
+      "Abdominal pain"
+    ],
+    "why": "Entacapone is a COMT inhibitor that blocks the breakdown of levodopa, significantly increasing its half-life and efficacy."
+  },
+  "tolcapone": {
+    "positives": [
+      "Extends levodopa duration",
+      "Reduces off time"
+    ],
+    "negatives": [
+      "Hepatotoxicity",
+      "Diarrhea",
+      "Nausea",
+      "Dyskinesia",
+      "Urine discoloration"
+    ],
+    "why": "Tolcapone is a highly effective COMT inhibitor, but its use is limited due to the risk of severe liver damage, requiring strict monitoring."
+  },
+  "pergolide": {
+    "positives": [
+      "Motor control enhancement",
+      "Prolactin reduction"
+    ],
+    "negatives": [
+      "Heart valve damage",
+      "Nausea",
+      "Dizziness",
+      "Hallucinations"
+    ],
+    "why": "Pergolide was an ergot-derived dopamine agonist withdrawn from the US market due to significant risks of cardiac valvulopathy."
+  },
+  "lisuride": {
+    "positives": [
+      "Prolactin reduction",
+      "Motor control enhancement",
+      "Migraine prevention"
+    ],
+    "negatives": [
+      "Nausea",
+      "Dizziness",
+      "Hallucinations",
+      "Blood pressure changes"
+    ],
+    "why": "Lisuride is an isoergoline derivative that acts as a dopamine agonist, chemically related to LSD but lacking typical psychedelic effects."
+  },
+  "safinamide": {
+    "positives": [
+      "Increases on time",
+      "Reduces off time",
+      "Glutamate modulation"
+    ],
+    "negatives": [
+      "Dyskinesia",
+      "Fall risk",
+      "Nausea",
+      "Insomnia"
+    ],
+    "why": "Safinamide combines MAO-B inhibition with modulation of glutamate release, offering a dual mechanism for Parkinson's symptom control."
+  },
+  "opicapone": {
+    "positives": [
+      "Once-daily dosing",
+      "Extends levodopa duration",
+      "Reduces off time"
+    ],
+    "negatives": [
+      "Dyskinesia",
+      "Constipation",
+      "Dry mouth",
+      "Dizziness"
+    ],
+    "why": "Opicapone is a newer, once-daily COMT inhibitor that provides a smoother, more continuous effect of levodopa compared to shorter-acting alternatives."
+  },
+  "piribedil": {
+    "positives": [
+      "Motor control enhancement",
+      "Cognitive enhancement",
+      "Vasodilation"
+    ],
+    "negatives": [
+      "Nausea",
+      "Vomiting",
+      "Drowsiness",
+      "Confusion"
+    ],
+    "why": "Piribedil is a dopamine agonist used for Parkinson's disease and sometimes for cognitive impairments in the elderly, particularly in Europe."
   }
 }

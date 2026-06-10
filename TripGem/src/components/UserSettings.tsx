@@ -28,78 +28,18 @@ export default function UserSettings() {
 
   useEffect(() => {
     if (!settingsOpen) return
-    let startY = 0
+    const originalOverflow = document.body.style.overflow
+    const originalPaddingRight = document.body.style.paddingRight
 
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
-        startY = e.touches[0].clientY
-      }
+    document.body.style.overflow = 'hidden'
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`
     }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      const container = containerRef.current
-      if (!container) return
-
-      if (!container.contains(e.target as Node)) {
-        if (e.cancelable) e.preventDefault()
-        return
-      }
-
-      const scrollable = container.querySelector('.overflow-y-auto') as HTMLElement | null
-      if (!scrollable) {
-        if (e.cancelable) e.preventDefault()
-        return
-      }
-
-      const currentY = e.touches[0].clientY
-      const diffY = currentY - startY
-
-      const scrollTop = scrollable.scrollTop
-      const scrollHeight = scrollable.scrollHeight
-      const clientHeight = scrollable.clientHeight
-
-      if (diffY > 0 && scrollTop <= 0) {
-        if (e.cancelable) e.preventDefault()
-      } else if (diffY < 0 && scrollTop + clientHeight >= scrollHeight - 1) {
-        if (e.cancelable) e.preventDefault()
-      }
-    }
-
-    const handleWheel = (e: WheelEvent) => {
-      const container = containerRef.current
-      if (!container) return
-
-      if (!container.contains(e.target as Node)) {
-        e.preventDefault()
-        return
-      }
-
-      const scrollable = container.querySelector('.overflow-y-auto') as HTMLElement | null
-      if (!scrollable) {
-        e.preventDefault()
-        return
-      }
-
-      const deltaY = e.deltaY
-      const scrollTop = scrollable.scrollTop
-      const scrollHeight = scrollable.scrollHeight
-      const clientHeight = scrollable.clientHeight
-
-      if (deltaY < 0 && scrollTop <= 0) {
-        e.preventDefault()
-      } else if (deltaY > 0 && scrollTop + clientHeight >= scrollHeight - 1) {
-        e.preventDefault()
-      }
-    }
-
-    window.addEventListener('touchstart', handleTouchStart, { passive: true })
-    window.addEventListener('touchmove', handleTouchMove, { passive: false })
-    window.addEventListener('wheel', handleWheel, { passive: false })
 
     return () => {
-      window.removeEventListener('touchstart', handleTouchStart)
-      window.removeEventListener('touchmove', handleTouchMove)
-      window.removeEventListener('wheel', handleWheel)
+      document.body.style.overflow = originalOverflow
+      document.body.style.paddingRight = originalPaddingRight
     }
   }, [settingsOpen])
 
@@ -161,7 +101,7 @@ export default function UserSettings() {
           </button>
         </div>
 
-        <div className="p-5 sm:p-6 space-y-6 overflow-y-auto max-h-[70vh]">
+        <div className="p-5 sm:p-6 space-y-6 overflow-y-auto max-h-[70vh]" style={{ overscrollBehavior: 'contain' }}>
           {/* Body Weight */}
           <div className="space-y-3">
             <label className="flex items-center gap-2 text-sm font-mono text-[var(--text4)] uppercase tracking-[0.15em]">

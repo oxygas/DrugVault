@@ -19,78 +19,18 @@ export default function ThemeSelector() {
 
   useEffect(() => {
     if (!themeOpen) return
-    let startY = 0
+    const originalOverflow = document.body.style.overflow
+    const originalPaddingRight = document.body.style.paddingRight
 
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
-        startY = e.touches[0].clientY
-      }
+    document.body.style.overflow = 'hidden'
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`
     }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      const container = containerRef.current
-      if (!container) return
-
-      if (!container.contains(e.target as Node)) {
-        if (e.cancelable) e.preventDefault()
-        return
-      }
-
-      const scrollable = container.querySelector('.overflow-y-auto') as HTMLElement | null
-      if (!scrollable) {
-        if (e.cancelable) e.preventDefault()
-        return
-      }
-
-      const currentY = e.touches[0].clientY
-      const diffY = currentY - startY
-
-      const scrollTop = scrollable.scrollTop
-      const scrollHeight = scrollable.scrollHeight
-      const clientHeight = scrollable.clientHeight
-
-      if (diffY > 0 && scrollTop <= 0) {
-        if (e.cancelable) e.preventDefault()
-      } else if (diffY < 0 && scrollTop + clientHeight >= scrollHeight - 1) {
-        if (e.cancelable) e.preventDefault()
-      }
-    }
-
-    const handleWheel = (e: WheelEvent) => {
-      const container = containerRef.current
-      if (!container) return
-
-      if (!container.contains(e.target as Node)) {
-        e.preventDefault()
-        return
-      }
-
-      const scrollable = container.querySelector('.overflow-y-auto') as HTMLElement | null
-      if (!scrollable) {
-        e.preventDefault()
-        return
-      }
-
-      const deltaY = e.deltaY
-      const scrollTop = scrollable.scrollTop
-      const scrollHeight = scrollable.scrollHeight
-      const clientHeight = scrollable.clientHeight
-
-      if (deltaY < 0 && scrollTop <= 0) {
-        e.preventDefault()
-      } else if (deltaY > 0 && scrollTop + clientHeight >= scrollHeight - 1) {
-        e.preventDefault()
-      }
-    }
-
-    window.addEventListener('touchstart', handleTouchStart, { passive: true })
-    window.addEventListener('touchmove', handleTouchMove, { passive: false })
-    window.addEventListener('wheel', handleWheel, { passive: false })
 
     return () => {
-      window.removeEventListener('touchstart', handleTouchStart)
-      window.removeEventListener('touchmove', handleTouchMove)
-      window.removeEventListener('wheel', handleWheel)
+      document.body.style.overflow = originalOverflow
+      document.body.style.paddingRight = originalPaddingRight
     }
   }, [themeOpen])
 
@@ -143,7 +83,7 @@ export default function ThemeSelector() {
           </button>
         </div>
 
-        <div className="p-4 sm:p-5 overflow-y-auto" style={{ maxHeight: '75vh' }}>
+        <div className="p-4 sm:p-5 overflow-y-auto" style={{ maxHeight: '75vh', overscrollBehavior: 'contain' }}>
           <p className="text-xs text-[var(--text4)] font-mono uppercase tracking-[0.15em] mb-3">
             Choose your vibe
           </p>

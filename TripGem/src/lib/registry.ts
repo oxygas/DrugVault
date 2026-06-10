@@ -20,22 +20,22 @@ export interface HarmLevelConfig {
 }
 
 export const CATEGORY_REGISTRY: CategoryConfig[] = [
-  { name: 'Depressants', color: '#8b5cf6' },
-  { name: 'Stimulants', color: '#f97316' },
-  { name: 'Opioids', color: '#ef4444' },
-  { name: 'Psychedelics', color: '#06b6d4' },
-  { name: 'Dissociatives', color: '#a78bfa' },
-  { name: 'Entactogens', color: '#ec4899' },
-  { name: 'Cannabinoids', color: '#22c55e' },
-  { name: 'Inhalants', color: '#eab308' },
-  { name: 'Deliriants', color: '#7f1d1d' },
-  { name: 'Gabapentionoids', color: '#0d9488' },
-  { name: 'Nootropics', color: '#14b8a6' },
-  { name: 'Antidepressants', color: '#6366f1' },
-  { name: 'Antipsychotics', color: '#d946ef' },
-  { name: 'Dopaminergics', color: '#0ea5e9' },
-  { name: 'Supplements', color: '#84cc16' },
-  { name: 'Cathinones', color: '#d97706' },
+  { name: 'Depressants', color: '#3b82f6' }, // Blue (Calming/Slow)
+  { name: 'Stimulants', color: '#f97316' }, // Orange (Energetic)
+  { name: 'Psychedelics', color: '#d946ef' }, // Fuchsia/Magenta (Trippy/Vibrant)
+  { name: 'Dissociatives', color: '#06b6d4' }, // Cyan (Cold/Detached/Spacey)
+  { name: 'Opioids', color: '#b45309' }, // Amber/Brown (Warm/Heavy)
+  { name: 'Entactogens', color: '#ec4899' }, // Pink (Love/Empathy)
+  { name: 'Cannabinoids', color: '#22c55e' }, // Green (Nature/Plant)
+  { name: 'Deliriants', color: '#7f1d1d' }, // Dark Red (Scary/Danger)
+  { name: 'Gabapentionoids', color: '#818cf8' }, // Soft Indigo (Relaxing)
+  { name: 'Nootropics', color: '#38bdf8' }, // Light Blue (Clarity/Focus)
+  { name: 'Antidepressants', color: '#6366f1' }, // Indigo/Violet (Medical/Stable)
+  { name: 'Antipsychotics', color: '#64748b' }, // Slate Gray (Grounding/Dulling)
+  { name: 'Dopaminergics', color: '#eab308' }, // Yellow (Reward)
+  { name: 'Supplements', color: '#14b8a6' }, // Teal (Health/Wellness)
+  { name: 'Inhalants', color: '#84cc16' }, // Lime/Toxic Green
+  { name: 'Cathinones', color: '#ef4444' }, // Bright Red (Intense Stimulant)
 ]
 
 export const COMBO_LEVEL_REGISTRY: ComboLevelConfig[] = [

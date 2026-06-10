@@ -33,14 +33,14 @@ const byCategory = new Map<string, Substance[]>()
 const substanceComboMap = new Map<string, SubstanceCombo>()
 type StatsResult = {
   total: number;
-  avgHarm: number;
-  avgAddiction: number;
-  avgOdRisk: number;
-  avgWithdrawal: number;
-  avgInteraction: number;
-  avgDependence: number;
-  extremeCount: number;
   categories: number;
+  extremeCount: number;
+  highHarmCount: number;
+  highAddictionCount: number;
+  highOdRiskCount: number;
+  totalCombos: number;
+  dangerousCombos: number;
+  safeCombos: number;
 }
 let statsCache: StatsResult | null = null
 let comboMatrixCache: Record<string, ComboLevel> | null = null
@@ -347,40 +347,32 @@ export async function checkInteraction(
   return { substanceA: a, substanceB: b, level, description, note }
 }
 
-export async function getSubstanceStats(): Promise<{
-  total: number;
-  avgHarm: number;
-  avgAddiction: number;
-  avgOdRisk: number;
-  avgWithdrawal: number;
-  avgInteraction: number;
-  avgDependence: number;
-  extremeCount: number;
-  categories: number;
-}> {
+export async function getSubstanceStats(): Promise<StatsResult> {
   await ensureData()
   if (statsCache) return statsCache
   const total = substances.length
-  let harm = 0, addiction = 0, odRisk = 0, withdrawal = 0, interaction = 0, dependence = 0, extreme = 0
+  let extreme = 0, highHarm = 0, highAddiction = 0, highOdRisk = 0
   for (const s of substances) {
-    harm += s.harmScore
-    addiction += s.addictionScore
-    odRisk += s.odRisk
-    withdrawal += s.withdrawalSeverity
-    interaction += s.interactionDanger
-    dependence += s.dependenceLiability
     if (s.harmLevel === 'extreme') extreme++
+    if (s.harmScore >= 75) highHarm++
+    if (s.addictionScore >= 75) highAddiction++
+    if (s.odRisk >= 75) highOdRisk++
   }
+  
+  const totalCombos = substanceCombos.length
+  const dangerousCombos = substanceCombos.filter(c => c.level === 'dangerous' || c.level === 'deadly').length
+  const safeCombos = substanceCombos.filter(c => c.level === 'safe' || c.level === 'low_risk').length
+
   statsCache = {
     total,
-    avgHarm: Math.round(harm / total),
-    avgAddiction: Math.round(addiction / total),
-    avgOdRisk: Math.round(odRisk / total),
-    avgWithdrawal: Math.round(withdrawal / total),
-    avgInteraction: Math.round(interaction / total),
-    avgDependence: Math.round(dependence / total),
-    extremeCount: extreme,
     categories: byCategory.size,
+    extremeCount: extreme,
+    highHarmCount: highHarm,
+    highAddictionCount: highAddiction,
+    highOdRiskCount: highOdRisk,
+    totalCombos,
+    dangerousCombos,
+    safeCombos
   }
   return statsCache
 }

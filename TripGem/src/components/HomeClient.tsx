@@ -26,6 +26,11 @@ const SubstancePopup = dynamic(() => import('@/features/substances/components/Su
   ),
 })
 
+const StatDetailModal = dynamic(() => import('@/components/StatDetailModal'), {
+  ssr: false,
+  loading: () => null
+})
+
 type Section = 'substances' | 'matrix' | 'tools'
 
 const FETCH_FIELDS = [
@@ -36,7 +41,17 @@ const FETCH_FIELDS = [
 ].join(',')
 
 interface HomeClientProps {
-  stats: { total: number; avgHarm: number; avgAddiction: number; avgOdRisk: number; avgWithdrawal: number; avgInteraction: number; avgDependence: number; extremeCount: number; categories: number }
+  stats: {
+    total: number
+    categories: number
+    extremeCount: number
+    highHarmCount: number
+    highAddictionCount: number
+    highOdRiskCount: number
+    totalCombos: number
+    dangerousCombos: number
+    safeCombos: number
+  }
   categories: CategoryMeta[]
   comboMatrix: Record<string, ComboLevel>
   substanceCombos?: SubstanceCombo[]
@@ -45,6 +60,7 @@ interface HomeClientProps {
 export default function HomeClient({ stats, categories, comboMatrix, substanceCombos }: HomeClientProps) {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [popupSubstance, setPopupSubstance] = useState<Substance | null>(null)
+  const [activeStatModal, setActiveStatModal] = useState<string | null>(null)
   const [activeSection, setActiveSection] = useState<Section>('substances')
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -151,6 +167,11 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
     if (section === activeSectionRef.current) return
     playSectionChange()
     setActiveSection(section)
+  }, [])
+
+  const handleStatClick = useCallback((label: string) => {
+    playClick()
+    setActiveStatModal(label)
   }, [])
 
   // Keyboard shortcuts for desktop
@@ -372,7 +393,7 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
         </div>
 
         <section className="section-card w-full min-w-0" style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both', contain: 'none' }}>
-          <StatsBar stats={stats} categories={categories} />
+          <StatsBar stats={stats} categories={categories} onStatClick={handleStatClick} />
         </section>
 
         <div className="w-full min-w-0">
@@ -463,9 +484,9 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
 
       {mounted && <OnboardingModal />}
 
-      {settingsOpen && <UserSettings />}
+      <UserSettings />
 
-      {themeOpen && <ThemeSelector />}
+      <ThemeSelector />
 
       {scoreBreakdownOpen && <ScoreBreakdownPopup substances={substances} />}
 
@@ -476,6 +497,20 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
           onClose={closePopup}
           onNavigate={openPopup}
           allSubstances={substances}
+          setStatModal={setActiveStatModal}
+        />
+      )}
+
+      {activeStatModal && (
+        <StatDetailModal
+          label={activeStatModal}
+          substances={substances}
+          comboMatrix={comboMatrix}
+          onClose={() => setActiveStatModal(null)}
+          onNavigate={(substance) => {
+            setActiveStatModal(null)
+            openPopup(substance)
+          }}
         />
       )}
 

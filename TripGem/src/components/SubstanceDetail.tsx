@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { Skull } from 'lucide-react'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
 import { slugify } from '@/lib/slugify'
@@ -138,8 +139,15 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <h1 className="text-sm sm:text-base lg:text-lg font-display font-bold text-white truncate">{substance.name}</h1>
-            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[var(--text4)] font-mono">
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm sm:text-base lg:text-lg font-display font-bold text-white truncate">{substance.name}</h1>
+              {substance.harmLevel === 'extreme' && (
+                <div className="flex items-center justify-center bg-red-500/10 text-red-500 rounded p-1 border border-red-500/30 shadow-[0_0_12px_rgba(239,68,68,0.25)] flex-shrink-0" title="High Risk / Extreme Harm">
+                  <Skull className="w-3.5 h-3.5 skull-icon" />
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[var(--text4)] font-mono mt-0.5">
               <span>{substance.category}</span>
               <span className="hidden sm:inline">·</span>
               <span className="hidden sm:inline">{substance.harmLevel}</span>
