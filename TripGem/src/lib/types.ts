@@ -167,6 +167,25 @@ export const CATEGORY_COLORS: Record<string, string> = Object.fromEntries(
   CATEGORY_REGISTRY.map(c => [c.name, c.color])
 )
 
+export const LOFI_CATEGORY_COLORS: Record<string, string> = {
+  'Depressants': '#6a8aaa',
+  'Stimulants': '#c89050',
+  'Psychedelics': '#b088b0',
+  'Dissociatives': '#58a0a8',
+  'Opioids': '#a88050',
+  'Entactogens': '#b88090',
+  'Cannabinoids': '#60a070',
+  'Deliriants': '#805050',
+  'Gabapentionoids': '#8090b8',
+  'Nootropics': '#60a0b8',
+  'Antidepressants': '#7078b0',
+  'Antipsychotics': '#6a7a8a',
+  'Dopaminergics': '#b8a858',
+  'Supplements': '#58a090',
+  'Inhalants': '#80a060',
+  'Cathinones': '#b86860',
+}
+
 export const HARM_LEVEL_COLORS: Record<string, string> = Object.fromEntries(
   HARM_LEVEL_REGISTRY.map(h => [h.key, h.color])
 )

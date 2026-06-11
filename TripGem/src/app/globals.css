@@ -2017,6 +2017,7 @@ body.is-scrolling .glass-aero {
   top: 0;
   bottom: 0;
   width: 4px;
+  background: var(--tube-c, var(--accent));
   animation: tubePulse 2s ease-in-out infinite;
 }
 
@@ -2284,8 +2285,8 @@ body.is-scrolling .glass-aero {
     filter: none;
   }
 
-  /* Kill tripgem logo double animation — just show it static on mobile */
-  .tripgem-logo { animation: none !important; }
+  /* Tripgem logo — GIF plays natively, no CSS animation needed */
+  .tripgem-logo { animation: none; }
 
   /* Kill hero badge pulsing dot */
   .hero-badge .dot { animation: none; box-shadow: none; }
@@ -2350,14 +2351,357 @@ body.is-scrolling .glass-aero {
 .lo-fi-mode .vaporwave-horizon,
 .lo-fi-mode .grid-noise,
 .lo-fi-mode .cyber-grid,
-.lo-fi-mode .hero-glow,
-.lo-fi-mode .neon-stripe {
+.lo-fi-mode .hero-glow {
   display: none !important;
   animation: none !important;
 }
 
 .lo-fi-mode body::before {
   animation: none !important;
+}
+
+/* Solid State Mode — desaturated category-specific palette */
+.lo-fi-mode .vaporwave-card {
+  background: linear-gradient(135deg, rgba(var(--bg2-rgb, 10, 4, 24), 0.45) 0%, rgba(var(--bg3-rgb, 18, 6, 36), 0.25) 40%, color-mix(in srgb, var(--tube-c, var(--accent)) 8%, transparent) 100%);
+}
+
+.lo-fi-mode .vaporwave-card:hover {
+  background: linear-gradient(135deg, rgba(var(--bg2-rgb, 10, 4, 24), 0.65) 0%, rgba(var(--bg3-rgb, 18, 6, 36), 0.45) 40%, color-mix(in srgb, var(--tube-c, var(--accent)) 14%, transparent) 100%);
+}
+
+.lo-fi-mode .vaporwave-card > .neon-stripe {
+  width: 2px;
+  animation: none !important;
+  transition: background 0.3s ease;
+}
+
+.lo-fi-mode .vaporwave-card:hover > .neon-stripe {
+  background: color-mix(in srgb, var(--tube-c, var(--accent)) 65%, #888) !important;
+}
+
+.lo-fi-mode .vaporwave-card > .neon-stripe::after {
+  background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+}
+
+/* Per-category lo-fi pill colors */
+.lo-fi-mode .cat-pill[data-category="Depressants"] { --pill-c: #6a8aaa !important; }
+.lo-fi-mode .cat-pill[data-category="Stimulants"] { --pill-c: #c89050 !important; }
+.lo-fi-mode .cat-pill[data-category="Psychedelics"] { --pill-c: #b088b0 !important; }
+.lo-fi-mode .cat-pill[data-category="Dissociatives"] { --pill-c: #58a0a8 !important; }
+.lo-fi-mode .cat-pill[data-category="Opioids"] { --pill-c: #a88050 !important; }
+.lo-fi-mode .cat-pill[data-category="Entactogens"] { --pill-c: #b88090 !important; }
+.lo-fi-mode .cat-pill[data-category="Cannabinoids"] { --pill-c: #60a070 !important; }
+.lo-fi-mode .cat-pill[data-category="Deliriants"] { --pill-c: #805050 !important; }
+.lo-fi-mode .cat-pill[data-category="Gabapentionoids"] { --pill-c: #8090b8 !important; }
+.lo-fi-mode .cat-pill[data-category="Nootropics"] { --pill-c: #60a0b8 !important; }
+.lo-fi-mode .cat-pill[data-category="Antidepressants"] { --pill-c: #7078b0 !important; }
+.lo-fi-mode .cat-pill[data-category="Antipsychotics"] { --pill-c: #6a7a8a !important; }
+.lo-fi-mode .cat-pill[data-category="Dopaminergics"] { --pill-c: #b8a858 !important; }
+.lo-fi-mode .cat-pill[data-category="Supplements"] { --pill-c: #58a090 !important; }
+.lo-fi-mode .cat-pill[data-category="Inhalants"] { --pill-c: #80a060 !important; }
+.lo-fi-mode .cat-pill[data-category="Cathinones"] { --pill-c: #b86860 !important; }
+
+/* Per-category lo-fi card colors */
+.lo-fi-mode .vaporwave-card[data-category="Depressants"] { --tube-c: #6a8aaa !important; }
+.lo-fi-mode .vaporwave-card[data-category="Stimulants"] { --tube-c: #c89050 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Psychedelics"] { --tube-c: #b088b0 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Dissociatives"] { --tube-c: #58a0a8 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Opioids"] { --tube-c: #a88050 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Entactogens"] { --tube-c: #b88090 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Cannabinoids"] { --tube-c: #60a070 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Deliriants"] { --tube-c: #805050 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Gabapentionoids"] { --tube-c: #8090b8 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Nootropics"] { --tube-c: #60a0b8 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Antidepressants"] { --tube-c: #7078b0 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Antipsychotics"] { --tube-c: #6a7a8a !important; }
+.lo-fi-mode .vaporwave-card[data-category="Dopaminergics"] { --tube-c: #b8a858 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Supplements"] { --tube-c: #58a090 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Inhalants"] { --tube-c: #80a060 !important; }
+.lo-fi-mode .vaporwave-card[data-category="Cathinones"] { --tube-c: #b86860 !important; }
+
+/* ─── Solid State Mode — modern professional cleanup ─── */
+
+/* ── Glass blur → solid surfaces ── */
+.lo-fi-mode .glass,
+.lo-fi-mode .glass-hover,
+.lo-fi-mode .glass-strong,
+.lo-fi-mode .glass-aero,
+.lo-fi-mode .section-card,
+.lo-fi-mode .metric-card,
+.lo-fi-mode .search-input,
+.lo-fi-mode .info-card,
+.lo-fi-mode .chemical-structure-container,
+.lo-fi-mode .popup-header,
+.lo-fi-mode .nav-bar-desktop,
+.lo-fi-mode .nav-bar-mobile {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── Glass decorative overlays ── */
+.lo-fi-mode .glass::after,
+.lo-fi-mode .glass-strong::after,
+.lo-fi-mode .glass-aero::before,
+.lo-fi-mode .glass-aero::after {
+  display: none !important;
+}
+
+.lo-fi-mode .glass-aero {
+  animation: none !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+}
+.lo-fi-mode .glass-aero:hover {
+  border-color: var(--border2) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+}
+
+/* ── Section cards — clean flat surfaces ── */
+.lo-fi-mode .section-card {
+  background: var(--bg2) !important;
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+.lo-fi-mode .section-card::before,
+.lo-fi-mode .section-card > .aero-top,
+.lo-fi-mode .section-card::after {
+  display: none !important;
+}
+.lo-fi-mode .section-card:hover {
+  border-color: var(--border2) !important;
+  box-shadow: none !important;
+}
+
+/* ── Metric cards ── */
+.lo-fi-mode .metric-card {
+  background: var(--surface) !important;
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+.lo-fi-mode .metric-card::before {
+  display: none !important;
+}
+.lo-fi-mode .metric-card:hover {
+  transform: none !important;
+  border-color: var(--border2) !important;
+  box-shadow: none !important;
+}
+.lo-fi-mode .metric-card svg {
+  filter: none !important;
+}
+.lo-fi-mode .metric-card .neon-ripple {
+  display: none !important;
+}
+
+/* ── Info cards — clean, remove aurora ── */
+.lo-fi-mode .info-card {
+  background: var(--surface) !important;
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+.lo-fi-mode .info-card::after {
+  display: none !important;
+  animation: none !important;
+}
+.lo-fi-mode .info-card:hover {
+  border-color: var(--border2) !important;
+  box-shadow: none !important;
+}
+
+/* ── Popup header ── */
+.lo-fi-mode .popup-header {
+  background: rgba(8, 8, 20, 0.98) !important;
+}
+.lo-fi-mode .popup-header::after {
+  display: none !important;
+  animation: none !important;
+}
+
+/* ── Tab buttons active state — clean ── */
+.lo-fi-mode .tab-btn.active {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255,255,255,0.2) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.lo-fi-mode .tab-btn.active::before {
+  display: none !important;
+  animation: none !important;
+}
+
+/* ── Search input ── */
+.lo-fi-mode .search-input {
+  box-shadow: none !important;
+}
+.lo-fi-mode .search-input:focus-within {
+  border-color: var(--border2) !important;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.06) !important;
+}
+
+/* ── Chemical structure ── */
+.lo-fi-mode .chemical-structure-container {
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+
+/* ── Nav tabs ── */
+.lo-fi-mode .nav-tab:hover {
+  box-shadow: none !important;
+}
+.lo-fi-mode .nav-tab.active {
+  box-shadow: none !important;
+}
+
+/* ── Theme buttons ── */
+.lo-fi-mode .theme-btn:hover {
+  box-shadow: none !important;
+}
+
+/* ── Hero glow ── */
+.lo-fi-mode .hero-glow {
+  animation: none !important;
+  opacity: 0.15 !important;
+}
+
+/* ── Hero badge ── */
+.lo-fi-mode .hero-badge {
+  border-color: var(--border) !important;
+  background: var(--surface) !important;
+  color: var(--text2) !important;
+}
+.lo-fi-mode .hero-badge .dot {
+  animation: none !important;
+  background: var(--text4) !important;
+  box-shadow: none !important;
+}
+
+/* ── Gradient text → solid white ── */
+.lo-fi-mode .gradient-text {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: #fff !important;
+  color: #fff !important;
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+/* ── TripGem logo & heading text ── */
+.lo-fi-mode .tripgem-logo {
+  animation: none !important;
+}
+.lo-fi-mode .tripgem-text-trip,
+.lo-fi-mode .tripgem-text-gem {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: #fff !important;
+  color: #fff !important;
+  animation: none !important;
+  filter: none !important;
+}
+
+/* ── Vaporwave card — kill hover fx, keep data-category color ── */
+.lo-fi-mode .vaporwave-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.lo-fi-mode .vaporwave-card:hover {
+  animation: none !important;
+  box-shadow: none !important;
+}
+.lo-fi-mode .vaporwave-card .diagonal-shine {
+  display: none !important;
+}
+.lo-fi-mode .vaporwave-card:hover .card-name {
+  animation: none !important;
+}
+.lo-fi-mode .vaporwave-card:hover::after {
+  display: none !important;
+  animation: none !important;
+}
+
+/* ── Popup glow ── */
+.lo-fi-mode .neon-popup-glow {
+  animation: none !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
+}
+
+/* ── Substance popup title ── */
+.lo-fi-mode .substance-title-dynamic {
+  animation: none !important;
+  -webkit-text-fill-color: #fff !important;
+  color: #fff !important;
+  background: none !important;
+}
+
+/* ── Skull icon ── */
+.lo-fi-mode .skull-icon {
+  animation: none !important;
+}
+
+/* ── Skeleton / shimmer ── */
+.lo-fi-mode .skeleton-shimmer {
+  animation: none !important;
+  background: rgba(255,255,255,0.04) !important;
+}
+.lo-fi-mode .skeleton-neon {
+  animation: none !important;
+  background: rgba(255,255,255,0.04) !important;
+}
+
+/* ── Scrollbar → neutral gray ── */
+.lo-fi-mode ::-webkit-scrollbar-thumb {
+  background: #444 !important;
+}
+.lo-fi-mode ::-webkit-scrollbar-thumb:hover {
+  background: #666 !important;
+}
+.lo-fi-mode .substance-popup-scroll::-webkit-scrollbar-thumb {
+  background: #444 !important;
+}
+.lo-fi-mode .substance-popup-scroll::-webkit-scrollbar-thumb:hover {
+  background: #666 !important;
+}
+.lo-fi-mode .gemot-scrollbar::-webkit-scrollbar-thumb {
+  background: #444 !important;
+}
+.lo-fi-mode .gemot-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #666 !important;
+}
+
+/* ── GemBot button ── */
+.lo-fi-mode button[aria-label="Open GemBot"],
+.lo-fi-mode button[aria-label="Close GemBot"] {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+  animation: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--border) !important;
+}
+.lo-fi-mode button[aria-label="Open GemBot"] img,
+.lo-fi-mode button[aria-label="Close GemBot"] img {
+  filter: none !important;
+}
+
+/* ── CTA buttons ── */
+.lo-fi-mode .cta-btn::before {
+  display: none !important;
+}
+
+/* ── Mobile bottom nav inline blur ── */
+.lo-fi-mode nav.fixed.bottom-0 {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── Keyboard shortcuts button blur ── */
+.lo-fi-mode button[aria-label="Keyboard shortcuts"] {
+  backdrop-filter: none !important;
+  border-color: var(--border) !important;
+  background: var(--surface) !important;
 }
 
 /* Pause all persistent animations when tab/page is hidden (prevents GPU compositing and catch-up burst) */

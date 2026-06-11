@@ -423,8 +423,7 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
   <header className="text-center py-8 sm:py-14 lg:py-18 relative">
     <div className="hero-glow" />
     <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
-          <img src="/tripgem-logo-animated.gif" alt="TripGem" fetchPriority="high" className="hidden sm:block tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
-          <img src="/tripgem-logo.png" alt="TripGem" fetchPriority="high" className="block sm:hidden tripgem-logo w-20 h-20" />
+          <img src="/tripgem-logo-animated.gif" alt="TripGem" fetchPriority="high" className="tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
           <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
             <span className="tripgem-text-trip">Trip</span><span className="tripgem-text-gem">Gem</span>
           </span>

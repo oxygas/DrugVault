@@ -67,6 +67,7 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
       onKeyDown={handleKeyDown}
       onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
+      data-category={substance.category}
       className="substance-card vaporwave-card w-full cursor-pointer relative overflow-hidden group"
       style={{ '--tube-c': catColor, ...style, maxWidth: '384px' } as React.CSSProperties}
       role="button"
@@ -76,7 +77,7 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{
         background: `radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${catColor}15, transparent 40%)`
       }} />
-      <div className="neon-stripe" style={{ background: catColor }} />
+      <div className="neon-stripe" />
       <div className="diagonal-shine" />
 
       <div className="space-y-[3px]">

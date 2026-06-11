@@ -233,6 +233,7 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
       {CATEGORY_ENTRIES.map(([cat, color]) => (
         <button
           key={cat}
+          data-category={cat}
           onClick={() => { playCategoryClick(cat); onCategoryToggle(cat) }}
             className={`cat-pill ${selectedCategories.includes(cat) ? 'active' : ''}`}
             style={{ '--pill-c': color, color: selectedCategories.includes(cat) ? '#fff' : undefined } as React.CSSProperties}
