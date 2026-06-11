@@ -20,19 +20,16 @@ const DEFAULTS: PersistedData = {
   userLevel: 'common',
   onboarded: false,
   uiSounds: true,
-  loFiMode: false,
+  loFiMode: true,
 }
 
 function loadFromStorage(): PersistedData {
   if (typeof window === 'undefined') return DEFAULTS
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    const isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches
     if (!raw) {
-      return {
-        ...DEFAULTS,
-        loFiMode: isTouch,
-      }
+      // No saved preference — default to Solid State ON
+      return { ...DEFAULTS }
     }
     const parsed = JSON.parse(raw) as Partial<PersistedData>
     return {
@@ -41,7 +38,8 @@ function loadFromStorage(): PersistedData {
       userLevel: parsed.userLevel === 'new' || parsed.userLevel === 'heavy' ? parsed.userLevel : 'common',
       onboarded: parsed.onboarded === true,
       uiSounds: parsed.uiSounds !== false,
-      loFiMode: parsed.loFiMode !== undefined ? parsed.loFiMode === true : isTouch,
+      // Default ON; only OFF if user explicitly saved false
+      loFiMode: parsed.loFiMode === false ? false : true,
     }
   } catch {
     return DEFAULTS
