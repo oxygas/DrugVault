@@ -10,11 +10,6 @@ interface SubstanceGridProps {
   onSubstanceClick: (substance: Substance) => void
 }
 
-interface GridContext {
-  substances: Substance[]
-  onSubstanceClick: (substance: Substance) => void
-}
-
 const List = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
   ({ style, children, ...props }, ref) => (
     <div
@@ -47,13 +42,13 @@ const OVERSCAN = IS_TOUCH ? 150 : 300
 
 function SubstanceGridInner({ substances, onSubstanceClick }: SubstanceGridProps) {
   const itemContent = useCallback(
-    (index: number, _: unknown, context: GridContext) => (
+    (index: number) => (
       <SubstanceCard
-        substance={context.substances[index]}
-        onClick={context.onSubstanceClick}
+        substance={substances[index]}
+        onClick={onSubstanceClick}
       />
     ),
-    []
+    [substances, onSubstanceClick]
   )
 
   if (substances.length === 0) {
@@ -76,7 +71,6 @@ function SubstanceGridInner({ substances, onSubstanceClick }: SubstanceGridProps
       totalCount={substances.length}
       components={{ List, Item }}
       overscan={OVERSCAN}
-      context={{ substances, onSubstanceClick }}
       itemContent={itemContent}
     />
   )

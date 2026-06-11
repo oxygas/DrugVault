@@ -37,14 +37,18 @@ export default function OnboardingModal() {
 
   useEffect(() => {
     if (onboarded) return
-    const handleScroll = (e: Event) => {
-      if (e.cancelable) e.preventDefault()
-    }
-    window.addEventListener('wheel', handleScroll, { passive: false })
-    window.addEventListener('touchmove', handleScroll, { passive: false })
+    const body = document.body
+    const scrollY = window.scrollY
+    body.style.overflow = 'hidden'
+    body.style.position = 'fixed'
+    body.style.top = `-${scrollY}px`
+    body.style.width = '100%'
     return () => {
-      window.removeEventListener('wheel', handleScroll)
-      window.removeEventListener('touchmove', handleScroll)
+      body.style.overflow = ''
+      body.style.position = ''
+      body.style.top = ''
+      body.style.width = ''
+      window.scrollTo(0, scrollY)
     }
   }, [onboarded])
 

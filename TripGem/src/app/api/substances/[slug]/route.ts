@@ -12,7 +12,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params
-    const name = decodeURIComponent(slug).replace(/-/g, ' ')
+    const name = slug.replace(/-/g, ' ')
 
     const substance = await getSubstanceBySlug(slug) || await getSubstanceByName(name)
     if (!substance) {

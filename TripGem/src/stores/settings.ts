@@ -125,6 +125,9 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   hydrate: () => {
     if (get().hydrated) return
     const data = loadFromStorage()
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('lo-fi-mode', data.loFiMode)
+    }
     set({
       bodyWeight: data.bodyWeight,
       weightUnit: data.weightUnit,

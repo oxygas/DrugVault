@@ -51,7 +51,7 @@ function expandSubstance(r: RawSubstance): Substance {
   }
   function mapBreakdown(b?: RawScoreBreakdown): ScoreBreakdown | undefined {
     if (!b) return undefined
-    return { factors: b.factors.map(mapFactor), sourceUrl: b.su }
+    return { factors: (b.factors || []).map(mapFactor), sourceUrl: b.su }
   }
   return {
     name: r.n, aliases: r.a,
@@ -60,7 +60,7 @@ function expandSubstance(r: RawSubstance): Substance {
     category: r.c as Category,
     harmLevel: r.hl as HarmLevel, harmScore: r.hs, addictionScore: r.as,
     onset: r.o, duration: r.d, odRisk: r.od,
-    withdrawalSeverity: r.ws, interactionDanger: Math.min(r.id, 100), dependenceLiability: r.dl,
+    withdrawalSeverity: r.ws, interactionDanger: Math.max(0, Math.min(r.id, 100)), dependenceLiability: r.dl,
     risks: r.r, overdose: r.od2, safety: r.s, interactions: r.i,
     withdrawal: r.w && r.w.length ? r.w : undefined,
     recovery: r.rc && r.rc.length ? r.rc : undefined,

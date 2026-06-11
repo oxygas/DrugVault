@@ -166,6 +166,8 @@ export default function SubstancePopup({ substance: initialSubstance, isOpen, co
     setPrevName(initialSubstance.name)
     setDetailedSubstance(null)
     setLoadingDetails(true)
+    setTab('overview')
+    setAnimKey(k => k + 1)
   }
 
   useEffect(() => {

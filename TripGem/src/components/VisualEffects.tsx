@@ -242,7 +242,6 @@ export default function VisualEffects() {
 
     const render = (time: number) => {
       if (document.hidden || document.documentElement.classList.contains('lo-fi-mode')) {
-        animId = requestAnimationFrame(render)
         return
       }
 
@@ -254,12 +253,21 @@ export default function VisualEffects() {
       animId = requestAnimationFrame(render)
     }
 
+    const onVisibilityChange = () => {
+      if (!document.hidden) {
+        lastTime = performance.now()
+        animId = requestAnimationFrame(render)
+      }
+    }
+
+    document.addEventListener('visibilitychange', onVisibilityChange)
     animId = requestAnimationFrame(render)
 
     return () => {
       cancelAnimationFrame(animId)
       window.removeEventListener('resize', handleResize)
       observer.disconnect()
+      document.removeEventListener('visibilitychange', onVisibilityChange)
     }
   }, [isHome, isTouch, showDeferred])
 
