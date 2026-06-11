@@ -212,10 +212,13 @@ export default function StatDetailModal({ label, substances, comboMatrix, onClos
         .sort((a, b) => a.popularityRank - b.popularityRank)
 
       return (
-        <button
+        <div
           key={cat}
+          role="button"
+          tabIndex={0}
           onClick={() => { playClick(); setExpandedCategory(isExpanded ? null : cat); }}
-          className="w-full text-left p-4 rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] transition-all flex flex-col gap-3 group animate-in fade-in-50 duration-200"
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); playClick(); setExpandedCategory(isExpanded ? null : cat); } }}
+          className="w-full text-left p-4 rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] transition-all flex flex-col gap-3 group animate-in fade-in-50 duration-200 cursor-pointer"
         >
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-3">
@@ -258,7 +261,7 @@ export default function StatDetailModal({ label, substances, comboMatrix, onClos
               </div>
             </div>
           )}
-        </button>
+        </div>
       )
     })
   } else if (label === 'Deadly Combos' || label === 'Safe Synergies') {
@@ -277,10 +280,13 @@ export default function StatDetailModal({ label, substances, comboMatrix, onClos
       const levelColor = COMBO_LEVEL_COLORS[level]
       
       return (
-        <button 
-          key={i} 
+        <div
+          key={i}
+          role="button"
+          tabIndex={0}
           onClick={() => setExpandedCombo(expandedCombo === key ? null : key)}
-          className="w-full text-left p-4 rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] transition-all flex flex-col gap-3 group"
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedCombo(expandedCombo === key ? null : key); } }}
+          className="w-full text-left p-4 rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] transition-all flex flex-col gap-3 group cursor-pointer"
         >
           <div className="flex w-full items-center gap-4">
             <div className="flex-1 text-right font-display font-bold text-white text-sm sm:text-base">{catA}</div>
@@ -342,7 +348,7 @@ export default function StatDetailModal({ label, substances, comboMatrix, onClos
               </div>
             )
           })()}
-        </button>
+        </div>
       )
     })
   }
