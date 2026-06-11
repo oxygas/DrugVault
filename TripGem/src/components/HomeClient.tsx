@@ -393,12 +393,7 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
         }}
       >
         <div className="w-full px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src="/tripgem-icon.png" alt="TripGem" className="w-7 h-7 rounded" />
-            <span className="font-display font-extrabold text-lg tracking-tight">
-              <span className="tripgem-text-trip">Trip</span><span className="tripgem-text-gem">Gem</span>
-            </span>
-          </div>
+          <div className="shrink-0" />
           <div className="flex items-center gap-1">
             <button
               onClick={() => { playToggle(); toggleTheme() }}
