@@ -1,11 +1,16 @@
 'use client'
 
-import { memo, forwardRef } from 'react'
+import { memo, forwardRef, useCallback } from 'react'
 import { VirtuosoGrid } from 'react-virtuoso'
 import type { Substance } from '@/lib/types'
 import SubstanceCard from './SubstanceCard'
 
 interface SubstanceGridProps {
+  substances: Substance[]
+  onSubstanceClick: (substance: Substance) => void
+}
+
+interface GridContext {
   substances: Substance[]
   onSubstanceClick: (substance: Substance) => void
 }
@@ -37,6 +42,16 @@ const Item = ({ children, ...props }: React.HTMLProps<HTMLDivElement>) => (
 Item.displayName = 'VirtuosoGridItem'
 
 function SubstanceGridInner({ substances, onSubstanceClick }: SubstanceGridProps) {
+  const itemContent = useCallback(
+    (index: number, _: unknown, context: GridContext) => (
+      <SubstanceCard
+        substance={context.substances[index]}
+        onClick={context.onSubstanceClick}
+      />
+    ),
+    []
+  )
+
   if (substances.length === 0) {
     return (
       <div className="text-center py-16 sm:py-24">
@@ -57,14 +72,11 @@ function SubstanceGridInner({ substances, onSubstanceClick }: SubstanceGridProps
       totalCount={substances.length}
       components={{ List, Item }}
       overscan={400}
-      itemContent={(index) => (
-        <SubstanceCard
-          substance={substances[index]}
-          onClick={onSubstanceClick}
-        />
-      )}
+      context={{ substances, onSubstanceClick }}
+      itemContent={itemContent}
     />
   )
 }
 
 export default memo(SubstanceGridInner)
+

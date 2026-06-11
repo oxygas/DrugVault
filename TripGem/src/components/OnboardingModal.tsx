@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSettingsStore } from '@/stores/settings'
 import { USER_LEVEL_OPTIONS } from '@/lib/user-level'
+import { setUIsoundsEnabled } from '@/lib/ui-sounds'
 
 export default function OnboardingModal() {
   const {
@@ -10,12 +11,26 @@ export default function OnboardingModal() {
     weightUnit,
     userLevel,
     onboarded,
+    uiSounds,
+    loFiMode,
     setBodyWeight,
     setWeightUnit,
     setUserLevel,
     setOnboarded,
     setSettingsOpen,
+    setUISounds,
+    setLoFiMode,
   } = useSettingsStore()
+
+  const handleToggleUISounds = () => {
+    const next = !uiSounds
+    setUIsoundsEnabled(next)
+    setUISounds(next)
+  }
+
+  const handleToggleLoFiMode = () => {
+    setLoFiMode(!loFiMode)
+  }
 
   const [weightInput, setWeightInput] = useState(String(bodyWeight))
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -140,6 +155,60 @@ export default function OnboardingModal() {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* UI Sounds toggle */}
+          <div className="flex items-center justify-between p-3.5 rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.02)] hover:border-[var(--border2)] transition-all">
+            <div className="flex-1 min-w-0 pr-4">
+              <div className="flex items-center gap-2 text-xs font-mono text-[var(--text4)] uppercase tracking-[0.15em] mb-1">
+                <svg className="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                </svg>
+                UI Sounds
+              </div>
+              <div className="text-xs text-[var(--text4)] leading-normal">Retro synth click &amp; interaction sounds</div>
+            </div>
+            <button
+              role="switch"
+              aria-checked={uiSounds}
+              onClick={handleToggleUISounds}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                uiSounds ? 'bg-[var(--accent2)] shadow-[0_0_8px_var(--accent2)]' : 'bg-slate-700'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                  uiSounds ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Solid State Mode toggle */}
+          <div className="flex items-center justify-between p-3.5 rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.02)] hover:border-[var(--border2)] transition-all">
+            <div className="flex-1 min-w-0 pr-4">
+              <div className="flex items-center gap-2 text-xs font-mono text-[var(--text4)] uppercase tracking-[0.15em] mb-1">
+                <svg className="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                </svg>
+                Solid State Mode
+              </div>
+              <div className="text-xs text-[var(--text4)] leading-normal">Disables ambient orbs &amp; effects for max performance</div>
+            </div>
+            <button
+              role="switch"
+              aria-checked={loFiMode}
+              onClick={handleToggleLoFiMode}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                loFiMode ? 'bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]' : 'bg-slate-700'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                  loFiMode ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
           </div>
 
           <div className="flex gap-3 pt-2">
