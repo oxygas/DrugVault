@@ -1,7 +1,10 @@
 import { NextRequest } from 'next/server'
 import { buildSystemPrompt, enrichQueryWithSubstanceData, isGreeting } from '@/lib/gembot-prompt'
+import { getAllSubstances, getComboMatrix } from '@/lib/data'
 
 export const dynamic = 'force-dynamic'
+
+let cachedSystemPrompt = ''
 
 // In-memory cache with TTL expiration (replaces lru-cache which broke Turbopack bundling)
 class SimpleCache<K, V> {
@@ -114,7 +117,23 @@ export async function POST(req: NextRequest) {
     }
 
     const enrichment = await enrichQueryWithSubstanceData(message)
-    const systemPrompt = buildSystemPrompt()
+
+    if (!cachedSystemPrompt) {
+      const allSubstances = await getAllSubstances()
+      const matrix = await getComboMatrix()
+
+      const substancesIndex = allSubstances
+        .map(s => `${s.name} | ${s.category} | Harm:${s.harmScore}/100 | Addiction:${s.addictionScore}/100 | OD:${s.odRisk}/100`)
+        .join('\n')
+
+      const matrixIndex = Object.entries(matrix)
+        .map(([key, val]) => `${key.replace('+', ' + ')} -> ${val}`)
+        .join('\n')
+
+      cachedSystemPrompt = buildSystemPrompt(substancesIndex, matrixIndex)
+    }
+
+    const systemPrompt = cachedSystemPrompt
 
     const systemContent = enrichment.contextBlock
       ? `${systemPrompt}\n\n${enrichment.contextBlock}`
@@ -238,6 +257,7 @@ export async function POST(req: NextRequest) {
       },
     })
   } catch (err) {
+    console.error('GemBot handler error:', err)
     return Response.json(
       { error: 'internal', message: 'Internal server error' },
       { status: 500 }

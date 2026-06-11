@@ -116,7 +116,7 @@ export default function StatDetailModal({ label, substances, comboMatrix, onClos
 
   let items: React.ReactNode[] = []
   let accentColor = 'var(--accent)'
-  let title = label
+  const title = label
   let description = ''
 
   if (label === 'High Harm') {

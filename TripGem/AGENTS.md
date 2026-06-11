@@ -15,6 +15,10 @@ Next.js 16 App Router SSG site: 634 substances, 877 combos, dark vaporwave/cyber
 - **Harm score** → 10 LED dots: `Math.round(harmScore / 10)`. Displayed in HarmBar components.
 - **Subjective effects**: MDMA has full data from `mdma-effects.json`; ~556 others have `{positives,negatives,why}` from `subjective-effects.json`.
 - `scripts/enrich-from-pw.py` for PsychonautWiki enrichment.
+  - **Safety**: `names_match()` validates PW result matches our substance before merging dose/ROA/summary. Prevents cross-contamination (e.g. Opium ← 1,4-Butanediol).
+  - **`PW_NAME_VARIANTS`**: explicit name mappings for substances known by different names in PW (e.g. psilocybin → psilocybin mushrooms).
+  - **Erowid**: PW lacks dose data for ~79 substances (RChems, dopaminergics, inhalants). Manual Erowid data added for Salvia, Opium, Khat, Nitrous Oxide, Poppers, Ayahuasca, PST.
+  - **`DosageTable.tsx`**: `hasMeaningfulDose()` filters routes with null/empty dose. Shows fallback message when no meaningful dose exists.
 
 ## GemBot Chat
 - **Backend**: `/api/gembot` (POST) proxies to NVIDIA NIM (`meta/llama-3.3-70b-instruct`, overridable via `NVIDIA_MODEL` env var). Requires `NVIDIA_API_KEY` in `.env.local`. Additional routes: `/api/gembot/trending` (GET), `/api/gembot/learn` (POST).

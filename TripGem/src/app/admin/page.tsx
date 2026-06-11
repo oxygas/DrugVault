@@ -27,6 +27,7 @@ interface DashboardData {
     webglVendors: StatEntry[]
     regions: StatEntry[]
     sessionsRecent: any[]
+    error?: string
   }
   analytics: {
     queries: StatEntry[]
@@ -248,6 +249,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState('overview')
+  const [kvHealth, setKvHealth] = useState<{ ok: boolean; error?: string } | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -255,12 +257,15 @@ export default function AdminPage() {
       setLoading(true)
       setError('')
       try {
-        const [{ visitors }, dashRes] = await Promise.all([
+        const [{ visitors }, dashRes, health] = await Promise.all([
           fetch('/api/analytics/visitors').then(r => r.json()),
           fetch('/api/analytics/dashboard').then(r => r.json()),
+          fetch('/api/admin/kv-health').then(r => r.json()).catch(() => ({ ok: false, error: 'Health check failed' })),
         ])
         if (cancelled) return
         setData({ visitors, analytics: dashRes })
+        setKvHealth(health)
+        if (visitors.error) setError(visitors.error)
       } catch {
         if (!cancelled) setError('Failed to load dashboard data')
       } finally {
@@ -276,8 +281,11 @@ export default function AdminPage() {
     Promise.all([
       fetch('/api/analytics/visitors').then(r => r.json()),
       fetch('/api/analytics/dashboard').then(r => r.json()),
-    ]).then(([visitors, analytics]) => {
+      fetch('/api/admin/kv-health').then(r => r.json()).catch(() => ({ ok: false, error: 'Health check failed' })),
+    ]).then(([visitors, analytics, health]) => {
       setData({ visitors, analytics })
+      setKvHealth(health)
+      if (visitors.error) setError(visitors.error)
     }).catch(() => setError('Failed')).finally(() => setLoading(false))
   }
 
@@ -293,7 +301,12 @@ export default function AdminPage() {
           <h1 className="text-2xl font-bold">TripGem Admin</h1>
           <p className="text-sm opacity-60 mt-1">Advanced user intelligence dashboard</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-4">
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium ${kvHealth?.ok ? 'bg-green-500/20 border border-green-500/30 text-green-400' : 'bg-red-500/20 border border-red-500/30 text-red-400'}`}>
+            <span className="w-2 h-2 rounded-full" style={{ background: kvHealth?.ok ? '#22c55e' : '#ef4444' }} />
+            KV: {kvHealth?.ok ? 'Connected' : `Disconnected${kvHealth?.error ? ` - ${kvHealth.error}` : ''}`}
+          </div>
+          <div className="flex gap-2">
           {tabs.map((t) => (
             <button key={t} onClick={() => setActiveTab(t)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
@@ -309,6 +322,7 @@ export default function AdminPage() {
             {loading ? '...' : 'Refresh'}
           </button>
         </div>
+      </div>
       </div>
 
       {error && (

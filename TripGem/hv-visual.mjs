@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer-core';
 
-const CHROME = '/home/sigh/.cache/ms-playwright/chromium-1217/chrome-linux64/chrome';
+const CHROME = '/usr/bin/chromium';
 
 async function main() {
   const browser = await puppeteer.launch({
@@ -15,6 +15,18 @@ async function main() {
   // Collect console errors
   const errors = [];
   page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
+
+  // Set onboarded true to prevent the onboarding modal from blocking interactions
+  await page.evaluateOnNewDocument(() => {
+    localStorage.setItem('tripgem-settings', JSON.stringify({
+      bodyWeight: 70,
+      weightUnit: 'kg',
+      userLevel: 'common',
+      onboarded: true,
+      uiSounds: false,
+      loFiMode: false
+    }));
+  });
 
   await page.goto('http://localhost:3000', { waitUntil: 'networkidle0', timeout: 15000 });
   await page.waitForSelector('.substance-card', { timeout: 8000 });
@@ -97,8 +109,9 @@ async function main() {
     await new Promise(r => setTimeout(r, 500));
     await page.screenshot({ path: '/tmp/hv-final-5-matrix.png' });
     const matrixInfo = await page.evaluate(() => {
-      const cells = document.querySelectorAll('.combo-cell');
-      const selfCells = document.querySelectorAll('.combo-self');
+      const allCells = Array.from(document.querySelectorAll('td'));
+      const cells = allCells.filter(c => c.textContent.trim() !== '—');
+      const selfCells = allCells.filter(c => c.textContent.trim() === '—');
       const labels = new Set();
       cells.forEach(c => { const t = c.textContent.trim(); if (t) labels.add(t); });
       return {

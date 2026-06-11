@@ -38,7 +38,6 @@ export function GemBotOverlay() {
   const overlayRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
-  const [streamingContent, setStreamingContent] = useState('')
   const [error, setError] = useState<string | null>(null)
   const lastQueryRef = useRef('')
   const { trackQuery, trackFeedback } = useAnalytics()
@@ -49,7 +48,6 @@ export function GemBotOverlay() {
       abortRef.current = null
     }
     setIsLoading(false)
-    setStreamingContent('')
     setError(null)
     close()
   }, [close])
@@ -59,8 +57,8 @@ export function GemBotOverlay() {
   }, [])
 
   useEffect(() => {
-    scrollToBottom(isLoading || !!streamingContent)
-  }, [messages, streamingContent, isLoading, scrollToBottom])
+    scrollToBottom(isLoading)
+  }, [messages, isLoading, scrollToBottom])
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -92,7 +90,6 @@ export function GemBotOverlay() {
 
   const handleSend = useCallback(async (text: string) => {
     setError(null)
-    setStreamingContent('')
     lastQueryRef.current = text
 
     addMessage({ role: 'user', content: text })
@@ -129,8 +126,17 @@ export function GemBotOverlay() {
 
       if (!reader) throw new Error('No response stream')
 
-      let botContent = ''
+      let hasContent = false
+      let buffer = ''
+      let rafId = 0
       addMessage({ role: 'assistant', content: '' })
+
+      const flush = () => {
+        if (buffer) {
+          appendToLastBotMessage(buffer)
+          buffer = ''
+        }
+      }
 
       while (true) {
         const { done, value } = await reader.read()
@@ -152,7 +158,17 @@ export function GemBotOverlay() {
             }
             const raw = parsed.content
             if (typeof raw === 'string' && raw.length > 0) {
-              botContent += raw
+              if (!hasContent) {
+                hasContent = true
+                setIsLoading(false)
+              }
+              buffer += raw
+              if (!rafId) {
+                rafId = requestAnimationFrame(() => {
+                  rafId = 0
+                  flush()
+                })
+              }
             }
           } catch {
             // skip non-json lines
@@ -160,8 +176,10 @@ export function GemBotOverlay() {
         }
       }
 
-      if (botContent) {
-        appendToLastBotMessage(botContent)
+      cancelAnimationFrame(rafId)
+      flush()
+
+      if (hasContent) {
         fetch('/api/gembot/learn', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -176,7 +194,6 @@ export function GemBotOverlay() {
       addMessage({ role: 'assistant', content: `⚠️ Error: ${msg}` })
     } finally {
       setIsLoading(false)
-      setStreamingContent('')
       abortRef.current = null
     }
   }, [addMessage, appendToLastBotMessage, trackQuery])

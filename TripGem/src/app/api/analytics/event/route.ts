@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const vercelGeo = vercelGeoLookup({ headers: req.headers })
 
     if (type === 'visit') {
-      const geo = await geoLookup(ip)
+      const geo = await geoLookup(ip, req.headers)
       const info = await recordExtendedVisitor(ip, ua, value || '/', geo || {
         ip,
         country: vercelGeo.country || 'Unknown',
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
         break
     }
 
-    const geo = await geoLookup(ip)
+    const geo = await geoLookup(ip, req.headers)
     if (geo || ip !== 'unknown') {
       await recordExtendedVisitor(ip, ua, req.headers.get('referer') || '/', geo || null, {
         screen, timezone, language, platform,

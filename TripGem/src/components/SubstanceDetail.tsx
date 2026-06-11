@@ -407,22 +407,17 @@ function ChemicalStructureImage({
   const [source, setSource] = useState<'sanity' | 'pubchem' | 'cactus' | null>(sanityUrl ? 'sanity' : null)
   const [loading, setLoading] = useState(!sanityUrl)
   const [error, setError] = useState(false)
-  const fetchedRef = useRef<string>('')
-
   useEffect(() => {
     if (sanityUrl) {
-      fetchedRef.current = substanceName
       return
     }
-
-    if (fetchedRef.current === substanceName) return
-    fetchedRef.current = substanceName
-    setLoading(true)
-    setError(false)
 
     let cancelled = false
 
     async function fetchStructure() {
+      setLoading(true)
+      setError(false)
+
       try {
         const hasTimeout = typeof AbortSignal !== 'undefined' && 'timeout' in AbortSignal
         const controller = hasTimeout ? new AbortController() : null
@@ -436,11 +431,13 @@ function ChemicalStructureImage({
         if (!res.ok) throw new Error('not found')
         const data = await res.json()
 
-        if (data.imageUrl) {
-          setImageUrl(data.imageUrl)
-          setSource(data.source)
-        } else {
-          setError(true)
+        if (!cancelled) {
+          if (data.imageUrl) {
+            setImageUrl(data.imageUrl)
+            setSource(data.source)
+          } else {
+            setError(true)
+          }
         }
       } catch {
         if (!cancelled) setError(true)

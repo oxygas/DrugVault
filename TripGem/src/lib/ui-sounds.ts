@@ -19,8 +19,7 @@ function getCtx(autoResume = true): AudioContext | null {
       ctx.resume().catch(() => {})
     }
     return ctx
-  } catch (e) {
-    console.warn('Web Audio API not supported or failed to initialize:', e)
+  } catch {
     return null
   }
 }
@@ -69,32 +68,25 @@ export function hydrateUIsounds() {
     if (raw !== null) _enabled = JSON.parse(raw)
   } catch {}
 
-  // Pre-warm the audio context and reverb bus in the background 
-  // so the first user click doesn't suffer a massive lag spike.
   if (typeof window !== 'undefined') {
     setTimeout(() => {
       const c = getCtx(false)
       if (c && !_reverbBus) {
         getReverbBus(c)
       }
-    }, 500)
+    }, 200)
   }
 
-  // Auto-unlock AudioContext on first user interaction (safeguard for iOS/mobile)
   if (typeof window !== 'undefined' && !_initListenersAdded) {
     _initListenersAdded = true
     const unlock = async () => {
       try {
         const c = getCtx(false)
         if (!c) return
-
         if (c.state === 'suspended') {
           await c.resume()
         }
-        
-        // Only remove listeners if the context successfully unlocked
         if (c.state === 'running') {
-          // Play a silent buffer to warm up / force Audio Context state change
           const buffer = c.createBuffer(1, 1, 22050)
           const source = c.createBufferSource()
           source.buffer = buffer
@@ -105,15 +97,19 @@ export function hydrateUIsounds() {
           window.removeEventListener('touchstart', unlock)
           window.removeEventListener('touchend', unlock)
         }
-      } catch (e) {
-        // If it fails (e.g., iOS Safari rejecting touchstart), do not unbind.
-        // It will retry on the next touchend or click.
-      }
+      } catch {}
     }
     window.addEventListener('click', unlock, { passive: true })
     window.addEventListener('touchstart', unlock, { passive: true })
     window.addEventListener('touchend', unlock, { passive: true })
   }
+}
+
+function play(fn: (c: AudioContext) => void) {
+  if (!_enabled) return
+  const c = getCtx()
+  if (!c) return
+  requestAnimationFrame(() => fn(c))
 }
 
 function chime(
@@ -125,51 +121,27 @@ function chime(
   dest: AudioNode,
   rev?: AudioNode
 ) {
-  const attack = 0.005
-  const decay = dur * 0.9
+  const osc = c.createOscillator()
+  osc.type = 'sine'
+  osc.frequency.value = freq
+  osc.detune.value = 3
 
-  const osc1 = c.createOscillator()
-  const osc2 = c.createOscillator()
-  osc1.type = 'sine'
-  osc2.type = 'sine'
-
-  osc1.frequency.value = freq
-  osc2.frequency.value = freq * 2.0
-
-  osc1.detune.value = 3
-  osc2.detune.value = -2
-
-  const g1 = c.createGain()
-  const g2 = c.createGain()
-  const master = c.createGain()
+  const gain = c.createGain()
   const filter = c.createBiquadFilter()
-
   filter.type = 'lowpass'
   filter.frequency.value = 4000
   filter.Q.value = 0.3
 
-  g1.gain.setValueAtTime(0, t)
-  g1.gain.linearRampToValueAtTime(vol, t + attack)
-  g1.gain.exponentialRampToValueAtTime(vol * 0.2, t + dur * 0.5)
-  g1.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+  gain.gain.setValueAtTime(0, t)
+  gain.gain.linearRampToValueAtTime(vol, t + 0.005)
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur)
 
-  g2.gain.setValueAtTime(0, t)
-  g2.gain.linearRampToValueAtTime(vol * 0.3, t + attack)
-  g2.gain.exponentialRampToValueAtTime(vol * 0.06, t + dur * 0.5)
-  g2.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+  osc.connect(gain)
+  gain.connect(filter)
+  filter.connect(dest)
+  if (rev) gain.connect(rev)
 
-  master.gain.value = 0.8
-
-  osc1.connect(g1)
-  osc2.connect(g2)
-  g1.connect(filter)
-  g2.connect(filter)
-  filter.connect(master)
-  master.connect(dest)
-  if (rev) master.connect(rev)
-
-  osc1.start(t); osc1.stop(t + dur + 0.02)
-  osc2.start(t); osc2.stop(t + dur + 0.02)
+  osc.start(t); osc.stop(t + dur + 0.02)
 }
 
 function chimeChord(
@@ -186,196 +158,92 @@ function chimeChord(
   })
 }
 
-const CATEGORY_SOUNDS: Record<string, (c: AudioContext, t: number, dest: AudioNode, rev?: AudioNode) => void> = {
-  Stimulants(c, t, dest, rev) {
-    chimeChord(c, [587.33, 783.99], t, 0.16, 0.2, dest, rev)
-  },
-
-  Depressants(c, t, dest, rev) {
-    chimeChord(c, [164.81, 246.94], t, 0.22, 0.2, dest, rev)
-  },
-
-  Psychedelics(c, t, dest, rev) {
-    chimeChord(c, [329.63, 493.88], t, 0.18, 0.18, dest, rev)
-  },
-
-  Dissociatives(c, t, dest, rev) {
-    chimeChord(c, [277.18, 440], t, 0.17, 0.18, dest, rev)
-  },
-
-  Entactogens(c, t, dest, rev) {
-    chimeChord(c, [392, 587.33], t, 0.16, 0.2, dest, rev)
-  },
-
-  Opioids(c, t, dest, rev) {
-    chimeChord(c, [146.83, 220], t, 0.24, 0.2, dest, rev)
-  },
-
-  Cannabinoids(c, t, dest, rev) {
-    chimeChord(c, [261.63, 392], t, 0.18, 0.18, dest, rev)
-  },
-
-  Inhalants(c, t, dest, rev) {
-    chimeChord(c, [523.25, 783.99], t, 0.12, 0.19, dest, rev)
-  },
-
-  Deliriants(c, t, dest, rev) {
-    chimeChord(c, [233.08, 349.23], t, 0.16, 0.18, dest, rev)
-  },
-
-  Gabapentionoids(c, t, dest, rev) {
-    chimeChord(c, [311.13, 466.16], t, 0.15, 0.2, dest, rev)
-  },
-
-  Nootropics(c, t, dest, rev) {
-    chimeChord(c, [440, 659.25], t, 0.14, 0.2, dest, rev)
-  },
-
-  Antidepressants(c, t, dest, rev) {
-    chimeChord(c, [293.66, 440], t, 0.18, 0.18, dest, rev)
-  },
-
-  Antipsychotics(c, t, dest, rev) {
-    chimeChord(c, [220, 349.23], t, 0.2, 0.18, dest, rev)
-  },
-
-  Dopaminergics(c, t, dest, rev) {
-    chimeChord(c, [370, 587.33], t, 0.15, 0.2, dest, rev)
-  },
-
-  Supplements(c, t, dest, rev) {
-    chimeChord(c, [329.63, 493.88], t, 0.15, 0.18, dest, rev)
-  },
-
-  Cathinones(c, t, dest, rev) {
-    chimeChord(c, [493.88, 739.99], t, 0.12, 0.2, dest, rev)
-  },
-}
-
 export function playCategoryClick(category: Category) {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  const fn = CATEGORY_SOUNDS[category]
-  if (fn) fn(c, t, c.destination, b.node)
-  else playClick()
+  play((c) => {
+    const t = c.currentTime + 0.003
+    const b = getReverbBus(c)
+    chime(c, 440, t, 0.1, 0.2, c.destination, b.node)
+  })
 }
 
 export function playClick() {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  chimeChord(c, [523.25, 783.99], t, 0.1, 0.22, c.destination, b.node)
-}
-
-export function playHover() {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  chime(c, 587.33 * 1.02, t, 0.08, 0.05, c.destination)
+  play((c) => {
+    const t = c.currentTime + 0.003
+    chime(c, 523.25, t, 0.08, 0.18, c.destination)
+  })
 }
 
 export function playOpen() {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  chimeChord(c, [329.63, 523.25], t, 0.14, 0.2, c.destination, b.node)
+  play((c) => {
+    const t = c.currentTime + 0.003
+    const b = getReverbBus(c)
+    chime(c, 329.63, t, 0.12, 0.2, c.destination, b.node)
+  })
 }
 
 export function playClose() {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  chimeChord(c, [261.63, 440], t, 0.12, 0.18, c.destination, b.node)
+  play((c) => {
+    const t = c.currentTime + 0.003
+    const b = getReverbBus(c)
+    chime(c, 261.63, t, 0.1, 0.18, c.destination, b.node)
+  })
 }
 
 export function playToggle() {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  chimeChord(c, [440, 659.25], t, 0.1, 0.18, c.destination, b.node)
+  play((c) => {
+    const t = c.currentTime + 0.003
+    const b = getReverbBus(c)
+    chime(c, 440, t, 0.08, 0.18, c.destination, b.node)
+  })
 }
 
 export function playTab() {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  chime(c, 523.25, t, 0.08, 0.18, c.destination, b.node)
+  play((c) => {
+    const t = c.currentTime + 0.003
+    chime(c, 523.25, t, 0.06, 0.15, c.destination)
+  })
 }
 
 type PopupTab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interactions' | 'legal'
 
-const TAB_SOUNDS: Record<PopupTab, (c: AudioContext, t: number, dest: AudioNode, rev?: AudioNode) => void> = {
-  overview(c, t, dest, rev) {
-    chimeChord(c, [329.63, 523.25], t, 0.09, 0.18, dest, rev)
-  },
-  effects(c, t, dest, rev) {
-    chimeChord(c, [392, 622.25], t, 0.09, 0.18, dest, rev)
-  },
-  risks(c, t, dest, rev) {
-    chimeChord(c, [293.66, 493.88], t, 0.1, 0.2, dest, rev)
-  },
-  dosage(c, t, dest, rev) {
-    chimeChord(c, [440, 698.46], t, 0.08, 0.18, dest, rev)
-  },
-  tolerance(c, t, dest, rev) {
-    chimeChord(c, [349.23, 554.37], t, 0.09, 0.18, dest, rev)
-  },
-  interactions(c, t, dest, rev) {
-    chimeChord(c, [311.13, 466.16], t, 0.09, 0.18, dest, rev)
-  },
-  legal(c, t, dest, rev) {
-    chimeChord(c, [415.25, 622.25], t, 0.09, 0.18, dest, rev)
-  },
+const TAB_SOUNDS: Record<PopupTab, number> = {
+  overview: 329.63,
+  effects: 392,
+  risks: 293.66,
+  dosage: 440,
+  tolerance: 349.23,
+  interactions: 311.13,
+  legal: 415.25,
 }
 
 export function playPopupTab(tab: string) {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  const fn = TAB_SOUNDS[tab as PopupTab]
-  if (fn) fn(c, t, c.destination, b.node)
-  else playTab()
+  play((c) => {
+    const t = c.currentTime + 0.003
+    const b = getReverbBus(c)
+    const freq = TAB_SOUNDS[tab as PopupTab] || 523.25
+    chime(c, freq, t, 0.07, 0.18, c.destination, b.node)
+  })
 }
 
 export function playSearch() {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  chimeChord(c, [392, 622.25], t, 0.08, 0.19, c.destination, b.node)
+  play((c) => {
+    const t = c.currentTime + 0.003
+    chime(c, 392, t, 0.06, 0.16, c.destination)
+  })
 }
 
 export function playFavorite() {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  chimeChord(c, [349.23, 523.25, 783.99], t, 0.18, 0.2, c.destination, b.node)
+  play((c) => {
+    const t = c.currentTime + 0.003
+    const b = getReverbBus(c)
+    chime(c, 523.25, t, 0.15, 0.2, c.destination, b.node)
+  })
 }
 
 export function playSectionChange() {
-  if (!_enabled) return
-  const c = getCtx()
-  if (!c) return
-  const t = c.currentTime + 0.003
-  const b = getReverbBus(c)
-  chimeChord(c, [261.63, 392, 523.25], t, 0.16, 0.2, c.destination, b.node)
+  play((c) => {
+    const t = c.currentTime + 0.003
+    const b = getReverbBus(c)
+    chime(c, 392, t, 0.14, 0.2, c.destination, b.node)
+  })
 }

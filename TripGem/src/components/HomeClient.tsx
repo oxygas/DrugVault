@@ -10,7 +10,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { useThemeStore } from '@/stores/theme'
 import { useUIStore } from '@/stores/ui'
 import { useGemBotStore } from '@/stores/gembot'
-import { playClick, playHover, playOpen, playClose, playToggle, playSectionChange, playSearch, hydrateUIsounds, setUIsoundsEnabled } from '@/lib/ui-sounds'
+import { playClick, playOpen, playClose, playToggle, playSectionChange, playSearch, hydrateUIsounds, setUIsoundsEnabled } from '@/lib/ui-sounds'
 
 const KeyboardShortcutsModal = dynamic(() => import('@/components/KeyboardShortcutsModal'))
 const UserSettings = dynamic(() => import('@/components/UserSettings'))
@@ -283,7 +283,6 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
         <button
           key={feature.key}
           onClick={() => handleSectionChange(feature.key as Section)}
-          onMouseEnter={playHover}
           className={`nav-tab flex items-center gap-1.5 ${activeSection === feature.key ? 'active' : ''}`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -368,7 +367,7 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
   <header className="text-center py-8 sm:py-14 lg:py-18 relative">
     <div className="hero-glow" />
     <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
-          <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFkdHQzaHphODF6Y3Rlb2JnMTYybzlsaHVibG8zZXNpYjAybWc4NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Wt0zLr2PkDbDkfQOSo/giphy.gif" alt="TripGem" fetchPriority="high" className="hidden sm:block tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
+          <img src="/tripgem-logo-animated.gif" alt="TripGem" fetchPriority="high" className="hidden sm:block tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
           <img src="/tripgem-logo.png" alt="TripGem" fetchPriority="high" className="block sm:hidden tripgem-logo w-20 h-20" />
           <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
             <span className="tripgem-text-trip">Trip</span><span className="tripgem-text-gem">Gem</span>
@@ -417,46 +416,56 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] sm:hidden"
+      <nav className="fixed bottom-0 left-0 right-0 z-50 sm:hidden"
         style={{
-          background: 'rgba(4, 4, 12, 0.95)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          background: 'rgba(0, 0, 0, 0.92)',
+          backdropFilter: 'blur(16px) saturate(1.4)',
+          WebkitBackdropFilter: 'blur(16px) saturate(1.4)',
           paddingBottom: 'env(safe-area-inset-bottom)',
         }}
       >
+        <div className="absolute top-0 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-[rgba(var(--accent-rgb),0.15)] to-transparent" />
         <div className="flex items-center justify-around h-16">
-          {FEATURES.map(feature => (
-            <button
-              key={feature.key}
-              onClick={() => handleSectionChange(feature.key as Section)}
-              className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors duration-300 relative ${
-                activeSection === feature.key
-                  ? 'text-[var(--neon-magenta)] [text-shadow:0_0_12px_var(--neon-magenta)]'
-                  : 'text-[var(--text3)]'
-              }`}
-              aria-current={activeSection === feature.key ? 'page' as const : undefined}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d={feature.icon} />
-              </svg>
-              <span className="text-xs font-medium">{feature.label}</span>
-            </button>
-          ))}
+          {FEATURES.map(feature => {
+            const isActive = activeSection === feature.key
+            return (
+              <button
+                key={feature.key}
+                onClick={() => handleSectionChange(feature.key as Section)}
+                className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-xl transition-all duration-200 relative ${
+                  isActive
+                    ? 'text-[var(--neon-magenta)]'
+                    : 'text-[var(--text4)] active:text-[var(--text2)]'
+                }`}
+                aria-current={isActive ? 'page' as const : undefined}
+              >
+                {isActive && (
+                  <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-[var(--neon-magenta)] shadow-[0_0_8px_var(--neon-magenta)]" />
+                )}
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d={feature.icon} />
+                </svg>
+                <span className="text-[10px] font-medium tracking-wide">{feature.label}</span>
+              </button>
+            )
+          })}
           <button
             onClick={() => { playToggle(); toggleGemBot() }}
-            className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-lg transition-colors duration-300 relative ${
+            className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-xl transition-all duration-200 relative ${
               gemBotOpen
-                ? 'text-[var(--neon-magenta)] [text-shadow:0_0_12px_var(--neon-magenta)]'
-                : 'text-[var(--text3)]'
+                ? 'text-[var(--neon-magenta)]'
+                : 'text-[var(--text4)] active:text-[var(--text2)]'
             }`}
             aria-label="GemBot Chat"
             aria-expanded={gemBotOpen}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            {gemBotOpen && (
+              <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-[var(--neon-magenta)] shadow-[0_0_8px_var(--neon-magenta)]" />
+            )}
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.625.625 0 11-1.25 0 .625.625 0 011.25 0zm0 0H8.63m3.375 0a.625.625 0 11-1.25 0 .625.625 0 011.25 0zm0 0h.008m3.375 0a.625.625 0 11-1.25 0 .625.625 0 011.25 0zm0 0h.008m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l3.076-3.076c.49-.49 1.144-.764 1.83-.764h3.197c1.584 0 2.707-1.394 2.707-3.227V6.198c0-1.833-1.123-3.227-2.707-3.227H6.198c-1.584 0-2.707 1.394-2.707 3.227v7.352z" />
             </svg>
-            <span className="text-xs font-medium">GemBot</span>
+            <span className="text-[10px] font-medium tracking-wide">GemBot</span>
           </button>
         </div>
       </nav>

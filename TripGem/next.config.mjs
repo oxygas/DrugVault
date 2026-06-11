@@ -13,6 +13,7 @@ const withSerwist = withSerwistInit({
 })
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+const workspaceRoot = resolve(__dirname, '..')
 
 const bundleAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -31,7 +32,7 @@ const nextConfig = {
     ],
   },
   turbopack: {
-    root: __dirname,
+    root: workspaceRoot,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,

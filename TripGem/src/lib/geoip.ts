@@ -108,7 +108,29 @@ export function vercelGeoLookup(request: {
   }
 }
 
-export async function geoLookup(ip: string): Promise<GeoResult | null> {
+export async function geoLookup(ip: string, headers?: Headers | Record<string, string>): Promise<GeoResult | null> {
+  if (headers) {
+    const vercelGeo = vercelGeoLookup({ headers })
+    if (vercelGeo.countryCode) {
+      return {
+        ip,
+        country: vercelGeo.country || 'Unknown',
+        countryCode: vercelGeo.countryCode,
+        region: vercelGeo.region,
+        city: vercelGeo.city,
+        isp: '',
+        org: '',
+        as: '',
+        proxy: false,
+        hosting: false,
+        lat: vercelGeo.lat,
+        lon: vercelGeo.lon,
+        timezone: '',
+        mobile: false,
+      }
+    }
+  }
+
   if (!ip || ip === '127.0.0.1' || ip === '::1' || ip.startsWith('192.168.') || ip.startsWith('10.')) {
     return null
   }
@@ -329,7 +351,36 @@ function bucketSeconds(s: number): string {
   return '>10m'
 }
 
-export async function getVisitorStats() {
+export interface VisitorStats {
+  totalVisitors: number
+  ips: { name: string; count: number }[]
+  countries: { name: string; count: number }[]
+  cities: { name: string; count: number }[]
+  devices: { name: string; count: number }[]
+  deviceTypes: { name: string; count: number }[]
+  vpnIps: { name: string; count: number }[]
+  paths: { name: string; count: number }[]
+  recent: any[]
+  fingerprints: { name: string; count: number }[]
+  sessions: { name: string; count: number }[]
+  referrers: { name: string; count: number }[]
+  utms: { name: string; count: number }[]
+  connTypes: { name: string; count: number }[]
+  memories: { name: string; count: number }[]
+  webvitals: {
+    lcp: { name: string; count: number }[]
+    cls: { name: string; count: number }[]
+    inp: { name: string; count: number }[]
+  }
+  scrollDepths: { name: string; count: number }[]
+  timeOnPage: { name: string; count: number }[]
+  webglVendors: { name: string; count: number }[]
+  regions: { name: string; count: number }[]
+  sessionsRecent: any[]
+  error?: string
+}
+
+export async function getVisitorStats(): Promise<VisitorStats> {
   try {
     const [
       topIps, countries, cities, devices, deviceTypes, vpnIps,
@@ -337,28 +388,28 @@ export async function getVisitorStats() {
       connTypes, memories, lcp, cls, inp, scrollDepths, timeOnPage,
       webglVendors, regions, sessionsRecentStr,
     ] = await Promise.all([
-      kv.zrange('tripgem:visitors', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:countries', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:cities', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:devices', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:device_types', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:vpn_ips', 0, 49, { rev: true }).catch(() => []),
-      kv.lrange('tripgem:visits:recent', 0, 99).catch(() => []),
-      kv.zrange('tripgem:paths', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:fingerprints', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:sessions', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:referrers', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:utms', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:conn_types', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:memories', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:webvitals:lcp', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:webvitals:cls', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:webvitals:inp', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:scroll_depths', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:time_on_page', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:webgl_vendors', 0, 49, { rev: true }).catch(() => []),
-      kv.zrange('tripgem:regions', 0, 49, { rev: true }).catch(() => []),
-      kv.lrange('tripgem:sessions:recent', 0, 49).catch(() => []),
+      kv.zrange('tripgem:visitors', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:countries', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:cities', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:devices', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:device_types', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:vpn_ips', 0, 49, { rev: true, withScores: true }),
+      kv.lrange('tripgem:visits:recent', 0, 99),
+      kv.zrange('tripgem:paths', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:fingerprints', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:sessions', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:referrers', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:utms', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:conn_types', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:memories', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:webvitals:lcp', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:webvitals:cls', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:webvitals:inp', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:scroll_depths', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:time_on_page', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:webgl_vendors', 0, 49, { rev: true, withScores: true }),
+      kv.zrange('tripgem:regions', 0, 49, { rev: true, withScores: true }),
+      kv.lrange('tripgem:sessions:recent', 0, 49),
     ])
 
     const safe = (arr: any) => Array.isArray(arr) ? arr : []
@@ -416,7 +467,9 @@ export async function getVisitorStats() {
       regions: parseScores(regions),
       sessionsRecent,
     }
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('[geoip] getVisitorStats failed:', message)
     return {
       totalVisitors: 0, ips: [], countries: [], cities: [],
       devices: [], deviceTypes: [], vpnIps: [], paths: [], recent: [],
@@ -425,6 +478,17 @@ export async function getVisitorStats() {
       webvitals: { lcp: [], cls: [], inp: [] },
       scrollDepths: [], timeOnPage: [], webglVendors: [], regions: [],
       sessionsRecent: [],
+      error: `KV connection failed: ${message}. Check KV_REST_API_URL and KV_REST_API_TOKEN env vars.`,
     }
+  }
+}
+
+export async function checkKvHealth(): Promise<{ ok: boolean; error?: string }> {
+  try {
+    await kv.ping()
+    return { ok: true }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    return { ok: false, error: message }
   }
 }

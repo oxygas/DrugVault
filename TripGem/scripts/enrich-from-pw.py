@@ -1,6 +1,9 @@
 """
 Enrich all-data.json from PsychonautWiki GraphQL API.
-Fills: SMILES (sm), ROAs with dose/duration (pr), PW summaries (pw), aliases (a), commonNames.
+Fills: ROAs with dose/duration (pr), PW summaries (pw), aliases (a), commonNames.
+
+Safety: name_similar_enough() prevents cross-substance contamination.
+Only merges dose/ROA/summary data when PW result name is a credible match.
 """
 import json, time, urllib.request, urllib.parse, ssl, sys, os, re
 
@@ -9,12 +12,64 @@ API = "https://api.psychonautwiki.org/"
 DELAY = 1.2
 ctx = ssl.create_default_context()
 
-# ROA route name mapping between our format and PW
 ROA_ROUTES = [
     "oral", "sublingual", "buccal", "insufflated",
     "rectal", "transdermal", "subcutaneous",
     "intramuscular", "intravenous", "smoked"
 ]
+
+# Explicitly mapped name variants for substances known to exist in PW under different names.
+# ONLY add entries where the PW substance is THE SAME chemical or preparation.
+PW_NAME_VARIANTS = {
+    "psilocybin": ["psilocybin mushrooms"],
+    "salvia": ["salvia divinorum", "salvinorin a"],
+    "khat": ["cathinone"],
+    "nitrous oxide": ["nitrous oxide", "nitrous"],
+    "n-ethylpentedrone": ["nep"],
+    "n-ethylhexedrone": ["hexen", "neh"],
+    "ethcathinone": ["eth-cat"],
+    "alpha-php": ["a-php"],
+    "alpha-ppp": ["a-ppp"],
+    "alpha-pbp": ["a-pbp"],
+    "pv8": ["a-php"],
+    "methedrone": ["bk-pmma"],
+    "eutylone": ["bk-ebdp"],
+    "ephylone": ["n-ethylpentylone"],
+}
+
+def names_match(our_name, pw_name, our_aliases=None):
+    """Check if PW result is the same substance as ours.
+    Prevents cross-contamination (e.g. Opium vs 1,4-Butanediol)."""
+    if not our_name or not pw_name:
+        return False
+    a = our_name.lower().strip()
+    b = pw_name.lower().strip()
+    if a == b:
+        return True
+    # Check if one name contains the other — minimum 4 chars to avoid
+    # single-letter aliases like "O" matching inside unrelated words
+    if len(a) >= 4 and (a in b or b in a):
+        return True
+    # Check aliases — skip single-char aliases, require 4+ char match
+    if our_aliases:
+        for alias in our_aliases:
+            al = alias.lower().strip()
+            if len(al) < 3:
+                continue
+            if al == b:
+                return True
+            if len(al) >= 4 and (al in b or b in al):
+                return True
+    # Check shared significant token (e.g. "25I-NBF" and "25I-NBOMe" share "25i")
+    a_tokens = set(re.findall(r'[a-z0-9]{3,}', a))
+    b_tokens = set(re.findall(r'[a-z0-9]{3,}', b))
+    shared = a_tokens & b_tokens
+    generic = {"the", "and", "acid", "hydrate", "chloride", "sulfate", "hcl", "oxide"}
+    significant_shared = [t for t in shared if len(t) >= 3 and t not in generic]
+    if significant_shared:
+        return True
+    return False
+
 
 def fetch_substance(name):
     query = """
@@ -51,31 +106,29 @@ query($name: String!) {
         sys.stderr.write(f"  PW error for '{name}': {e}\n")
     return None
 
+
 def format_dose_range(val, units=None):
     if val is None:
         return None
     if isinstance(val, (int, float)):
-        s = str(int(val)) if val == int(val) else str(val)
-        return s
+        return str(int(val)) if val == int(val) else str(val)
     if isinstance(val, dict):
         mn = val.get("min")
         mx = val.get("max")
         if mn is not None and mx is not None:
             mn_s = str(int(mn)) if mn == int(mn) else str(mn)
             mx_s = str(int(mx)) if mx == int(mx) else str(mx)
-            if mn_s == mx_s:
-                return mn_s
-            return f"{mn_s}-{mx_s}"
+            return mn_s if mn_s == mx_s else f"{mn_s}-{mx_s}"
         if mn is not None:
             return str(int(mn)) if mn == int(mn) else str(mn)
     return None
+
 
 def format_duration_time(t, units):
     if t is None:
         return None
     s = str(int(t)) if t == int(t) else str(t)
     if units:
-        # Normalize units
         u = units.lower().rstrip("s")
         m = {"minute": "min", "hour": "hours", "day": "days", "week": "weeks", "month": "months"}
         u = m.get(u, u)
@@ -83,6 +136,7 @@ def format_duration_time(t, units):
             u = "hours"
         return f"{s} {u}"
     return s
+
 
 def pw_to_roa_list(pw_roa):
     roas = []
@@ -124,10 +178,10 @@ def pw_to_roa_list(pw_roa):
         roas.append(roa_entry)
     return roas
 
+
 def merge_roas(existing, pw_roas):
     if not pw_roas:
         return existing if existing else None
-
     if not existing:
         return pw_roas if pw_roas else None
 
@@ -139,9 +193,11 @@ def merge_roas(existing, pw_roas):
         name = pw_roa["n"]
         if name in existing_map:
             cur = existing_map[name]
+            cur_d = cur.get("d") or {}
             merged_dose = cur["d"] if cur["d"] else pw_roa["d"]
             merged_dur = cur["dur"] if cur["dur"] else pw_roa["dur"]
-            if cur["d"] is None or cur.get("d", {}).get("t") in ("?", None, ""):
+            cur_t = str(cur_d.get("t", "")).strip()
+            if cur_t in ("?", "", "0") or cur["d"] is None:
                 if pw_roa["d"]:
                     merged_dose = pw_roa["d"]
             existing_map[name] = {"n": name, "d": merged_dose, "dur": merged_dur}
@@ -151,6 +207,7 @@ def merge_roas(existing, pw_roas):
     result = list(existing_map.values())
     return result if result else None
 
+
 def main():
     with open(DATA_PATH) as f:
         data = json.load(f)
@@ -158,11 +215,11 @@ def main():
     substances = data["s"]
     total = len(substances)
 
-    stats = {"smiles_filled": 0, "roas_filled": 0, "pw_filled": 0, "aliases_added": 0, "dose_filled": 0, "dur_filled": 0}
+    stats = {"roas_filled": 0, "dose_filled": 0, "pw_filled": 0, "aliases_added": 0, "rejected": 0}
 
     for i, sub in enumerate(substances):
         name = sub["n"]
-        needs_smiles = not sub.get("sm")
+
         needs_roas = sub.get("pr") is None or len(sub.get("pr", [])) == 0
         has_null_dose = False
         has_null_dur = False
@@ -173,20 +230,31 @@ def main():
                 if roa.get("dur") is None:
                     has_null_dur = True
         needs_pw = not sub.get("pw")
-        needs_any = needs_smiles or needs_roas or needs_pw or has_null_dose or has_null_dur
+        needs_any = needs_roas or needs_pw or has_null_dose or has_null_dur
 
         if not needs_any:
             continue
 
-        candidates = [name] + [a for a in sub.get("a", []) if a]
+        name_lower = name.lower()
+        our_aliases = sub.get("a", [])
+        candidates = [name] + [a for a in our_aliases if a]
+        if name_lower in PW_NAME_VARIANTS:
+            for variant in PW_NAME_VARIANTS[name_lower]:
+                if variant.lower() not in [c.lower() for c in candidates]:
+                    candidates.append(variant)
+
         found = None
         used_name = None
         for cname in candidates:
             result = fetch_substance(cname)
             if result:
-                found = result
-                used_name = cname
-                break
+                pw_name = result.get("name", "")
+                if names_match(name, pw_name, our_aliases):
+                    found = result
+                    used_name = cname
+                    break
+                else:
+                    sys.stdout.write(f"  [skip: PW '{pw_name}' != '{name}']")
 
         sys.stdout.write(f"[{i+1}/{total}] {name}")
         sys.stdout.flush()
@@ -195,21 +263,17 @@ def main():
             pw_name = found.get("name", name)
             sys.stdout.write(f" (PW: {pw_name})")
 
-            # Fill SMILES - not available from PW API, skip
-            # (PW doesn't return SMILES)
-
-            # Fill summary
+            # Fill summary (only if names match — already validated above)
             if needs_pw or True:
                 summary = found.get("summary")
                 if summary and len(summary) > 10:
-                    # Clean up PW summary (remove "Summary sheet: " prefix etc.)
                     cleaned = re.sub(r'^Summary sheet:\s*[A-Za-z0-9\s]+\n?', '', summary).strip()
                     if cleaned and len(cleaned) > 10:
                         sub["pw"] = cleaned
                         stats["pw_filled"] += 1
                         sys.stdout.write(" +pw")
 
-            # Fill aliases from commonNames
+            # Fill aliases from commonNames (only if names match)
             common_names = found.get("commonNames", [])
             if common_names:
                 existing = set(a.lower() for a in sub.get("a", []))
@@ -219,14 +283,13 @@ def main():
                     stats["aliases_added"] += 1
                     sys.stdout.write(" +aliases")
 
-            # Fill ROAs
+            # Fill ROAs (only if names match — already validated)
             pw_roa = found.get("roa")
             if pw_roa:
                 pw_roas = pw_to_roa_list(pw_roa)
                 if pw_roas:
                     merged = merge_roas(sub.get("pr"), pw_roas)
                     if merged and (needs_roas or has_null_dose or has_null_dur):
-                        old_roas = sub.get("pr")
                         sub["pr"] = merged
                         if needs_roas:
                             stats["roas_filled"] += 1
@@ -252,11 +315,12 @@ def main():
         json.dump(data, f, ensure_ascii=False, indent=2)
 
     print(f"\n=== Enrichment complete ===")
-    print(f"  SMILES filled: {stats['smiles_filled']}")
     print(f"  ROAs added: {stats['roas_filled']}")
     print(f"  Dose data filled: {stats['dose_filled']}")
     print(f"  PW summaries filled: {stats['pw_filled']}")
     print(f"  Aliases added: {stats['aliases_added']}")
+    print(f"  Rejected (name mismatch): {stats['rejected']}")
+
 
 if __name__ == "__main__":
     main()

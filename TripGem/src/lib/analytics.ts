@@ -53,7 +53,7 @@ export async function trackGap(query: string) {
 async function zrevrange(key: string, start: number, stop: number): Promise<string[]>
 async function zrevrange(key: string, start: number, stop: number, opts: { withScores: true }): Promise<{ score: number; member: string }[]>
 async function zrevrange(key: string, start: number, stop: number, opts?: { withScores: boolean }): Promise<string[] | { score: number; member: string }[]> {
-  const results = await kv.zrange(key, start, stop, { rev: true })
+  const results = await kv.zrange(key, start, stop, { rev: true, withScores: opts?.withScores })
   if (opts?.withScores) {
     const parsed: { score: number; member: string }[] = []
     for (let i = 0; i < results.length; i += 2) {
@@ -78,9 +78,19 @@ export async function getTrendingSubstances(limit = 10): Promise<string[]> {
 
 export async function getCachedTrending() {
   const now = Date.now()
-  if (cachedTrending && now - cachedTrendingAt < TRENDING_TTL * 1000) {
+  if (cachedTrending) {
+    if (now - cachedTrendingAt >= TRENDING_TTL * 1000) {
+      Promise.all([
+        getTrendingQueries(10),
+        getTrendingSubstances(10),
+      ]).then(([queries, substances]) => {
+        cachedTrending = { queries, substances }
+        cachedTrendingAt = Date.now()
+      }).catch(() => {})
+    }
     return cachedTrending
   }
+
   const [queries, substances] = await Promise.all([
     getTrendingQueries(10),
     getTrendingSubstances(10),
@@ -131,9 +141,16 @@ export async function getPopularGaps(limit = 5): Promise<string[]> {
 
 export async function getTrendingSlugs(): Promise<Set<string>> {
   const now = Date.now()
-  if (cachedTrendingSlugs && now - cachedTrendingSlugsAt < TRENDING_SLUGS_TTL) {
+  if (cachedTrendingSlugs) {
+    if (now - cachedTrendingSlugsAt >= TRENDING_SLUGS_TTL) {
+      getTrendingSubstances(20).then(substances => {
+        cachedTrendingSlugs = new Set(substances)
+        cachedTrendingSlugsAt = Date.now()
+      }).catch(() => {})
+    }
     return cachedTrendingSlugs
   }
+
   try {
     const substances = await getTrendingSubstances(20)
     cachedTrendingSlugs = new Set(substances)

@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer-core';
 
-const CHROME = '/home/sigh/.cache/ms-playwright/chromium-1217/chrome-linux64/chrome';
+const CHROME = '/usr/bin/chromium';
 
 async function main() {
   const browser = await puppeteer.launch({
@@ -11,6 +11,18 @@ async function main() {
 
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 900 });
+  // Set onboarded true to prevent the onboarding modal from blocking interactions
+  await page.evaluateOnNewDocument(() => {
+    localStorage.setItem('tripgem-settings', JSON.stringify({
+      bodyWeight: 70,
+      weightUnit: 'kg',
+      userLevel: 'common',
+      onboarded: true,
+      uiSounds: false,
+      loFiMode: false
+    }));
+  });
+
   await page.goto('http://localhost:3000', { waitUntil: 'networkidle0', timeout: 15000 });
   await page.waitForSelector('.substance-card', { timeout: 8000 });
   await new Promise(r => setTimeout(r, 1000));
@@ -58,14 +70,15 @@ async function main() {
     await matrixTab.click();
     await new Promise(r => setTimeout(r, 500));
     const matrixContent = await page.evaluate(() => {
-      const cells = document.querySelectorAll('.combo-cell');
+      const allCells = Array.from(document.querySelectorAll('td'));
+      const cells = allCells.filter(c => c.textContent.trim() !== '—');
       const sectionCards = document.querySelectorAll('.section-card');
       const headings = document.querySelectorAll('h3');
       return {
         comboCells: cells.length,
         sectionCards: sectionCards.length,
         headings: Array.from(headings).map(h => h.textContent),
-        cellColors: Array.from(cells).slice(0, 10).map(c => c.className),
+        cellColors: Array.from(cells).slice(0, 10).map(c => c.getAttribute('aria-label') || ''),
         bodyText: document.body.innerText.substring(0, 1000),
       };
     });

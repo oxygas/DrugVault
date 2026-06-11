@@ -875,48 +875,45 @@ function ChemicalStructureImage({
   const [source, setSource] = useState<'sanity' | 'pubchem' | 'cactus' | null>(sanityUrl ? 'sanity' : null)
   const [loading, setLoading] = useState(!sanityUrl)
   const [error, setError] = useState(false)
-  const fetchedRef = useRef<string>('')
-  const imgLoadRef = useRef(0)
 
   useEffect(() => {
     if (sanityUrl) {
-      fetchedRef.current = substanceName
       return
     }
-
-    if (fetchedRef.current === substanceName) return
-    fetchedRef.current = substanceName
-    setLoading(true)
-    setError(false)
 
     let cancelled = false
 
     async function fetchStructure() {
-    try {
-      const hasTimeout = typeof AbortSignal !== 'undefined' && 'timeout' in AbortSignal
-      const controller = hasTimeout ? new AbortController() : null
-      const timeoutId = controller ? setTimeout(() => controller?.abort(), 8000) : null
+      setLoading(true)
+      setError(false)
 
-      const res = await fetch(
-        `/api/chemical-structure?name=${encodeURIComponent(substanceName)}${smiles ? `&smiles=${encodeURIComponent(smiles)}` : ''}`,
-        controller ? { signal: controller.signal } : undefined
-      );
-      if (timeoutId) clearTimeout(timeoutId);
-      if (!res.ok) throw new Error('not found');
-      const data = await res.json();
+      try {
+        const hasTimeout = typeof AbortSignal !== 'undefined' && 'timeout' in AbortSignal
+        const controller = hasTimeout ? new AbortController() : null
+        const timeoutId = controller ? setTimeout(() => controller?.abort(), 8000) : null
 
-      if (data.imageUrl) {
-        setImageUrl(data.imageUrl);
-        setSource(data.source);
-      } else {
-        setError(true);
+        const res = await fetch(
+          `/api/chemical-structure?name=${encodeURIComponent(substanceName)}${smiles ? `&smiles=${encodeURIComponent(smiles)}` : ''}`,
+          controller ? { signal: controller.signal } : undefined
+        )
+        if (timeoutId) clearTimeout(timeoutId)
+        if (!res.ok) throw new Error('not found')
+        const data = await res.json()
+
+        if (!cancelled) {
+          if (data.imageUrl) {
+            setImageUrl(data.imageUrl)
+            setSource(data.source)
+          } else {
+            setError(true)
+          }
+        }
+      } catch {
+        if (!cancelled) setError(true)
+      } finally {
+        if (!cancelled) setLoading(false)
       }
-    } catch {
-      if (!cancelled) setError(true);
-    } finally {
-      if (!cancelled) setLoading(false);
     }
-  }
 
     fetchStructure()
     return () => { cancelled = true }
@@ -947,8 +944,7 @@ function ChemicalStructureImage({
       loading="lazy"
       onLoad={() => setLoading(false)}
       onError={() => {
-        if (source === 'pubchem' && smiles && imgLoadRef.current < 1) {
-          imgLoadRef.current += 1
+        if (source === 'pubchem' && smiles) {
           setImageUrl(`https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(smiles)}/image`)
           setSource('cactus')
           setLoading(true)

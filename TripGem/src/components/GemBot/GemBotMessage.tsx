@@ -4,6 +4,9 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { ThumbsUp, ThumbsDown } from 'lucide-react'
 import type { Message } from '@/stores/gembot'
+import { useQueryClient } from '@tanstack/react-query'
+import type { Substance } from '@/lib/types'
+import RadarChart from '@/components/RadarChart'
 
 interface Props {
   message: Message
@@ -28,15 +31,15 @@ function HarmBar({ label, value, max = 100 }: { label: string; value: number; ma
     pct <= 75 ? '#f97316' : '#ef4444'
 
   return (
-    <div className="flex items-center gap-2 py-0.5">
-      <span className="w-20 shrink-0 truncate text-[10px] font-mono text-[var(--text3)]">{label}</span>
-      <div className="flex-1 h-2.5 rounded-full bg-[var(--bg2)] overflow-hidden">
+    <div className="flex items-center gap-3 py-1 w-full text-[10px] font-mono leading-none">
+      <span className="text-[var(--text3)] uppercase tracking-wider font-bold min-w-[70px] max-w-[120px] truncate">{label}</span>
+      <div className="flex-1 h-2 rounded-full bg-[var(--bg2)]/60 overflow-hidden border border-[var(--border3)]/20 p-[1px]">
         <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${color}cc, ${color})` }}
+          className="h-full rounded-full transition-all duration-700 ease-out shadow-[0_0_8px_var(--accent)]"
+          style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${color}99, ${color})` }}
         />
       </div>
-      <span className="w-8 shrink-0 text-right text-[10px] font-mono text-[var(--text2)]">{value}</span>
+      <span className="text-[var(--text2)] font-bold min-w-[35px] text-right">{value} / {max}</span>
     </div>
   )
 }
@@ -61,8 +64,9 @@ function ComboCard({ subA, subB, level }: { subA: string; subB: string; level: s
   )
 }
 
-const BAR_REGEX = /^(.+?)[:\s]+[█░]+.*?(\d+)\s*\/\s*100/gm
+const BAR_REGEX = /([\w\s-]+?)[:\s]+[█░]+\s*(\d+)\s*\/\s*100/gi
 const COMBO_REGEX = /\[COMBO:\s*(.+?)\s*\+\s*(.+?)\s*→\s*(.+?)\]/gi
+const CHART_REGEX = /\[CHART:\s*(.+?)\s*\]/gi
 
 function extractText(node: React.ReactNode): string {
   if (typeof node === 'string') return node
@@ -74,7 +78,7 @@ function extractText(node: React.ReactNode): string {
   return ''
 }
 
-function parseVisuals(content: string): React.ReactNode[] {
+function parseVisuals(content: string, substances: Substance[]): React.ReactNode[] {
   const parts: React.ReactNode[] = []
   let lastIndex = 0
 
@@ -96,6 +100,26 @@ function parseVisuals(content: string): React.ReactNode[] {
     })
   }
 
+  for (const m of content.matchAll(CHART_REGEX)) {
+    const subName = m[1].trim()
+    const substance = substances.find(
+      s => s.name.toLowerCase() === subName.toLowerCase() ||
+           s.aliases.some(a => a.toLowerCase() === subName.toLowerCase())
+    )
+    if (substance) {
+      allMatches.push({
+        index: m.index!,
+        length: m[0].length,
+        node: (
+          <div key={`chart-${m.index}`} className="my-3 w-full max-w-[280px] mx-auto bg-[var(--bg2)]/40 p-3 rounded-xl border border-[var(--border3)]/20 shadow-inner">
+            <h4 className="text-center text-[10px] font-bold font-mono uppercase tracking-wider text-[var(--accent2)] mb-2">{substance.name} Radar Profile</h4>
+            <RadarChart substance={substance} />
+          </div>
+        ),
+      })
+    }
+  }
+
   allMatches.sort((a, b) => a.index - b.index)
 
   for (const match of allMatches) {
@@ -115,6 +139,9 @@ function parseVisuals(content: string): React.ReactNode[] {
 
 export function GemBotMessage({ message, query, onFeedback }: Props) {
   const isUser = message.role === 'user'
+
+  const queryClient = useQueryClient()
+  const substances = queryClient.getQueryData<Substance[]>(['substances']) || []
 
   if (isUser) {
     return (
@@ -148,9 +175,12 @@ export function GemBotMessage({ message, query, onFeedback }: Props) {
             components={{
               p: ({ children }) => {
                 const text = extractText(children)
-                const visuals = parseVisuals(text)
+                const visuals = parseVisuals(text, substances)
                 const hasVisuals = visuals.some(v => typeof v !== 'string')
-                return <p className="my-1">{hasVisuals ? visuals : children}</p>
+                if (hasVisuals) {
+                  return <div className="my-1.5 space-y-2">{visuals}</div>
+                }
+                return <p className="my-1">{children}</p>
               },
               code: ({ children, className }) => {
                 const isInline = !className

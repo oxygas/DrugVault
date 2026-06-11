@@ -161,7 +161,7 @@ export const MOCK_SUBSTANCES = [
     lastUpdated: '2025-10-20',
   },
   {
-    id: 'dmt', name: 'DMT', aliases: ['N,N-Dimethyltryptamine', 'The Spirit Molecule', 'Dimitri'],
+    id: 'dmt', name: 'DMT', aliases: ['The Spirit Molecule', 'Dimitri'],
     category: 'Psychedelic', summary: 'Powerful short-acting psychedelic producing intense visual and entity contact phenomena.',
     smile: 'CN(C)CCC1=CNC2=C1C=CC=C2',
     harmLevel: 3, harmScore: 20, addictionPotential: 2,

@@ -68,7 +68,7 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
       onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       className="substance-card vaporwave-card w-full cursor-pointer relative overflow-hidden group"
-      style={{ '--tube-c': catColor, ...style } as React.CSSProperties}
+      style={{ '--tube-c': catColor, ...style, maxWidth: '384px' } as React.CSSProperties}
       role="button"
       tabIndex={0}
       aria-label={`View ${substance.name}`}

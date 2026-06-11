@@ -28,7 +28,7 @@ export default function DigitalRain() {
     let w = 0
     let h = 0
     let lastFrame = 0
-    const FPS = 20
+    const FPS = 12
     const frameInterval = 1000 / FPS
 
     let charPool: string[] = []
@@ -42,10 +42,10 @@ export default function DigitalRain() {
       const style = getComputedStyle(document.documentElement)
       const aRgb = style.getPropertyValue('--accent2-rgb') || '255, 110, 199'
       const sRgb = style.getPropertyValue('--accent-rgb') || '139, 92, 246'
-      
+
       const [ar, ag, ab] = aRgb.split(',').map(n => parseInt(n.trim(), 10))
       const [sr, sg, sb] = sRgb.split(',').map(n => parseInt(n.trim(), 10))
-      
+
       accentRgb = { r: ar ?? 255, g: ag ?? 110, b: ab ?? 199 }
       secondaryRgb = { r: sr ?? 139, g: sg ?? 92, b: sb ?? 246 }
     }
@@ -59,15 +59,15 @@ export default function DigitalRain() {
     function resize() {
       w = canvas!.width = window.innerWidth
       h = canvas!.height = getVpHeight()
-      const cols = Math.floor(w / 28)
+      const cols = Math.floor(w / 36)
       drops = Array.from({ length: cols }, (_, i) => ({
-        x: i * 28,
+        x: i * 36,
         y: -(Math.random() * h),
-        speed: 0.4 + Math.random() * 0.8,
-        length: 6 + Math.floor(Math.random() * 10),
+        speed: 0.3 + Math.random() * 0.6,
+        length: 5 + Math.floor(Math.random() * 8),
         delay: Math.random() * 120,
       }))
-      charPool = Array.from({ length: cols * 18 }, () => chars[Math.floor(Math.random() * chars.length)])
+      charPool = Array.from({ length: cols * 12 }, () => chars[Math.floor(Math.random() * chars.length)])
     }
 
     resize()
@@ -86,13 +86,18 @@ export default function DigitalRain() {
     window.visualViewport?.addEventListener('resize', resize)
 
     function draw(now: number) {
-      animId = requestAnimationFrame(draw)
-      if (document.hidden || document.documentElement.classList.contains('lo-fi-mode')) return
+      if (document.hidden || document.documentElement.classList.contains('lo-fi-mode')) {
+        animId = requestAnimationFrame(draw)
+        return
+      }
       const elapsed = now - lastFrame
-      if (elapsed < frameInterval) return
+      if (elapsed < frameInterval) {
+        animId = requestAnimationFrame(draw)
+        return
+      }
       lastFrame = now - (elapsed % frameInterval)
 
-      if (frameCount % 20 === 0) {
+      if (frameCount % 30 === 0) {
         updateThemeColors()
       }
       frameCount++
@@ -112,8 +117,8 @@ export default function DigitalRain() {
 
         if (drop.y - drop.length * 14 > h) {
           drop.y = -(drop.length * 14)
-          drop.speed = 0.4 + Math.random() * 0.8
-          drop.length = 6 + Math.floor(Math.random() * 10)
+          drop.speed = 0.3 + Math.random() * 0.6
+          drop.length = 5 + Math.floor(Math.random() * 8)
         }
 
         for (let i = 0; i < drop.length; i++) {
@@ -150,6 +155,7 @@ export default function DigitalRain() {
           }
         }
       }
+      animId = requestAnimationFrame(draw)
     }
 
     animId = requestAnimationFrame(draw)

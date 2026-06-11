@@ -1,0 +1,39 @@
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { validateToken } from '@/lib/admin-auth'
+
+const ADMIN_PATHS = ['/admin']
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  const isAdminPath = ADMIN_PATHS.some(p => pathname.startsWith(p))
+  const isLoginPath = pathname.startsWith('/admin/login')
+  const isApiPath = pathname.startsWith('/api/admin')
+
+  if (!isAdminPath) {
+    return NextResponse.next()
+  }
+
+  const token = request.cookies.get('admin_token')?.value
+
+  if (!token || !(await validateToken(token))) {
+    if (isLoginPath) {
+      return NextResponse.next()
+    }
+
+    if (isApiPath) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const loginUrl = new URL('/admin/login', request.url)
+    loginUrl.searchParams.set('redirect', pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ['/admin/:path*'],
+}

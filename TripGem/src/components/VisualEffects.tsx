@@ -42,10 +42,11 @@ export default function VisualEffects() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
-    const r = requestAnimationFrame(() => {
-      setIsTouch(matchMedia('(pointer: coarse)').matches)
-    })
-    return () => cancelAnimationFrame(r)
+    const mql = matchMedia('(pointer: coarse)')
+    const r = requestAnimationFrame(() => setIsTouch(mql.matches))
+    const onChange = (e: MediaQueryListEvent) => setIsTouch(e.matches)
+    mql.addEventListener('change', onChange)
+    return () => { cancelAnimationFrame(r); mql.removeEventListener('change', onChange) }
   }, [])
 
   useEffect(() => {
@@ -240,7 +241,6 @@ export default function VisualEffects() {
     }
 
     const render = (time: number) => {
-      // Pause drawing loop if tab is hidden or Solid State Mode is active
       if (document.hidden || document.documentElement.classList.contains('lo-fi-mode')) {
         animId = requestAnimationFrame(render)
         return

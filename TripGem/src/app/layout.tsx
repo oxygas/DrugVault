@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import Script from 'next/script'
 import { Suspense } from 'react'
-import { ClientGemBotButton, ClientLoadingScreen } from '@/components/ClientDynamicComponents'
+import { ClientGemBotButton } from '@/components/ClientDynamicComponents'
 import './globals.css'
 import { cn } from "@/lib/utils"
 import { QueryProvider } from '@/providers/query-provider'
@@ -156,7 +156,6 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <ClientLoadingScreen />
         <QueryProvider>
           <TooltipProvider>
             <VisualEffects />

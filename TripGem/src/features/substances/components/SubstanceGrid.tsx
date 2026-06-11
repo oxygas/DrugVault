@@ -29,7 +29,7 @@ List.displayName = 'VirtuosoGridList'
 const Item = ({ children, ...props }: React.HTMLProps<HTMLDivElement>) => (
   <div
     {...props}
-    className="w-full flex"
+    className="w-full flex justify-center"
   >
     {children}
   </div>

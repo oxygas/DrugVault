@@ -39,7 +39,7 @@ export async function GET() {
     let recent: string[] = []
     let stateCounts: string[] = []
     try { recent = await kv.lrange('tripgem:deployments:recent', 0, 19) } catch { recent = [] }
-    try { stateCounts = await kv.zrange('tripgem:deployments:count', 0, 49, { rev: true }) as string[] } catch { stateCounts = [] }
+    try { stateCounts = await kv.zrange('tripgem:deployments:count', 0, 49, { rev: true, withScores: true }) as string[] } catch { stateCounts = [] }
 
     const parsed = recent.map((s: string) => {
       try { return JSON.parse(s) } catch { return null }
