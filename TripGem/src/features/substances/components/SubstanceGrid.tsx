@@ -20,7 +20,7 @@ const List = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
     <div
       ref={ref}
       {...props}
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+      className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
       style={{
         ...style,
       }}
@@ -40,6 +40,10 @@ const Item = ({ children, ...props }: React.HTMLProps<HTMLDivElement>) => (
   </div>
 )
 Item.displayName = 'VirtuosoGridItem'
+
+// Determine overscan once per module load — stable across re-renders
+const IS_TOUCH = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+const OVERSCAN = IS_TOUCH ? 150 : 300
 
 function SubstanceGridInner({ substances, onSubstanceClick }: SubstanceGridProps) {
   const itemContent = useCallback(
@@ -71,7 +75,7 @@ function SubstanceGridInner({ substances, onSubstanceClick }: SubstanceGridProps
       useWindowScroll
       totalCount={substances.length}
       components={{ List, Item }}
-      overscan={400}
+      overscan={OVERSCAN}
       context={{ substances, onSubstanceClick }}
       itemContent={itemContent}
     />

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect, memo } from 'react'
+import { useState, useCallback, useRef, useEffect, memo, useMemo } from 'react'
 import type { Substance, Category } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
 
@@ -46,6 +46,13 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
   const localRef = useRef<HTMLInputElement>(null)
   const inputRef = externalInputRef ?? localRef
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // O(1) lookup map for recent searches — avoids O(n) .find() per recent item per render
+  const substancesByName = useMemo(() => {
+    const map = new Map<string, Substance>()
+    for (const s of substances) map.set(s.name, s)
+    return map
+  }, [substances])
 
   const search = useCallback((q: string) => {
     setQuery(q)
@@ -185,7 +192,7 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
                   </button>
                 </div>
                 {recentSearches.map(name => {
-                  const s = substances.find(s => s.name === name)
+                  const s = substancesByName.get(name)
                   if (!s) return null
                   return (
                     <button

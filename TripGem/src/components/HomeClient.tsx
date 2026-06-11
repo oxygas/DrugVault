@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
 import type { Substance, Category, ComboLevel, CategoryMeta, SubstanceCombo } from '@/lib/types'
 import { FEATURES, type FeatureConfig } from '@/features/registry'
@@ -31,13 +31,35 @@ const StatDetailModal = dynamic(() => import('@/components/StatDetailModal'), {
   loading: () => null
 })
 
+// Eagerly preload section chunks — called once after mount so JS is parsed
+// and ready before the user ever taps a tab. On mobile, skip heavy desktop-only
+// components (ComboMatrixPC, DrugChecker, DXMCalculator) since they won't render.
+function preloadSectionChunks() {
+  // Feature sections — always preload
+  import('@/features/matrix/components/MatrixSection')
+  import('@/features/tools/components/ToolsSection')
+  // Phone matrix — always preload (renders on mobile)
+  import('@/features/matrix/components/ComboMatrixPhone')
+  // Popup — preload so first card click is instant
+  import('@/features/substances/components/SubstancePopup')
+  // Modal components
+  import('@/components/StatDetailModal')
+  // Desktop-only components — skip on touch devices
+  const isDesktop = typeof window !== 'undefined' && !window.matchMedia('(pointer: coarse)').matches
+  if (isDesktop) {
+    import('@/features/matrix/components/ComboMatrixPC')
+    import('@/features/tools/components/DrugChecker')
+    import('@/features/tools/components/DXMCalculator')
+  }
+}
+
 type Section = 'substances' | 'matrix' | 'tools'
 
 const FETCH_FIELDS = [
   'name','category','harmScore','harmLevel','aliases',
   'addictionScore','odRisk','withdrawalSeverity',
   'dependenceLiability','interactionDanger','smiles',
-  'subjectiveEffects','popularityRank'
+  'popularityRank'
 ].join(',')
 
 interface HomeClientProps {
@@ -54,19 +76,31 @@ interface HomeClientProps {
   }
   categories: CategoryMeta[]
   comboMatrix: Record<string, ComboLevel>
-  substanceCombos?: SubstanceCombo[]
+  initialSubstances?: Substance[]
 }
 
-export default function HomeClient({ stats, categories, comboMatrix, substanceCombos }: HomeClientProps) {
+export default function HomeClient({ stats, categories, comboMatrix, initialSubstances }: HomeClientProps) {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [popupSubstance, setPopupSubstance] = useState<Substance | null>(null)
   const [activeStatModal, setActiveStatModal] = useState<string | null>(null)
   const [activeSection, setActiveSection] = useState<Section>('substances')
   const [mounted, setMounted] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  // Start false (matches SSR) to avoid hydration mismatch, update in useEffect
   const [isTouch, setIsTouch] = useState(false)
   const isTouchRef = useRef(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
+
+  const queryClient = useQueryClient()
+
+  // Seed the React Query cache with server-prefetched data — this makes
+  // the useQuery below return data immediately with no network request.
+  // We do this before useQuery so it sees the data on its very first run.
+  if (initialSubstances && initialSubstances.length > 0) {
+    const cached = queryClient.getQueryData<Substance[]>(['substances'])
+    if (!cached || cached.length === 0) {
+      queryClient.setQueryData(['substances'], initialSubstances)
+    }
+  }
 
   const { data: substances = [] } = useQuery({
     queryKey: ['substances'],
@@ -80,12 +114,27 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
       })
       return sorted
     },
-    staleTime: 300_000,
-    gcTime: 600_000,
+    staleTime: 600_000,   // 10 min — never refetch within a session
+    gcTime: 3_600_000,    // 1 hr in memory
+  })
+
+  // Lazy-load substance combos only when Matrix/Tools tab is active
+  const [needsCombos, setNeedsCombos] = useState(false)
+  const { data: substanceCombos = [] } = useQuery({
+    queryKey: ['substanceCombos'],
+    queryFn: async () => {
+      const res = await fetch('/api/substance-combos')
+      const json = await res.json()
+      return json.combos || []
+    },
+    enabled: needsCombos,
+    staleTime: 600_000,
+    gcTime: 3_600_000,
   })
 
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const popupRef = useRef(popupSubstance)
+  const [lastPopup, setLastPopup] = useState<Substance | null>(null)
   const bodyWeight = useSettingsStore(s => s.bodyWeight)
   const weightUnit = useSettingsStore(s => s.weightUnit)
   const userLevel = useSettingsStore(s => s.userLevel)
@@ -105,7 +154,10 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
   const userLevelLabel = userLevel === 'new' ? 'New' : userLevel === 'common' ? 'Common' : 'Heavy'
 
   const openPopup = useCallback((s: Substance | null) => {
-    if (s) playOpen()
+    if (s) {
+      playOpen()
+      setLastPopup(s)
+    }
     setPopupSubstance(s)
   }, [])
 
@@ -119,13 +171,23 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
   }, [popupSubstance])
 
   useEffect(() => {
-    const touch = 'ontouchstart' in window
-    isTouchRef.current = touch
     hydrateTheme()
     hydrateSettings()
     hydrateUIsounds()
-    requestAnimationFrame(() => setMounted(true))
-    if (touch) queueMicrotask(() => setIsTouch(true))
+    // Detect touch after mount — matches SSR false, avoids hydration mismatch
+    const mq = window.matchMedia('(pointer: coarse)')
+    requestAnimationFrame(() => {
+      setIsTouch(mq.matches)
+      isTouchRef.current = mq.matches
+      setMounted(true)
+      // Preload all section JS chunks during idle time after first paint
+      // so Matrix/Tools tab switches are instant. 5s timeout gives
+      // first-paint more runway on mobile devices.
+      const schedulePreload = typeof requestIdleCallback !== 'undefined'
+        ? (fn: () => void) => requestIdleCallback(fn, { timeout: 5000 })
+        : (fn: () => void) => setTimeout(fn, 2000)
+      schedulePreload(preloadSectionChunks)
+    })
   }, [hydrateTheme, hydrateSettings])
 
   useEffect(() => {
@@ -141,19 +203,15 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
   }, [uiSounds])
 
   useEffect(() => {
-    let ticking = false
     let lastScrolled = false
     const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const nowScrolled = window.scrollY > 50
-          if (nowScrolled !== lastScrolled) {
-            lastScrolled = nowScrolled
-            setScrolled(nowScrolled)
-          }
-          ticking = false
+      const nowScrolled = window.scrollY > 50
+      if (nowScrolled !== lastScrolled) {
+        lastScrolled = nowScrolled
+        // Toggle CSS class directly on nav elements — avoids React re-render
+        document.querySelectorAll('.nav-bar-desktop, .nav-bar-mobile').forEach(el => {
+          el.classList.toggle('scrolled', nowScrolled)
         })
-        ticking = true
       }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -167,6 +225,10 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
     if (section === activeSectionRef.current) return
     playSectionChange()
     setActiveSection(section)
+    // Lazy-fetch substance combos when switching to Matrix or Tools
+    if (section === 'matrix' || section === 'tools') {
+      setNeedsCombos(true)
+    }
   }, [])
 
   const handleStatClick = useCallback((label: string) => {
@@ -270,7 +332,7 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
     <div className={`flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px] ${isTouch ? 'pb-16' : ''}`}>
       {/* Desktop/Tablet Top Nav */}
       <nav
-        className={`sticky top-0 z-50 border-b border-[var(--border)] hidden sm:flex nav-bar-desktop ${scrolled ? 'scrolled' : ''}`}
+        className={`sticky top-0 z-50 border-b border-[var(--border)] hidden sm:flex nav-bar-desktop`}
         style={{
           backdropFilter: isTouch ? 'blur(12px)' : 'blur(24px) saturate(1.6)',
           WebkitBackdropFilter: isTouch ? 'blur(12px)' : 'blur(24px) saturate(1.6)',
@@ -324,11 +386,10 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
       </nav>
 
       {/* Mobile Top Bar */}
-      <nav className={`sticky top-0 z-50 border-b border-[var(--border)] sm:hidden nav-bar-mobile ${scrolled ? 'scrolled' : ''}`}
+      <nav className={`sticky top-0 z-50 border-b border-[var(--border)] sm:hidden nav-bar-mobile`}
         style={{
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          background: scrolled ? 'rgba(10, 4, 24, 0.8)' : 'transparent',
         }}
       >
         <div className="w-full px-4 h-14 flex items-center justify-between">
@@ -398,13 +459,19 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
         <div className="w-full min-w-0">
           {FEATURES.map(feature => {
             const isActive = feature.key === activeSection
-            if (!isActive) return null
             const FeatureComponent = feature.component
             return (
               <section
                 key={feature.key}
                 className="section-card w-full min-w-0"
-                style={{ contain: 'none' }}
+                style={{
+                  contain: 'none',
+                  // Keep section in the DOM but hidden — avoids remounting React tree
+                  // on every tab switch and means the JS chunk + React render
+                  // work is paid once, not repeated.
+                  display: isActive ? undefined : 'none',
+                }}
+                aria-hidden={!isActive}
               >
                 <FeatureComponent
                   {...(sectionProps[feature.key as Section] ?? {})}
@@ -499,16 +566,15 @@ export default function HomeClient({ stats, categories, comboMatrix, substanceCo
 
       {scoreBreakdownOpen && <ScoreBreakdownPopup substances={substances} />}
 
-      {popupSubstance && (
-        <SubstancePopup
-          substance={popupSubstance}
-          comboMatrix={comboMatrix}
-          onClose={closePopup}
-          onNavigate={openPopup}
-          allSubstances={substances}
-          setStatModal={setActiveStatModal}
-        />
-      )}
+      <SubstancePopup
+        substance={popupSubstance ?? lastPopup!}
+        isOpen={popupSubstance !== null}
+        comboMatrix={comboMatrix}
+        onClose={closePopup}
+        onNavigate={openPopup}
+        allSubstances={substances}
+        setStatModal={setActiveStatModal}
+      />
 
       {activeStatModal && (
         <StatDetailModal

@@ -8,16 +8,22 @@ export interface FeatureConfig {
   component: React.ComponentType<any>
 }
 
+// All section components load with no loading UI — they mount hidden in the background
+// and are revealed instantly when the user switches tabs. The JS chunks are also
+// eagerly preloaded by HomeClient after mount via requestIdleCallback.
 const SubstancesSection = dynamic(
-  () => import('@/features/substances/components/SubstancesSection')
+  () => import('@/features/substances/components/SubstancesSection'),
+  { loading: () => null }
 )
 
 const MatrixSection = dynamic(
-  () => import('@/features/matrix/components/MatrixSection')
+  () => import('@/features/matrix/components/MatrixSection'),
+  { loading: () => null }
 )
 
 const ToolsSection = dynamic(
-  () => import('@/features/tools/components/ToolsSection')
+  () => import('@/features/tools/components/ToolsSection'),
+  { loading: () => null }
 )
 
 export const FEATURES: FeatureConfig[] = [

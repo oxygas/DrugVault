@@ -38,7 +38,13 @@ export function AnalyticsTracker() {
       }
     }
 
-    const throttledScroll = () => requestAnimationFrame(handleScroll)
+    let lastScrollTime = 0
+    const throttledScroll = () => {
+      const now = Date.now()
+      if (now - lastScrollTime < 500) return
+      lastScrollTime = now
+      handleScroll()
+    }
 
     window.addEventListener('scroll', throttledScroll, { passive: true })
 

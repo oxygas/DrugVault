@@ -28,13 +28,6 @@ export function GemBotButton() {
         />
       </button>
       <GemBotOverlay />
-
-      <style jsx global>{`
-        @keyframes gembot-pulse {
-          0%, 100% { box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.4), 0 0 20px rgba(var(--accent-rgb), 0.1); }
-          50% { box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.7), 0 0 40px rgba(var(--accent-rgb), 0.3), 0 0 60px rgba(var(--accent-rgb), 0.1); }
-        }
-      `}</style>
     </>
   )
 }

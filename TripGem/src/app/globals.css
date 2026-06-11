@@ -2173,6 +2173,13 @@ body.is-scrolling .glass-aero {
     line-height: 1.1;
   }
 
+  /* Mobile grid touch */
+  .chromatic-overlay { display: none; }
+  .vaporwave-scanlines { display: none; }
+  .mouse-glow { display: none; }
+  .particles { display: none; }
+  .digital-rain-canvas { display: none; }
+
   /* Mobile grid adjustments */
   .substance-card {
     max-width: 100%;
@@ -2243,19 +2250,80 @@ body.is-scrolling .glass-aero {
     display: none !important;
   }
 
-  /* Kill expensive compositing layers on touch */
+  /* ── Kill expensive compositing layers on touch ── */
   .chromatic-overlay { display: none; }
   .vaporwave-scanlines { display: none; }
   .mouse-glow { display: none; }
   .particles { display: none; }
   .digital-rain-canvas { display: none; }
-  .vaporwave-horizon { animation: none; opacity: 0.3; }
+  .vaporwave-horizon { animation: none; opacity: 0.3; will-change: auto; }
   .cyber-grid::before { animation: none; }
   .cyber-grid { opacity: 0.08; }
-  .neon-stripe { animation: none; }
+  /* Extra specificity to beat vaporwave-card .neon-stripe rule */
+  .neon-stripe,
+  .vaporwave-card .neon-stripe { animation: none !important; }
   .grid-noise { opacity: 0.3; }
-  body::before { animation: none; }
-  .hero-glow { animation: none; }
+  body::before { animation: none; will-change: auto; }
+  /* Reduce blur cost; full blur(60px) is expensive on mobile */
+  .hero-glow { animation: none; filter: blur(30px); will-change: auto; }
+
+  /* Kill rotating conic-gradient + filter:blur — biggest GPU hog on mobile
+     These are ::before/::after pseudo-elements with auroraSpin + blur(40px) */
+  .info-card::after { display: none !important; }
+  .tab-btn.active::before { display: none !important; }
+
+  /* Kill popup neon pulsing box-shadow animation */
+  .neon-popup-glow { animation: none !important; }
+
+  /* Kill hero heading gradient-shift animation (background still shows, just static) */
+  .gradient-text { animation: none; background-position: 0% 50%; }
+
+  /* Kill tripgem gem text glow filter animation (keep color shift, remove expensive drop-shadow chain) */
+  .tripgem-text-gem {
+    animation: tripgem-diamond-shift 4s ease-in-out infinite;
+    filter: none;
+  }
+
+  /* Kill tripgem logo double animation — just show it static on mobile */
+  .tripgem-logo { animation: none !important; }
+
+  /* Kill hero badge pulsing dot */
+  .hero-badge .dot { animation: none; box-shadow: none; }
+
+  /* Kill skull icon pulse */
+  .skull-icon { animation: none; filter: drop-shadow(0 0 4px rgba(239,68,68,0.4)); }
+
+  /* Kill active category pill tubePulse */
+  .cat-pill.active { animation: none; }
+
+  /* Kill deadly-pulse on cards */
+  .deadly-pulse { animation: none !important; }
+
+  /* Kill popup header animated gradient line */
+  .popup-header::after { animation: none; background-position: 50% 50%; }
+
+  /* Reduce backdrop-filter blur costs for frequently rendered elements */
+  .section-card {
+    backdrop-filter: blur(12px) saturate(1.3);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  }
+  .glass-strong {
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+  }
+  .info-card {
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+  }
+  .tab-btn.active {
+    backdrop-filter: blur(8px) saturate(150%);
+    -webkit-backdrop-filter: blur(8px) saturate(150%);
+  }
+  /* Remove per-card backdrop blur — too expensive with 8-12 visible cards */
+  .vaporwave-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 
   .nav-tab {
     -webkit-tap-highlight-color: transparent;
@@ -2264,6 +2332,9 @@ body.is-scrolling .glass-aero {
     transform: scale(0.96);
     transition-duration: 0.05s;
   }
+
+  /* Kill staggered count-up animations on stat cards — 8 simultaneous animations cause jank */
+  .count-up { animation: none !important; }
 }
 
 /* Solid State Mode (Lo-Fi Mode) overrides to maximize performance */
@@ -3055,4 +3126,9 @@ body.is-scrolling .glass-aero {
 }
 [data-theme="oled"] .orb {
   opacity: 0.02 !important;
+}
+
+@keyframes gembot-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.4), 0 0 20px rgba(var(--accent-rgb), 0.1); }
+  50% { box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.7), 0 0 40px rgba(var(--accent-rgb), 0.3), 0 0 60px rgba(var(--accent-rgb), 0.1); }
 }

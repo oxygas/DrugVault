@@ -20,79 +20,6 @@ import { useUIStore } from '@/stores/ui'
 
 const SubjectiveEffectsModal = lazy(() => import('@/components/SubjectiveEffectsModal'))
 
-const PRONUNCIATIONS: Record<string, string> = {
-  'Fentanyl': 'FEN-tuh-nil',
-  'NBOMe': 'EN-bee-oh-em',
-  '25I-NBOMe': 'twenty-five-eye EN-bee-oh-em',
-  '25B-NBOMe': 'twenty-five-bee EN-bee-oh-em',
-  '25C-NBOMe': 'twenty-five-see EN-bee-oh-em',
-  '25D-NBOMe': 'twenty-five-dee EN-bee-oh-em',
-  '25E-NBOMe': 'twenty-five-ee EN-bee-oh-em',
-  '25G-NBOMe': 'twenty-five-gee EN-bee-oh-em',
-  '25H-NBOMe': 'twenty-five-aitch EN-bee-oh-em',
-  '25I-NBF': 'twenty-five-eye EN-bee-eff',
-  '25I-NBMD': 'twenty-five-eye EN-bee-em-dee',
-  '25iP-NBOMe': 'twenty-five-eye-pee EN-bee-oh-em',
-  '25N-NBOMe': 'twenty-five-en EN-bee-oh-em',
-  '25P-NBOMe': 'twenty-five-pee EN-bee-oh-em',
-  '25T-2-NBOMe': 'twenty-five-tee-two EN-bee-oh-em',
-  '25T-4-NBOMe': 'twenty-five-tee-four EN-bee-oh-em',
-  '25x-NBOMe': 'twenty-five-x EN-bee-oh-em',
-  'Datura': 'duh-TOOR-uh',
-  'Scopolamine': 'skoh-PALL-uh-meen',
-  'Krokodil': 'KROK-uh-deel',
-  'DPH': 'dee-pee-aitch',
-  'Xylazine': 'ZIL-uh-zeen',
-  'Sufentanil': 'soo-FEN-tuh-nil',
-  'Acetylfentanyl': 'uh-SEE-til-FEN-tuh-nil',
-  'Acrylfentanyl': 'AK-ril-FEN-tuh-nil',
-  'Butyrfentanyl': 'BYOO-ter-FEN-tuh-nil',
-  'Furanylfentanyl': 'FYOO-ran-il-FEN-tuh-nil',
-  'Bromadol': 'BRO-muh-dol',
-  'Bromo-DragonFLY': 'BRO-mo DRAG-un-fly',
-  'Clonitazene': 'kloh-NIT-uh-zeen',
-  'Nitazenes': 'nye-TAZ-uh-zeen',
-  'Alpha-PVP': 'AL-fuh pee-vee-pee',
-  'U-47700': 'you forty-seven seven hundred',
-  'U-49900': 'you forty-nine nine hundred',
-  'U-51754': 'you fifty-one seven fifty-four',
-  'W-15': 'double-you fifteen',
-  'AH-7921': 'ay-aitch seventy-nine twenty-one',
-  'MT-45': 'em-tee forty-five',
-  'MPTP': 'em-pee-tee-pee',
-  '6-MDDM': 'six em-dee-dee-em',
-  'Methoxyacetyl-Fentanyl': 'meh-THOK-see-uh-SEE-til-FEN-tuh-nil',
-  'Parafluorofentanyl': 'PAR-uh-FLOOR-oh-FEN-tuh-nil',
-  'Tetrahydrofuran-Fentanyl': 'TET-ruh-HY-dro-FYOOR-an-FEN-tuh-nil',
-  'Valerylfentanyl': 'VAL-er-il-FEN-tuh-nil',
-  '4-Fluorobutyrfentanyl': 'four FLOOR-oh-BYOO-ter-FEN-tuh-nil',
-  '4-MeO-Butyrfentanyl': 'four-mee-oh BYOO-ter-FEN-tuh-nil',
-  'Cyclopentyl-Fentanyl': 'SY-kloh-PEN-til-FEN-tuh-nil',
-  'Benzodioxole-Fentanyl': 'BEN-zoh-dye-OX-ohl-FEN-tuh-nil',
-  'Hydromorphone': 'HY-droh-MOR-fone',
-  'Oxymorphone': 'OK-see-MOR-fone',
-  'Dextromoramide': 'DEK-stroh-MOR-uh-mide',
-  'Dipipanone': 'dye-PIP-uh-none',
-  'Ketobemidone': 'KEE-toh-BEM-ih-done',
-  'Morpheridine': 'MOR-FER-ih-deen',
-  'Nicomorphine': 'NIK-oh-MOR-feen',
-  'Isomethadone': 'eye-soh-METH-uh-done',
-  'Methiodone': 'meth-EYE-oh-done',
-  'PMA': 'pee-em-ay',
-  'PST': 'pee-ess-tee',
-  'MGM-15': 'em-gee-em fifteen',
-  'MGM-16': 'em-gee-em sixteen',
-  '7-Hydroxymitragynine': 'seven HY-drok-see-mih-TRAJ-ih-neen',
-  'Mitragynine Pseudoindoxyl': 'mih-TRAJ-ih-neen SOO-doh-IN-dok-sil',
-  'Synthetic Cannabinoids': 'sin-THET-ik kan-AB-in-oydz',
-  'Methamphetamine': 'meth-am-FET-uh-meen',
-  'Heroin': 'HAIR-oh-win',
-  'Morphine': 'MOR-feen',
-  'Opium': 'OH-pee-um',
-  'Oxycodone': 'OK-see-KOH-done',
-  'Hydrocodone': 'HY-droh-KOH-done',
-}
-
 function speakSubstanceName(name: string) {
   if (typeof window === 'undefined') return
   const prev = document.querySelector('.tripgem-tts-audio')
@@ -182,6 +109,7 @@ function toggleFavorite(name: string) {
 
 interface SubstancePopupProps {
   substance: Substance
+  isOpen: boolean
   comboMatrix: Record<string, ComboLevel>
   onClose: () => void
   onNavigate: (substance: Substance) => void
@@ -191,7 +119,7 @@ interface SubstancePopupProps {
 
 type Tab = 'overview' | 'effects' | 'risks' | 'dosage' | 'tolerance' | 'interactions' | 'legal'
 
-export default function SubstancePopup({ substance: initialSubstance, comboMatrix, onClose, onNavigate, allSubstances, setStatModal }: SubstancePopupProps) {
+export default function SubstancePopup({ substance: initialSubstance, isOpen, comboMatrix, onClose, onNavigate, allSubstances, setStatModal }: SubstancePopupProps) {
   const [tab, setTab] = useState<Tab>('overview')
   const [animKey, setAnimKey] = useState(0)
   const [effectsModalOpen, setEffectsModalOpen] = useState(false)
@@ -199,7 +127,7 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
   const popupRef = useRef<HTMLDivElement>(null)
   const touchStartXRef = useRef<number | null>(null)
   const onCloseRef = useRef(onClose)
-  const [isFav, setIsFav] = useState(() => getFavorites().includes(initialSubstance.name))
+  const [isFav, setIsFav] = useState(() => initialSubstance ? getFavorites().includes(initialSubstance.name) : false)
   const [favPulse, setFavPulse] = useState(0)
 
   const pullStartYRef = useRef<number | null>(null)
@@ -210,7 +138,7 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
 
   const { isMobile } = useDevice()
 
-  const [prevName, setPrevName] = useState(initialSubstance.name)
+  const [prevName, setPrevName] = useState(initialSubstance?.name ?? '')
   const [detailedSubstance, setDetailedSubstance] = useState<Substance | null>(null)
   const [loadingDetails, setLoadingDetails] = useState(true)
 
@@ -222,17 +150,26 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
   , [comboSubstanceName, allSubstances])
 
   const comboLevel = useMemo(() => {
-    if (!selectedComboSub) return null
+    if (!selectedComboSub || !initialSubstance) return null
     return comboMatrix[`${initialSubstance.category}+${selectedComboSub.category}`] || comboMatrix[`${selectedComboSub.category}+${initialSubstance.category}`] || 'caution'
   }, [selectedComboSub, initialSubstance, comboMatrix])
 
-  if (initialSubstance.name !== prevName) {
+  const filteredComboSubs = useMemo(() =>
+    initialSubstance
+      ? allSubstances
+          .filter(s => s.name !== initialSubstance.name && s.name.toLowerCase().includes(comboSubstanceName.toLowerCase()))
+          .slice(0, 30)
+      : []
+  , [comboSubstanceName, initialSubstance, allSubstances])
+
+  if (initialSubstance && initialSubstance.name !== prevName) {
     setPrevName(initialSubstance.name)
     setDetailedSubstance(null)
     setLoadingDetails(true)
   }
 
   useEffect(() => {
+    if (!initialSubstance) return
     const slug = initialSubstance.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
     let active = true
 
@@ -251,9 +188,9 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
       })
 
     return () => { active = false }
-  }, [initialSubstance.name])
+  }, [initialSubstance, initialSubstance?.name])
 
-  const substance = detailedSubstance || initialSubstance
+  const substance = detailedSubstance || initialSubstance || { name: '', category: '', harmLevel: 'low' as const }
 
   const catColor = CATEGORY_COLORS[substance.category]
   const harmColor = HARM_LEVEL_COLORS[substance.harmLevel]
@@ -322,19 +259,53 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
   // Scroll lock — prevents background from scrolling when popup is open
   // We use event listeners instead of body overflow:hidden because overflow:hidden causes
   // VirtuosoGrid to lose its height and scroll to the top of the page.
+  // NOTE: touchmove is registered with { passive: false } only when strictly needed.
+  // We pre-detect outside-popup touches in touchstart, then only call preventDefault
+  // for touchmove events that originated outside the popup — this avoids blocking
+  // native scroll optimisation for the vast majority of touches inside the popup.
   useEffect(() => {
-    const handleScroll = (e: Event) => {
+    if (!isOpen) return
+
+    let touchOutsidePopup = false
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const popup = popupRef.current
+      touchOutsidePopup = !!(popup && !popup.contains(e.target as Node))
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (touchOutsidePopup) {
+        e.preventDefault()
+      }
+    }
+
+    const handleWheel = (e: WheelEvent) => {
       const popup = popupRef.current
       if (popup && popup.contains(e.target as Node)) return
       e.preventDefault()
     }
-    window.addEventListener('wheel', handleScroll, { passive: false })
-    window.addEventListener('touchmove', handleScroll, { passive: false })
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: false })
+    window.addEventListener('wheel', handleWheel, { passive: false })
     return () => {
-      window.removeEventListener('wheel', handleScroll)
-      window.removeEventListener('touchmove', handleScroll)
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+      window.removeEventListener('wheel', handleWheel)
     }
-  }, [])
+  }, [isOpen])
+
+  const relatedSubs = useMemo(() =>
+    initialSubstance
+      ? allSubstances
+          .filter(s => s.category === initialSubstance.category && s.name !== initialSubstance.name)
+          .slice(0, 4)
+      : []
+  , [initialSubstance, allSubstances])
+
+  // Return nothing when closed — component stays mounted to avoid remount cost
+  // Must be after all hooks to satisfy Rules of Hooks
+  if (!isOpen) return null
 
   // Pull-to-dismiss gesture — uses refs to avoid stale closure issues
   const handlePullStart = (e: React.TouchEvent) => {
@@ -396,10 +367,6 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
     { key: 'tolerance', label: 'Tolerance' },
     { key: 'interactions', label: 'Interactions' },
   ]
-
-  const relatedSubs = allSubstances
-    .filter(s => s.category === substance.category && s.name !== substance.name)
-    .slice(0, 4)
 
   return (
     <div
@@ -612,13 +579,9 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
                         </svg>
                       </div>
                     </div>
-                    {comboDropdownOpen && (() => {
-                      const filtered = allSubstances
-                        .filter(s => s.name !== substance.name && s.name.toLowerCase().includes(comboSubstanceName.toLowerCase()))
-                        .slice(0, 30)
-                      return (
+                    {comboDropdownOpen && (
                         <div className="-mt-3 max-h-[200px] overflow-y-auto substance-popup-scroll bg-[var(--bg2)] border border-[var(--accent)] border-t-0 rounded-b-lg">
-                          {filtered.length > 0 ? filtered.map(s => (
+                          {filteredComboSubs.length > 0 ? filteredComboSubs.map(s => (
                             <button
                               key={s.name}
                               onMouseDown={(e) => e.preventDefault()}
@@ -635,8 +598,7 @@ export default function SubstancePopup({ substance: initialSubstance, comboMatri
                             <div className="p-4 text-center text-sm text-[var(--text4)]">No substances found.</div>
                           )}
                         </div>
-                      )
-                    })()}
+                      )}
                 </div>
 
                 {selectedComboSub && comboLevel && (

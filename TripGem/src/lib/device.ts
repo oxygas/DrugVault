@@ -80,15 +80,22 @@ export function getDeviceFromRequest(request: { headers: Headers; nextUrl: { hos
 
 /**
  * Client-side device detection hook
- * Returns device info with SSR-safe defaults
+ * Returns device info with SSR-safe defaults.
+ * Result is memoized — UA parsing only runs once per component mount.
  */
+let cachedDevice: DeviceInfo | null = null
+
 export function useDevice(): DeviceInfo {
   if (typeof window === 'undefined') {
     return { isMobile: false, isTablet: false, isDesktop: true, isTouch: false }
   }
 
-  const ua = navigator.userAgent
-  return detectDevice(ua)
+  if (!cachedDevice) {
+    const ua = navigator.userAgent
+    cachedDevice = detectDevice(ua)
+  }
+
+  return cachedDevice
 }
 
 /**
