@@ -3,6 +3,9 @@ import { CATEGORY_REGISTRY } from '@/lib/registry'
 import { CATEGORY_COLORS, COMBO_DESCRIPTIONS } from '@/lib/types'
 import fuzzysort from 'fuzzysort'
 import { slugify } from '@/lib/slugify'
+import rawData from '@/data/all-data.json'
+import rawEffects from '@/data/subjective-effects.json'
+import mdmaEffectsJson from '@/data/mdma-effects.json'
 
 interface RawScoreFactor { l: string; e: string; su?: string }
 interface RawScoreBreakdown { factors: RawScoreFactor[]; su?: string }
@@ -190,18 +193,8 @@ function assignPopularityRanks(subs: Substance[]) {
 async function ensureData() {
   if (initPromise) return initPromise
   initPromise = (async () => {
-    const [
-      { default: rawData },
-      { default: rawEffects },
-      { default: mdmaEffectsJson },
-    ] = await Promise.all([
-      import('@/data/all-data.json') as Promise<{ default: RawData }>,
-      import('@/data/subjective-effects.json') as Promise<{ default: Record<string, unknown> }>,
-      import('@/data/mdma-effects.json') as Promise<{ default: SubjectiveEffects }>,
-    ])
-
-    const data = rawData as RawData
-    const mdmaEffectsData = mdmaEffectsJson as SubjectiveEffects
+    const data = rawData as unknown as RawData
+    const mdmaEffectsData = mdmaEffectsJson as unknown as SubjectiveEffects
     const effectsData = rawEffects as Record<string, unknown>
 
     substances = data.s.map(s => {

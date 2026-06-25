@@ -1,0 +1,32 @@
+# TripGem
+
+TripGem is an open-source, evidence-based harm reduction database and drug interaction checker. It offers a catalog of 540+ substances with detailed educational safety metrics, dosage guidelines, duration timelines, and drug combination checks.
+
+## Key Routes & Functionality
+
+- `/` — Homepage: Hero display, database statistics, and interactive tabbed access to substances, combinations, and tools.
+- `/substances` — Substances Directory: Flat list and filterable/searchable browser of all 540+ indexed substances.
+- `/substances/[slug]` — Substance Profile: Structured profile for an individual substance (e.g. `/substances/mdma` or `/substances/ketamine`).
+  - Harm Scores: Six-axis metrics (harm score, addiction score, overdose risk, withdrawal severity, dependency liability, interaction danger).
+  - Subjective Effects: Positive and negative drug effects categorized.
+  - Dosage Guides: Threshold, Light, Common, Strong, and Heavy dosage numbers broken down by Route of Administration (ROA).
+  - Duration Timelines: Onset, Peak, and Offset durations by ROA.
+  - Risks & Safety: Bulleted safety guidelines, overdose signs, withdrawal symptoms, and recovery options.
+  - Chemical Structure: PubChem/CACTUS structure image and SMILES fallback.
+- `/interactions` — Interaction Checker & Matrix:
+  - Drug Checker: Interactive pairwise check between any two substances to retrieve specific interaction notes.
+  - Combination Matrix: Grid displaying generalized risk (Safe, Low Risk, Caution, Dangerous, Deadly) between category drug classes.
+  - DXM Calculator: Dosage plateau calculations by body weight.
+- `/about` — Sourcing policies (PsychonautWiki, Erowid, TripSit, WHO, FDA, PubMed) and E-E-A-T credentials.
+- `/privacy` — Local processing policy. All search queries and checker checks execute client-side in the browser. Zero server-side logging of substance searches.
+- `/disclaimer` — Legal waivers and crisis contact resources (Never Use Alone, Fireside Project).
+
+## Public API Endpoints
+
+- `/api/substances` — Retrieves substance entries.
+  - Query Params:
+    - `fields` (optional): Comma-separated list of fields to select (e.g. `fields=name,category,harmScore`).
+    - `limit` (optional): Limit query size.
+- `/api/substance-combos` — Retrieves specific substance-to-substance rules.
+- `/api/search?q={query}` — Returns fuzzy search results.
+- `/api/chemical-structure?name={name}&smiles={smiles}` — Proxy for chemical structure images from PubChem or Cactus NCI.

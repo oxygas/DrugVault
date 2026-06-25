@@ -44,12 +44,41 @@ export default async function SubstancePage({ params }: PageProps) {
     .filter(s => s.category === substance.category && s.name !== substance.name)
     .slice(0, 6)
 
+  // Dynamic Schema.org Drug structured data
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Drug',
+    name: substance.name,
+    alternateName: [
+      ...(substance.aliases || []),
+      ...(substance.brandNames || []),
+      ...(substance.streetNames || [])
+    ],
+    description: substance.pwSummary || `${substance.name} harm reduction safety profile, harm score ${substance.harmScore}/100, addiction score ${substance.addictionScore}/100, classification: ${substance.category}.`,
+    category: substance.category,
+    nonProprietaryName: substance.name,
+    overdosage: substance.overdose && substance.overdose.length > 0 ? substance.overdose.join('. ') : undefined,
+    safetyConsideration: [
+      ...(substance.safety || []),
+      ...(substance.risks || [])
+    ].slice(0, 8).join('. ') || undefined,
+    dosageForm: substance.pwRoas && substance.pwRoas.length > 0
+      ? substance.pwRoas.filter(Boolean).map(r => `${r.n} (${r.d?.t || 'unknown'} dose)`).join(', ')
+      : undefined,
+  }
+
   return (
-    <SubstanceDetail
-      substance={substance}
-      comboMatrix={comboMatrix}
-      relatedSubstances={relatedSubs}
-      allSubstances={allSubstances}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <SubstanceDetail
+        substance={substance}
+        comboMatrix={comboMatrix}
+        relatedSubstances={relatedSubs}
+        allSubstances={allSubstances}
+      />
+    </>
   )
 }

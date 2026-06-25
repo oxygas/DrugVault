@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import type { Substance, Category, ComboLevel, CategoryMeta, SubstanceCombo } from '@/lib/types'
 import { FEATURES, type FeatureConfig } from '@/features/registry'
 import StatsBar from '@/components/StatsBar'
@@ -77,13 +78,26 @@ interface HomeClientProps {
   categories: CategoryMeta[]
   comboMatrix: Record<string, ComboLevel>
   initialSubstances?: Substance[]
+  defaultSection?: Section
+  showHero?: boolean
 }
 
-export default function HomeClient({ stats, categories, comboMatrix, initialSubstances }: HomeClientProps) {
+export default function HomeClient({ stats, categories, comboMatrix, initialSubstances, defaultSection = 'substances', showHero = true }: HomeClientProps) {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [popupSubstance, setPopupSubstance] = useState<Substance | null>(null)
   const [activeStatModal, setActiveStatModal] = useState<string | null>(null)
-  const [activeSection, setActiveSection] = useState<Section>('substances')
+  const [activeSection, setActiveSection] = useState<Section>(defaultSection)
+  const [needsCombos, setNeedsCombos] = useState(false)
+  const [prevDefaultSection, setPrevDefaultSection] = useState(defaultSection)
+
+  if (defaultSection !== prevDefaultSection) {
+    setPrevDefaultSection(defaultSection)
+    setActiveSection(defaultSection)
+    if (defaultSection === 'matrix' || defaultSection === 'tools') {
+      setNeedsCombos(true)
+    }
+  }
+
   const [mounted, setMounted] = useState(false)
   // Start false (matches SSR) to avoid hydration mismatch, update in useEffect
   const [isTouch, setIsTouch] = useState(false)
@@ -118,8 +132,6 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
     gcTime: 3_600_000,    // 1 hr in memory
   })
 
-  // Lazy-load substance combos only when Matrix/Tools tab is active
-  const [needsCombos, setNeedsCombos] = useState(false)
   const { data: substanceCombos = [] } = useQuery({
     queryKey: ['substanceCombos'],
     queryFn: async () => {
@@ -229,7 +241,7 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
     if (section === 'matrix' || section === 'tools') {
       setNeedsCombos(true)
     }
-  }, [])
+  }, [setNeedsCombos])
 
   const handleStatClick = useCallback((label: string) => {
     playClick()
@@ -339,20 +351,42 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
         }}
       >
       <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center justify-between gap-3 sm:gap-4">
-        <div className="shrink-0" />
+        {showHero ? (
+          <div className="shrink-0" />
+        ) : (
+          <Link href="/" className="flex items-center gap-2 group shrink-0">
+            <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
+              <div className="absolute inset-[1px] rounded-[5px] sm:rounded-[7px] bg-[var(--bg)] flex items-center justify-center">
+                <span className="text-xs sm:text-sm font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
+              </div>
+            </div>
+            <span className="font-display font-bold text-base sm:text-lg tracking-tight hidden sm:inline">
+              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Gem</span>
+            </span>
+          </Link>
+        )}
           <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-full bg-[rgba(255,255,255,0.03)] border border-[var(--border)]">
-            {FEATURES.map(feature => (
-        <button
-          key={feature.key}
-          onClick={() => handleSectionChange(feature.key as Section)}
-          className={`nav-tab flex items-center gap-1.5 ${activeSection === feature.key ? 'active' : ''}`}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d={feature.icon} />
-                </svg>
-                <span className="hidden sm:inline">{feature.label}</span>
-              </button>
-            ))}
+            {FEATURES.map(feature => {
+              const href = feature.key === 'substances'
+                ? '/substances'
+                : feature.key === 'matrix'
+                  ? '/interactions?tab=matrix'
+                  : '/interactions?tab=checker'
+              return (
+                <Link
+                  key={feature.key}
+                  href={href}
+                  onClick={() => playSectionChange()}
+                  className={`nav-tab flex items-center gap-1.5 ${activeSection === feature.key ? 'active' : ''}`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d={feature.icon} />
+                  </svg>
+                  <span className="hidden sm:inline">{feature.label}</span>
+                </Link>
+              )
+            })}
             <button
               onClick={() => { playToggle(); toggleTheme() }}
               className="nav-tab flex items-center justify-center"
@@ -393,7 +427,15 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
         }}
       >
         <div className="w-full px-4 h-14 flex items-center justify-between">
-          <div className="shrink-0" />
+          {showHero ? (
+            <div className="shrink-0" />
+          ) : (
+            <Link href="/" className="flex items-center gap-1.5 group shrink-0">
+              <span className="font-display font-bold text-sm tracking-tight">
+                <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Gem</span>
+              </span>
+            </Link>
+          )}
           <div className="flex items-center gap-1">
             <button
               onClick={() => { playToggle(); toggleTheme() }}
@@ -419,32 +461,57 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
       </nav>
 
       <main className="w-full px-4 sm:px-8 py-0 sm:py-0 space-y-6 sm:space-y-10 flex-1">
-        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 bg-[var(--bg2)] border-b border-[var(--border)]">
-  <header className="text-center py-8 sm:py-14 lg:py-18 relative">
-    <div className="hero-glow" />
-    <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
-          <img src="/tripgem-logo-animated.gif" alt="TripGem" fetchPriority="high" className="tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
-          <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
-            <span className="tripgem-text-trip">Trip</span><span className="tripgem-text-gem">Gem</span>
-          </span>
-    </div>
-    <div className="hero-badge mx-auto">
-              <span className="dot" />
-              {stats.total} substances indexed
+        {!showHero ? (
+          <div className="pt-6 sm:pt-10 pb-2 border-b border-[var(--border)] mb-4">
+            <div className="flex items-center gap-3">
+              <div className="relative w-8 h-8 rounded-lg overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
+                <div className="absolute inset-[1px] rounded-[7px] bg-[var(--bg)] flex items-center justify-center">
+                  <span className="text-xs font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight text-white capitalize">
+                  {activeSection === 'substances' ? 'Substances Directory' : activeSection === 'matrix' ? 'Combination Matrix' : 'Interaction Checker'}
+                </h1>
+                <p className="text-xs sm:text-sm text-[var(--text4)] mt-0.5">
+                  {activeSection === 'substances' 
+                    ? 'Browse harm scores, dosage guides, and recovery options for 540+ substances.'
+                    : activeSection === 'matrix'
+                      ? 'Select cells to check general interaction risk between substance categories.'
+                      : 'Select any two substances to view detailed interaction notes and risk levels.'}
+                </p>
+              </div>
             </div>
-            <h1 className="text-4xl sm:text-7xl lg:text-8xl font-display font-extrabold leading-[1.05] tracking-tight gradient-text">
-              Evidence-Based<br />Harm Reduction
-            </h1>
-            <p className="text-base sm:text-xl text-[var(--text3)] max-w-xl mx-auto leading-relaxed"
-               style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' }}>
-              Comprehensive database with interaction checking, combination risk matrix, and dosage guides.
-            </p>
-            <div className="disclaimer-box max-w-lg mx-auto mt-3"
-                 style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both' }}>
-              Educational resource only. Not medical advice. Always consult healthcare professionals.
-            </div>
-          </header>
-        </div>
+          </div>
+        ) : (
+          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 bg-[var(--bg2)] border-b border-[var(--border)]">
+            <header className="text-center py-8 sm:py-14 lg:py-18 relative">
+              <div className="hero-glow" />
+              <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
+                    <img src="/tripgem-logo-animated.gif" alt="TripGem" fetchPriority="high" className="tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
+                    <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
+                      <span className="tripgem-text-trip">Trip</span><span className="tripgem-text-gem">Gem</span>
+                    </span>
+              </div>
+              <div className="hero-badge mx-auto">
+                <span className="dot" />
+                {stats.total} substances indexed
+              </div>
+              <h1 className="text-4xl sm:text-7xl lg:text-8xl font-display font-extrabold leading-[1.05] tracking-tight gradient-text">
+                Evidence-Based<br />Harm Reduction
+              </h1>
+              <p className="text-base sm:text-xl text-[var(--text3)] max-w-xl mx-auto leading-relaxed"
+                 style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' }}>
+                Comprehensive database with interaction checking, combination risk matrix, and dosage guides.
+              </p>
+              <div className="disclaimer-box max-w-lg mx-auto mt-3"
+                   style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both' }}>
+                Educational resource only. Not medical advice. Always consult healthcare professionals.
+              </div>
+            </header>
+          </div>
+        )}
 
         <section className="section-card w-full min-w-0" style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both', contain: 'none' }}>
           <StatsBar stats={stats} categories={categories} onStatClick={handleStatClick} />
@@ -460,9 +527,6 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
                 className="section-card w-full min-w-0"
                 style={{
                   contain: 'none',
-                  // Keep section in the DOM but hidden — avoids remounting React tree
-                  // on every tab switch and means the JS chunk + React render
-                  // work is paid once, not repeated.
                   display: isActive ? undefined : 'none',
                 }}
                 aria-hidden={!isActive}
@@ -489,10 +553,16 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
         <div className="flex items-center justify-around h-16">
           {FEATURES.map(feature => {
             const isActive = activeSection === feature.key
+            const href = feature.key === 'substances'
+              ? '/substances'
+              : feature.key === 'matrix'
+                ? '/interactions?tab=matrix'
+                : '/interactions?tab=checker'
             return (
-              <button
+              <Link
                 key={feature.key}
-                onClick={() => handleSectionChange(feature.key as Section)}
+                href={href}
+                onClick={() => playSectionChange()}
                 className={`flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-xl transition-all duration-200 relative ${
                   isActive
                     ? 'text-[var(--neon-magenta)]'
@@ -507,7 +577,7 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
                   <path strokeLinecap="round" strokeLinejoin="round" d={feature.icon} />
                 </svg>
                 <span className="text-[10px] font-medium tracking-wide">{feature.label}</span>
-              </button>
+              </Link>
             )
           })}
           <button
@@ -542,9 +612,16 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
           {' · '}<a href="https://tripsit.me" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text2)] transition-colors">TripSit</a>
           {' · '}Erowid · WHO
         </p>
-        <p className="text-[10px] text-[var(--text5)] mt-2 font-mono">
+        <p className="text-[10px] text-[var(--text5)] mt-2.5 font-mono flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
+          <Link href="/about" className="hover:text-[var(--text3)] transition-colors">About</Link>
+          <span className="opacity-30">·</span>
+          <Link href="/privacy" className="hover:text-[var(--text3)] transition-colors">Privacy</Link>
+          <span className="opacity-30">·</span>
+          <Link href="/disclaimer" className="hover:text-[var(--text3)] transition-colors">Disclaimer</Link>
+          <span className="opacity-30">·</span>
           <a href="https://github.com/oxygas/DrugVault" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text3)] transition-colors">Source</a>
-          {' · '}© {new Date().getFullYear()} · MIT
+          <span className="opacity-30">·</span>
+          <span className="opacity-60">© {new Date().getFullYear()} · MIT</span>
         </p>
       </footer>
 

@@ -73,4 +73,7 @@ const sentryOptions = {
   },
 }
 
-export default withSentryConfig(withSerwist(bundleAnalyzer(nextConfig)), sentryOptions)
+const config = withSerwist(bundleAnalyzer(nextConfig));
+export default process.env.SENTRY_AUTH_TOKEN
+  ? withSentryConfig(config, sentryOptions)
+  : config;

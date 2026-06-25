@@ -43,6 +43,7 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
   const [focused, setFocused] = useState(false)
   const [results, setResults] = useState<Substance[]>([])
   const [recentSearches, setRecentSearches] = useState<Substance['name'][]>(() => getRecentSearches())
+  const [activeIndex, setActiveIndex] = useState(-1)
   const localRef = useRef<HTMLInputElement>(null)
   const inputRef = externalInputRef ?? localRef
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -53,6 +54,37 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
     for (const s of substances) map.set(s.name, s)
     return map
   }, [substances])
+
+  // Get active selectable list based on query state
+  const activeList = useMemo(() => {
+    if (query.length >= 2) {
+      return results
+    }
+    if (query.length === 0) {
+      return recentSearches.map(name => substancesByName.get(name)).filter((s): s is Substance => s !== undefined)
+    }
+    return []
+  }, [query, results, recentSearches, substancesByName])
+
+  // Reset index when query/results change
+  const [prevQuery, setPrevQuery] = useState(query)
+  const [prevResults, setPrevResults] = useState(results)
+
+  if (query !== prevQuery || results !== prevResults) {
+    setPrevQuery(query)
+    setPrevResults(results)
+    setActiveIndex(-1)
+  }
+
+  // Scroll active item into view
+  useEffect(() => {
+    if (activeIndex >= 0) {
+      const el = document.getElementById(`search-result-${activeIndex}`)
+      if (el) {
+        el.scrollIntoView({ block: 'nearest' })
+      }
+    }
+  }, [activeIndex])
 
   const search = useCallback((q: string) => {
     setQuery(q)
@@ -76,6 +108,26 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
     setResults([])
     setFocused(false)
   }, [onSelect])
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!focused || activeList.length === 0) return
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActiveIndex(prev => (prev < activeList.length - 1 ? prev + 1 : 0))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex(prev => (prev > 0 ? prev - 1 : activeList.length - 1))
+    } else if (e.key === 'Enter') {
+      if (activeIndex >= 0 && activeIndex < activeList.length) {
+        e.preventDefault()
+        handleSelect(activeList[activeIndex])
+      }
+    } else if (e.key === 'Escape') {
+      setFocused(false)
+      inputRef.current?.blur()
+    }
+  }, [focused, activeList, activeIndex, handleSelect, inputRef])
 
   useEffect(() => {
     function handleClick(e: PointerEvent) {
@@ -106,13 +158,13 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
           <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--text4)] shrink-0 pointer-events-none" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
           </svg>
-
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={e => search(e.target.value)}
             onFocus={() => setFocused(true)}
+            onKeyDown={handleKeyDown}
             placeholder="Search substances..."
             className="flex-1 min-w-0 py-3 sm:py-3.5 lg:py-4 bg-transparent border-0 text-white placeholder:text-[var(--text4)] text-base focus:outline-none"
             aria-label="Search substances"
@@ -120,6 +172,7 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
             aria-expanded={focused && (results.length > 0 || recentSearches.length > 0)}
             aria-controls="search-results"
             aria-autocomplete="list"
+            aria-activedescendant={activeIndex >= 0 ? `search-result-${activeIndex}` : undefined}
             enterKeyHint="search"
             autoComplete="off"
           />
@@ -153,30 +206,35 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
                 <div className="px-3 py-1.5 text-[10px] font-mono text-[var(--text4)] uppercase tracking-wider">
                   Results
                 </div>
-                {results.map((s, i) => (
+                {results.map((s, i) => {
+                  const isHighlighted = activeIndex === i
+                  return (
                     <button
-                    key={s.name}
-                    id={`search-result-${i}`}
-                    role="option"
-                    aria-selected={false}
-                    onClick={() => handleSelect(s)}
-                    className="w-full px-4 py-3 lg:py-4 flex items-center gap-3 hover:bg-[rgba(255,255,255,0.05)] transition-colors text-left border-b border-[var(--border)] last:border-0"
-                    style={{ animation: `fadeInUp 0.2s ease-out ${i * 25}ms both` }}
-                  >
-                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[s.category], boxShadow: `0 0 6px ${CATEGORY_COLORS[s.category]}40` }} />
-                    <div className="min-w-0 flex-1">
-                      <div className="font-display font-medium text-sm lg:text-[15px] text-white truncate">{s.name}</div>
-                      <div className="text-[11px] lg:text-xs text-[var(--text3)] truncate">{s.category}</div>
-                    </div>
-                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{
-                      background: `${CATEGORY_COLORS[s.category]}12`,
-                      color: CATEGORY_COLORS[s.category],
-                      border: `1px solid ${CATEGORY_COLORS[s.category]}20`,
-                    }}>
-                      {s.harmScore}
-                    </span>
-                  </button>
-                ))}
+                      key={s.name}
+                      id={`search-result-${i}`}
+                      role="option"
+                      aria-selected={isHighlighted}
+                      onClick={() => handleSelect(s)}
+                      className={`w-full px-4 py-3 lg:py-4 flex items-center gap-3 transition-colors text-left border-b border-[var(--border)] last:border-0 ${
+                        isHighlighted ? 'bg-white/[0.08] shadow-[inset_3px_0_0_var(--accent)]' : 'hover:bg-[rgba(255,255,255,0.05)]'
+                      }`}
+                      style={{ animation: `fadeInUp 0.2s ease-out ${i * 25}ms both` }}
+                    >
+                      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[s.category], boxShadow: `0 0 6px ${CATEGORY_COLORS[s.category]}40` }} />
+                      <div className="min-w-0 flex-1">
+                        <div className="font-display font-medium text-sm lg:text-[15px] text-white truncate">{s.name}</div>
+                        <div className="text-[11px] lg:text-xs text-[var(--text3)] truncate">{s.category}</div>
+                      </div>
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{
+                        background: `${CATEGORY_COLORS[s.category]}12`,
+                        color: CATEGORY_COLORS[s.category],
+                        border: `1px solid ${CATEGORY_COLORS[s.category]}20`,
+                      }}>
+                        {s.harmScore}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
             )}
 
@@ -191,14 +249,20 @@ function SearchBarInner({ substances, onSelect, selectedCategories, onCategoryTo
                     Clear
                   </button>
                 </div>
-                {recentSearches.map(name => {
+                {recentSearches.map((name, i) => {
                   const s = substancesByName.get(name)
                   if (!s) return null
+                  const isHighlighted = activeIndex === i
                   return (
                     <button
                       key={name}
+                      id={`search-result-${i}`}
+                      role="option"
+                      aria-selected={isHighlighted}
                       onClick={() => handleSelect(s)}
-                      className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-[rgba(255,255,255,0.04)] transition-colors text-left border-b border-[var(--border)] last:border-0"
+                      className={`w-full px-4 py-2.5 flex items-center gap-3 transition-colors text-left border-b border-[var(--border)] last:border-0 ${
+                        isHighlighted ? 'bg-white/[0.08] shadow-[inset_3px_0_0_var(--accent)]' : 'hover:bg-[rgba(255,255,255,0.04)]'
+                      }`}
                     >
                       <svg className="w-3.5 h-3.5 text-[var(--text4)] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />

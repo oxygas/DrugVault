@@ -103,7 +103,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
               </div>
             </div>
             <span className="font-display font-bold text-base sm:text-lg tracking-tight hidden sm:inline">
-              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Dex</span>
+              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Gem</span>
             </span>
           </Link>
           <div className="h-5 sm:h-6 w-px bg-[var(--border)] flex-shrink-0" />
@@ -365,9 +365,16 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
           {' · '}<a href="https://tripsit.me" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text2)] transition-colors">TripSit</a>
           {' · '}Erowid · WHO
         </p>
-        <p className="text-[10px] text-[var(--text5)] mt-2 font-mono">
+        <p className="text-[10px] text-[var(--text5)] mt-2.5 font-mono flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
+          <Link href="/about" className="hover:text-[var(--text3)] transition-colors">About</Link>
+          <span className="opacity-30">·</span>
+          <Link href="/privacy" className="hover:text-[var(--text3)] transition-colors">Privacy</Link>
+          <span className="opacity-30">·</span>
+          <Link href="/disclaimer" className="hover:text-[var(--text3)] transition-colors">Disclaimer</Link>
+          <span className="opacity-30">·</span>
           <a href="https://github.com/oxygas/DrugVault" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text3)] transition-colors">Source</a>
-          {' · '}© {new Date().getFullYear()} · MIT
+          <span className="opacity-30">·</span>
+          <span className="opacity-60">© {new Date().getFullYear()} · MIT</span>
         </p>
       </footer>
 
