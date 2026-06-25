@@ -14,22 +14,10 @@ export default function DisclaimerPage() {
     <div className="flex flex-col flex-1 min-h-0 w-full mx-auto max-w-[1800px]">
       <nav className="nav-bar-desktop sticky top-0 z-50 border-b border-[var(--border)] scrolled bg-black/40 backdrop-blur-md">
         <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center gap-2 sm:gap-3">
-          <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
-            <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
-              <div className="absolute inset-[1px] rounded-[5px] sm:rounded-[7px] bg-[var(--bg)] flex items-center justify-center">
-                <span className="text-xs sm:text-sm font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
-              </div>
+          <Link href="/" className="flex items-center group flex-shrink-0" aria-label="Go home">
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
+              <img src="/logo.svg" alt="Gem" className="w-7 h-7 object-contain" />
             </div>
-            <span className="font-display font-bold text-base sm:text-lg tracking-tight hidden sm:inline">
-              <span className="text-[var(--accent2)]">Trip</span><span className="text-white">Gem</span>
-            </span>
-          </Link>
-          <div className="h-5 sm:h-6 w-px bg-[var(--border)] flex-shrink-0" />
-          <Link href="/" className="p-1.5 sm:p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text3)] hover:text-white flex-shrink-0" aria-label="Go home">
-            <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
           </Link>
           <span className="text-sm font-display font-bold text-white">Disclaimer</span>
         </div>
