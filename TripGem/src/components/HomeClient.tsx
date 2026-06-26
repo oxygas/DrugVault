@@ -351,15 +351,7 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
         }}
       >
       <div className="w-full px-5 sm:px-8 h-16 sm:h-18 flex items-center justify-between gap-3 sm:gap-4">
-        {showHero ? (
           <div className="shrink-0" />
-        ) : (
-          <Link href="/" className="flex items-center group shrink-0" aria-label="Go home">
-            <div className="relative w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
-              <img src="/logo.svg" alt="Gem" className="w-7 h-7 object-contain" />
-            </div>
-          </Link>
-        )}
           <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-full bg-[rgba(255,255,255,0.03)] border border-[var(--border)]">
             {FEATURES.map(feature => {
               const href = feature.key === 'substances'
@@ -421,15 +413,7 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
         }}
       >
         <div className="w-full px-4 h-14 flex items-center justify-between">
-          {showHero ? (
             <div className="shrink-0" />
-          ) : (
-            <Link href="/" className="flex items-center group shrink-0" aria-label="Go home">
-              <div className="relative w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center">
-                <img src="/logo.svg" alt="Gem" className="w-6 h-6 object-contain" />
-              </div>
-            </Link>
-          )}
           <div className="flex items-center gap-1">
             <button
               onClick={() => { playToggle(); toggleTheme() }}
