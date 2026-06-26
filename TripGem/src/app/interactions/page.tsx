@@ -53,7 +53,6 @@ export default async function InteractionsPage({ searchParams }: PageProps) {
       categories={categories}
       comboMatrix={comboMatrix}
       initialSubstances={initialSubstances}
-      showHero={false}
       defaultSection={defaultSection}
     />
   )

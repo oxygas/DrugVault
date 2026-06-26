@@ -46,7 +46,6 @@ export default async function SubstancesPage() {
       categories={categories}
       comboMatrix={comboMatrix}
       initialSubstances={initialSubstances}
-      showHero={false}
       defaultSection="substances"
     />
   )

@@ -79,10 +79,9 @@ interface HomeClientProps {
   comboMatrix: Record<string, ComboLevel>
   initialSubstances?: Substance[]
   defaultSection?: Section
-  showHero?: boolean
 }
 
-export default function HomeClient({ stats, categories, comboMatrix, initialSubstances, defaultSection = 'substances', showHero = true }: HomeClientProps) {
+export default function HomeClient({ stats, categories, comboMatrix, initialSubstances, defaultSection = 'substances' }: HomeClientProps) {
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [popupSubstance, setPopupSubstance] = useState<Substance | null>(null)
   const [activeStatModal, setActiveStatModal] = useState<string | null>(null)
@@ -439,57 +438,32 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
       </nav>
 
       <main className="w-full px-4 sm:px-8 py-0 sm:py-0 space-y-6 sm:space-y-10 flex-1">
-        {!showHero ? (
-          <div className="pt-6 sm:pt-10 pb-2 border-b border-[var(--border)] mb-4">
-            <div className="flex items-center gap-3">
-              <div className="relative w-8 h-8 rounded-lg overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-[var(--pink)]" />
-                <div className="absolute inset-[1px] rounded-[7px] bg-[var(--bg)] flex items-center justify-center">
-                  <span className="text-xs font-bold font-display bg-gradient-to-br from-[var(--accent2)] to-[var(--pink)] bg-clip-text text-transparent">T</span>
-                </div>
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight text-white capitalize">
-                  {activeSection === 'substances' ? 'Substances Directory' : activeSection === 'matrix' ? 'Combination Matrix' : 'Interaction Checker'}
-                </h1>
-                <p className="text-xs sm:text-sm text-[var(--text4)] mt-0.5">
-                  {activeSection === 'substances' 
-                    ? 'Browse harm scores, dosage guides, and recovery options for 540+ substances.'
-                    : activeSection === 'matrix'
-                      ? 'Select cells to check general interaction risk between substance categories.'
-                      : 'Select any two substances to view detailed interaction notes and risk levels.'}
-                </p>
-              </div>
+        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 bg-[var(--bg2)] border-b border-[var(--border)]">
+          <header className="text-center py-8 sm:py-14 lg:py-18 relative">
+            <div className="hero-glow" />
+            <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
+              <img src="/tripgem-logo-animated.gif" alt="TripGem" fetchPriority="high" className="tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
+              <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
+                <span className="tripgem-text-trip">Trip</span><span className="tripgem-text-gem">Gem</span>
+              </span>
             </div>
-          </div>
-        ) : (
-          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 bg-[var(--bg2)] border-b border-[var(--border)]">
-            <header className="text-center py-8 sm:py-14 lg:py-18 relative">
-              <div className="hero-glow" />
-              <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
-                    <img src="/tripgem-logo-animated.gif" alt="TripGem" fetchPriority="high" className="tripgem-logo w-20 h-20 sm:w-32 sm:h-32" />
-                    <span className="font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight leading-none">
-                      <span className="tripgem-text-trip">Trip</span><span className="tripgem-text-gem">Gem</span>
-                    </span>
-              </div>
-              <div className="hero-badge mx-auto">
-                <span className="dot" />
-                {stats.total} substances indexed
-              </div>
-              <h1 className="text-4xl sm:text-7xl lg:text-8xl font-display font-extrabold leading-[1.05] tracking-tight gradient-text">
-                Evidence-Based<br />Harm Reduction
-              </h1>
-              <p className="text-base sm:text-xl text-[var(--text3)] max-w-xl mx-auto leading-relaxed"
-                 style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' }}>
-                Comprehensive database with interaction checking, combination risk matrix, and dosage guides.
-              </p>
-              <div className="disclaimer-box max-w-lg mx-auto mt-3"
-                   style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both' }}>
-                Educational resource only. Not medical advice. Always consult healthcare professionals.
-              </div>
-            </header>
-          </div>
-        )}
+            <div className="hero-badge mx-auto">
+              <span className="dot" />
+              {stats.total} substances indexed
+            </div>
+            <h1 className="text-4xl sm:text-7xl lg:text-8xl font-display font-extrabold leading-[1.05] tracking-tight gradient-text">
+              Evidence-Based<br />Harm Reduction
+            </h1>
+            <p className="text-base sm:text-xl text-[var(--text3)] max-w-xl mx-auto leading-relaxed"
+               style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' }}>
+              Comprehensive database with interaction checking, combination risk matrix, and dosage guides.
+            </p>
+            <div className="disclaimer-box max-w-lg mx-auto mt-3"
+                 style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both' }}>
+              Educational resource only. Not medical advice. Always consult healthcare professionals.
+            </div>
+          </header>
+        </div>
 
         <section className="section-card w-full min-w-0" style={{ animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both', contain: 'none' }}>
           <StatsBar stats={stats} categories={categories} onStatClick={handleStatClick} />
