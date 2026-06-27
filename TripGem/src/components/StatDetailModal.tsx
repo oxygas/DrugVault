@@ -6,6 +6,7 @@ import type { Substance, ComboLevel, Category } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
 import { playClose, playClick } from '@/lib/ui-sounds'
 import { useDevice } from '@/lib/device'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 
 const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   Psychedelics: 'Substances that alter perception, cognition, and mood by primarily agonizing serotonin 5-HT2A receptors (e.g., LSD, Psilocybin, DMT).',
@@ -59,19 +60,7 @@ export default function StatDetailModal({ label, substances, comboMatrix, onClos
     return () => document.removeEventListener('keydown', handler)
   }, [onClose])
 
-  useEffect(() => {
-    const handleScroll = (e: Event) => {
-      const popup = popupRef.current
-      if (popup && popup.contains(e.target as Node)) return
-      e.preventDefault()
-    }
-    window.addEventListener('wheel', handleScroll, { passive: false })
-    window.addEventListener('touchmove', handleScroll, { passive: false })
-    return () => {
-      window.removeEventListener('wheel', handleScroll)
-      window.removeEventListener('touchmove', handleScroll)
-    }
-  }, [])
+  useScrollLock(true)
 
   const handlePullStart = (e: React.TouchEvent) => {
     const target = e.target as HTMLElement

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 import type { Substance, SubjectiveEffects, EffectEntry, TimelinePhase } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
 
@@ -28,22 +29,7 @@ export default function SubjectiveEffectsModal({ substance, isOpen, onClose }: S
     requestAnimationFrame(() => setVisible(true))
   }, [isOpen])
 
-  useEffect(() => {
-    if (!isOpen) return
-    const originalOverflow = document.body.style.overflow
-    const originalPaddingRight = document.body.style.paddingRight
-
-    document.body.style.overflow = 'hidden'
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`
-    }
-
-    return () => {
-      document.body.style.overflow = originalOverflow
-      document.body.style.paddingRight = originalPaddingRight
-    }
-  }, [isOpen])
+  useScrollLock(isOpen)
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }

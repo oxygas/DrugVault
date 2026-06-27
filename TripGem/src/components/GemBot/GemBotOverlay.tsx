@@ -4,6 +4,7 @@ import { useEffect, useRef, useCallback, useState } from 'react'
 import { X, ChevronDown, Sparkles } from 'lucide-react'
 import { useGemBotStore } from '@/stores/gembot'
 import { useAnalytics } from '@/lib/use-analytics'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 import { GemBotMessage } from './GemBotMessage'
 import { GemBotInput } from './GemBotInput'
 
@@ -68,17 +69,29 @@ export function GemBotOverlay() {
     return () => window.removeEventListener('keydown', handleKey)
   }, [isOpen, handleClose])
 
+  useScrollLock(isOpen)
+
   useEffect(() => {
     if (!isOpen) return
     if (!matchMedia('(pointer: coarse)').matches) return
     const vv = window.visualViewport
     if (!vv) return
+
+    let ticking = false
     const update = () => {
-      const el = overlayRef.current
-      if (!el) return
-      el.style.height = `${vv.height}px`
-      el.style.top = `${vv.offsetTop}px`
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const el = overlayRef.current
+          if (el && vv) {
+            el.style.height = `${vv.height}px`
+            el.style.top = `${vv.offsetTop}px`
+          }
+          ticking = false
+        })
+        ticking = true
+      }
     }
+
     update()
     vv.addEventListener('resize', update)
     vv.addEventListener('scroll', update)

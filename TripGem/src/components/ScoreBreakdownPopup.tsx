@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useUIStore, type ScoreKey } from '@/stores/ui'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 import type { Substance } from '@/lib/types'
 import { CATEGORY_COLORS } from '@/lib/types'
 import { playClose } from '@/lib/ui-sounds'
@@ -62,22 +63,7 @@ export default function ScoreBreakdownPopup({ substances }: ScoreBreakdownPopupP
     }
   }, [isOpen])
 
-  useEffect(() => {
-    if (!isOpen) return
-    const originalOverflow = document.body.style.overflow
-    const originalPaddingRight = document.body.style.paddingRight
-
-    document.body.style.overflow = 'hidden'
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`
-    }
-
-    return () => {
-      document.body.style.overflow = originalOverflow
-      document.body.style.paddingRight = originalPaddingRight
-    }
-  }, [isOpen])
+  useScrollLock(isOpen)
 
   if (!isOpen || !substanceName || !scoreKey) return null
 

@@ -142,6 +142,11 @@ function chime(
   if (rev) gain.connect(rev)
 
   osc.start(t); osc.stop(t + dur + 0.02)
+  osc.onended = () => {
+    osc.disconnect()
+    gain.disconnect()
+    filter.disconnect()
+  }
 }
 
 function chimeChord(

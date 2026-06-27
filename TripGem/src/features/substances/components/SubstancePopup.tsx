@@ -17,6 +17,7 @@ import ScoreBadges from '@/components/ScoreBadges'
 import HarmReductionCard from '@/components/HarmReductionCard'
 import CategoryHarmReduction from '@/components/CategoryHarmReduction'
 import { useUIStore } from '@/stores/ui'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 
 const SubjectiveEffectsModal = lazy(() => import('@/components/SubjectiveEffectsModal'))
 
@@ -258,44 +259,8 @@ export default function SubstancePopup({ substance: initialSubstance, isOpen, co
     setAnimKey(k => k + 1)
   }
 
-  // Scroll lock — prevents background from scrolling when popup is open
-  // We use event listeners instead of body overflow:hidden because overflow:hidden causes
-  // VirtuosoGrid to lose its height and scroll to the top of the page.
-  // NOTE: touchmove is registered with { passive: false } only when strictly needed.
-  // We pre-detect outside-popup touches in touchstart, then only call preventDefault
-  // for touchmove events that originated outside the popup — this avoids blocking
-  // native scroll optimisation for the vast majority of touches inside the popup.
-  useEffect(() => {
-    if (!isOpen) return
-
-    let touchOutsidePopup = false
-
-    const handleTouchStart = (e: TouchEvent) => {
-      const popup = popupRef.current
-      touchOutsidePopup = !!(popup && !popup.contains(e.target as Node))
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (touchOutsidePopup) {
-        e.preventDefault()
-      }
-    }
-
-    const handleWheel = (e: WheelEvent) => {
-      const popup = popupRef.current
-      if (popup && popup.contains(e.target as Node)) return
-      e.preventDefault()
-    }
-
-    window.addEventListener('touchstart', handleTouchStart, { passive: true })
-    window.addEventListener('touchmove', handleTouchMove, { passive: false })
-    window.addEventListener('wheel', handleWheel, { passive: false })
-    return () => {
-      window.removeEventListener('touchstart', handleTouchStart)
-      window.removeEventListener('touchmove', handleTouchMove)
-      window.removeEventListener('wheel', handleWheel)
-    }
-  }, [isOpen])
+  // Scroll lock background
+  useScrollLock(isOpen)
 
   const relatedSubs = useMemo(() =>
     initialSubstance

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 import { useSettingsStore } from '@/stores/settings'
 import type { UserLevel } from '@/lib/types'
 import { USER_LEVEL_INFO } from '@/lib/user-level'
@@ -26,22 +27,7 @@ export default function UserSettings() {
   const [weightInput, setWeightInput] = useState(String(bodyWeight))
   const containerRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => {
-    if (!settingsOpen) return
-    const originalOverflow = document.body.style.overflow
-    const originalPaddingRight = document.body.style.paddingRight
-
-    document.body.style.overflow = 'hidden'
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`
-    }
-
-    return () => {
-      document.body.style.overflow = originalOverflow
-      document.body.style.paddingRight = originalPaddingRight
-    }
-  }, [settingsOpen])
+  useScrollLock(settingsOpen)
 
   if (!settingsOpen) return null
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef } from 'react'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 import { useThemeStore } from '@/stores/theme'
 import { THEMES } from '@/themes/config'
 
@@ -17,22 +18,7 @@ export default function ThemeSelector() {
 
   const containerRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => {
-    if (!themeOpen) return
-    const originalOverflow = document.body.style.overflow
-    const originalPaddingRight = document.body.style.paddingRight
-
-    document.body.style.overflow = 'hidden'
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`
-    }
-
-    return () => {
-      document.body.style.overflow = originalOverflow
-      document.body.style.paddingRight = originalPaddingRight
-    }
-  }, [themeOpen])
+  useScrollLock(themeOpen)
 
   useEffect(() => {
     if (!themeOpen) return
