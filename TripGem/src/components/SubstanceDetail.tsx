@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Skull } from 'lucide-react'
+import ShareLinkButton from '@/components/ShareLinkButton'
 import type { Substance, Category, ComboLevel } from '@/lib/types'
 import { CATEGORY_COLORS, HARM_LEVEL_COLORS, COMBO_LEVEL_COLORS, COMBO_LEVEL_LABELS, COMBO_DESCRIPTIONS } from '@/lib/types'
 import { slugify } from '@/lib/slugify'
@@ -149,7 +150,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 sm:py-5 bg-[rgba(10,6,22,0.65)] border-b border-[var(--border)]">
         <div className="flex items-center gap-2 mb-3">
           <div className="w-1.5 h-7 sm:h-8 rounded-full" style={{ background: catColor, boxShadow: `0 0 12px ${catColor}40` }} />
-          <div>
+          <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] sm:text-sm">
               <span className="text-[var(--text3)] font-display">{substance.category}</span>
               <span
@@ -161,6 +162,7 @@ export default function SubstanceDetail({ substance, comboMatrix, relatedSubstan
               {substance.ld50 && <span className="text-[var(--text4)] font-mono hidden sm:inline">LD50: {substance.ld50}</span>}
             </div>
           </div>
+          <ShareLinkButton substanceName={substance.name} />
         </div>
         
         <ScoreBadges substance={substance} className="mb-4" />
