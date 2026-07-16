@@ -9,33 +9,6 @@ export interface FeatureConfig {
   component: React.ComponentType<any>
 }
 
-/**
- * Wraps a dynamic import with retry logic — retries up to `maxRetries` times
- * with exponential backoff before giving up.  Handles the common case where a
- * chunk fails to load due to a network glitch, stale SW cache, or a Vercel
- * deployment swapping assets out from under a long-lived tab.
- */
-function retryDynamicImport<T>(
-  importFn: () => Promise<T>,
-  maxRetries = 3,
-): () => Promise<T> {
-  return async () => {
-    let lastError: unknown
-    for (let i = 0; i <= maxRetries; i++) {
-      try {
-        return await importFn()
-      } catch (err) {
-        lastError = err
-        if (i < maxRetries) {
-          // Exponential backoff: 500ms, 1s, 2s
-          await new Promise(r => setTimeout(r, 500 * Math.pow(2, i)))
-        }
-      }
-    }
-    throw lastError
-  }
-}
-
 /** Lightweight skeleton shown while a section chunk loads. */
 function SectionSkeleton() {
   return createElement('div', {
@@ -59,19 +32,20 @@ function SectionSkeleton() {
   )
 }
 
-// Section components now use retry-capable imports and skeleton loading UI.
+// Section components now use standard dynamic imports and skeleton loading UI.
+// (Next.js requires the import to be inline so the Webpack bundler can track it)
 const SubstancesSection = dynamic(
-  retryDynamicImport(() => import('@/features/substances/components/SubstancesSection')),
+  () => import('@/features/substances/components/SubstancesSection'),
   { loading: SectionSkeleton }
 )
 
 const MatrixSection = dynamic(
-  retryDynamicImport(() => import('@/features/matrix/components/MatrixSection')),
+  () => import('@/features/matrix/components/MatrixSection'),
   { loading: SectionSkeleton }
 )
 
 const ToolsSection = dynamic(
-  retryDynamicImport(() => import('@/features/tools/components/ToolsSection')),
+  () => import('@/features/tools/components/ToolsSection'),
   { loading: SectionSkeleton }
 )
 

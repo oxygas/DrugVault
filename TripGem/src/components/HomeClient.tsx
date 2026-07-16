@@ -14,24 +14,15 @@ import { useUIStore } from '@/stores/ui'
 import { useGemBotStore } from '@/stores/gembot'
 import { playClick, playOpen, playClose, playToggle, playSectionChange, playSearch, hydrateUIsounds, setUIsoundsEnabled } from '@/lib/ui-sounds'
 
-/** Retry a dynamic import up to 3 times with exponential backoff. */
-async function retryImport<T>(fn: () => Promise<T>, retries = 3): Promise<T> {
-  for (let i = 0; ; i++) {
-    try { return await fn() }
-    catch (err) {
-      if (i >= retries) throw err
-      await new Promise(r => setTimeout(r, 500 * Math.pow(2, i)))
-    }
-  }
-}
 
-const KeyboardShortcutsModal = dynamic(() => retryImport(() => import('@/components/KeyboardShortcutsModal')))
-const UserSettings = dynamic(() => retryImport(() => import('@/components/UserSettings')))
-const ThemeSelector = dynamic(() => retryImport(() => import('@/components/ThemeSelector')))
-const OnboardingModal = dynamic(() => retryImport(() => import('@/components/OnboardingModal')))
-const ScoreBreakdownPopup = dynamic(() => retryImport(() => import('@/components/ScoreBreakdownPopup')))
 
-const SubstancePopup = dynamic(() => retryImport(() => import('@/features/substances/components/SubstancePopup')), {
+const KeyboardShortcutsModal = dynamic(() => import('@/components/KeyboardShortcutsModal'))
+const UserSettings = dynamic(() => import('@/components/UserSettings'))
+const ThemeSelector = dynamic(() => import('@/components/ThemeSelector'))
+const OnboardingModal = dynamic(() => import('@/components/OnboardingModal'))
+const ScoreBreakdownPopup = dynamic(() => import('@/components/ScoreBreakdownPopup'))
+
+const SubstancePopup = dynamic(() => import('@/features/substances/components/SubstancePopup'), {
   loading: () => (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
@@ -39,7 +30,7 @@ const SubstancePopup = dynamic(() => retryImport(() => import('@/features/substa
   ),
 })
 
-const StatDetailModal = dynamic(() => retryImport(() => import('@/components/StatDetailModal')), {
+const StatDetailModal = dynamic(() => import('@/components/StatDetailModal'), {
   ssr: false,
   loading: () => null
 })
