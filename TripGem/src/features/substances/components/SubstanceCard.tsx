@@ -74,15 +74,15 @@ function SubstanceCardInner({ substance, onClick, style }: SubstanceCardProps) {
       tabIndex={0}
       aria-label={`View ${substance.name}`}
     >
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{
-        background: `radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${catColor}15, transparent 40%)`
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none mix-blend-screen" style={{
+        background: `radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${catColor}20, transparent 40%)`
       }} />
       <div className="neon-stripe" />
       <div className="diagonal-shine" />
 
       <div className="space-y-[3px]">
       <div className="flex items-center gap-1.5 min-h-[18px]">
-        <h3 className="card-name font-display font-semibold text-sm text-white truncate">
+        <h3 className="card-name font-display font-semibold text-sm text-white truncate transition-all duration-300 group-hover:text-[color:var(--tube-c)] group-hover:drop-shadow-[0_0_8px_var(--tube-c)]">
           {substance.name}
         </h3>
         <div className="flex items-center gap-[2px] ml-auto shrink-0">

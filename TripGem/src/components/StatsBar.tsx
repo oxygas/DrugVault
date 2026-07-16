@@ -129,16 +129,24 @@ const StatsBar = React.memo(function StatsBar({ stats, categories, onStatClick }
       {items.map((item, i) => {
         const value = stats[item.valueKey]
         const isClickable = item.label !== 'Substances'
-        const className = `metric-card group text-center p-3 sm:p-4 glass-aero relative transition-all duration-300 w-full outline-none rounded-2xl overflow-hidden ${
+        const className = `metric-card group text-center p-3 sm:p-4 relative transition-all duration-500 w-full outline-none rounded-2xl overflow-hidden ${
           isClickable 
-            ? 'hover:bg-white/5 active:scale-[0.97] cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--accent)]' 
+            ? 'hover:-translate-y-1 hover:shadow-lg hover:shadow-[color:var(--metric-c)]/20 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--accent)]' 
             : 'cursor-default'
         }`
-        const style = { '--metric-c': item.color, contain: 'none', animationDelay: `${i * 80}ms` } as React.CSSProperties
+        const style = { 
+          '--metric-c': item.color, 
+          contain: 'none', 
+          animationDelay: `${i * 80}ms`,
+          background: 'linear-gradient(145deg, rgba(20,20,20,0.4) 0%, rgba(5,5,5,0.7) 100%)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255,255,255,0.05)',
+        } as React.CSSProperties
         const innerContent = (
           <>
             {/* Subtle background glow on hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             
             <div className="flex items-center justify-center mb-4 relative z-10 pt-2">
               <item.Svg color={item.color} />

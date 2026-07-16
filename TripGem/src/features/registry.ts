@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import { createElement } from 'react'
 
 export interface FeatureConfig {
   key: string
@@ -8,22 +9,70 @@ export interface FeatureConfig {
   component: React.ComponentType<any>
 }
 
-// All section components load with no loading UI — they mount hidden in the background
-// and are revealed instantly when the user switches tabs. The JS chunks are also
-// eagerly preloaded by HomeClient after mount via requestIdleCallback.
+/**
+ * Wraps a dynamic import with retry logic — retries up to `maxRetries` times
+ * with exponential backoff before giving up.  Handles the common case where a
+ * chunk fails to load due to a network glitch, stale SW cache, or a Vercel
+ * deployment swapping assets out from under a long-lived tab.
+ */
+function retryDynamicImport<T>(
+  importFn: () => Promise<T>,
+  maxRetries = 3,
+): () => Promise<T> {
+  return async () => {
+    let lastError: unknown
+    for (let i = 0; i <= maxRetries; i++) {
+      try {
+        return await importFn()
+      } catch (err) {
+        lastError = err
+        if (i < maxRetries) {
+          // Exponential backoff: 500ms, 1s, 2s
+          await new Promise(r => setTimeout(r, 500 * Math.pow(2, i)))
+        }
+      }
+    }
+    throw lastError
+  }
+}
+
+/** Lightweight skeleton shown while a section chunk loads. */
+function SectionSkeleton() {
+  return createElement('div', {
+    className: 'w-full space-y-4 animate-pulse py-8',
+    'aria-label': 'Loading section…',
+  },
+    createElement('div', { className: 'h-10 rounded-xl skeleton-shimmer max-w-lg mx-auto' }),
+    createElement('div', { className: 'grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4' },
+      Array.from({ length: 8 }, (_, i) =>
+        createElement('div', {
+          key: i,
+          className: 'rounded-xl skeleton-shimmer p-4 space-y-3',
+          style: { animationDelay: `${i * 60}ms` },
+        },
+          createElement('div', { className: 'h-4 w-3/4 rounded bg-[rgba(var(--accent-rgb),0.1)]' }),
+          createElement('div', { className: 'h-3 w-full rounded bg-[rgba(var(--accent2-rgb),0.08)]' }),
+          createElement('div', { className: 'h-3 w-1/2 rounded bg-[rgba(var(--accent-rgb),0.06)]' }),
+        )
+      )
+    )
+  )
+}
+
+// Section components now use retry-capable imports and skeleton loading UI.
 const SubstancesSection = dynamic(
-  () => import('@/features/substances/components/SubstancesSection'),
-  { loading: () => null }
+  retryDynamicImport(() => import('@/features/substances/components/SubstancesSection')),
+  { loading: SectionSkeleton }
 )
 
 const MatrixSection = dynamic(
-  () => import('@/features/matrix/components/MatrixSection'),
-  { loading: () => null }
+  retryDynamicImport(() => import('@/features/matrix/components/MatrixSection')),
+  { loading: SectionSkeleton }
 )
 
 const ToolsSection = dynamic(
-  () => import('@/features/tools/components/ToolsSection'),
-  { loading: () => null }
+  retryDynamicImport(() => import('@/features/tools/components/ToolsSection')),
+  { loading: SectionSkeleton }
 )
 
 export const FEATURES: FeatureConfig[] = [
