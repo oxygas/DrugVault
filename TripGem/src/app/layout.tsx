@@ -150,10 +150,17 @@ export default async function RootLayout({
           }}
         />
         <Script
+          id="sw-cleanup"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(reg){reg.unregister()})});if('caches' in window){caches.keys().then(function(n){n.forEach(function(n){caches.delete(n)})})}}})()`,
+          }}
+        />
+        <Script
           id="chunk-error-recovery"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: `(function(){window.addEventListener('error',function(e){var m=e&&e.message||'';if(m.indexOf('Loading chunk')!==-1||m.indexOf('ChunkLoadError')!==-1||m.indexOf('Failed to fetch dynamically imported module')!==-1){var k='tripgem-chunk-reload';var v=sessionStorage.getItem(k);if(!v||Date.now()-Number(v)>30000){sessionStorage.setItem(k,String(Date.now()));window.location.reload()}}})})()`,
+            __html: `(function(){window.addEventListener('error',function(e){var m=e&&e.message||'';if(m.indexOf('Loading chunk')!==-1||m.indexOf('ChunkLoadError')!==-1||m.indexOf('Failed to fetch dynamically imported module')!==-1||m.indexOf('dynamically imported module')!==-1){var k='tripgem-chunk-reload';var v=sessionStorage.getItem(k);if(!v||Date.now()-Number(v)>10000){sessionStorage.setItem(k,String(Date.now()));window.location.reload(true)}}}})`,
           }}
         />
         <Script
