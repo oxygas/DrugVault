@@ -40,6 +40,7 @@ export default function VisualEffects() {
   const [isTouch, setIsTouch] = useState(false)
   const [showDeferred, setShowDeferred] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const glowRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const mql = matchMedia('(pointer: coarse)')
@@ -122,7 +123,6 @@ export default function VisualEffects() {
   }, [isHome, isTouch])
 
 
-
   // Canvas particle system
   useEffect(() => {
     if (!isHome || isTouch || !showDeferred) return
@@ -169,18 +169,18 @@ export default function VisualEffects() {
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 
     // Generate particles
-    const particleCount = 45
+    const particleCount = 50
     const particles: Particle[] = []
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        size: 1.2 + Math.random() * 2.8,
-        speedY: -(0.3 + Math.random() * 0.7), // floating upwards
+        size: 1.2 + Math.random() * 3,
+        speedY: -(0.3 + Math.random() * 0.7),
         driftSpeed: 0.12 + Math.random() * 0.28,
         driftPhase: Math.random() * Math.PI * 2,
         colorIndex: i % 6,
-        isSparkle: i >= 35, // top 10 are sparkles
+        isSparkle: i >= 40,
         pulseSpeed: 0.04 + Math.random() * 0.04,
         pulsePhase: Math.random() * Math.PI * 2,
       })
@@ -189,7 +189,6 @@ export default function VisualEffects() {
     const drawAndUpdate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // Update and draw particles
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i]
 
@@ -271,6 +270,27 @@ export default function VisualEffects() {
     }
   }, [isHome, isTouch, showDeferred])
 
+  // Mouse glow effect
+  useEffect(() => {
+    if (isTouch) return
+    
+    let ticking = false
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (glowRef.current) {
+            glowRef.current.style.transform = `translate3d(${e.clientX - 300}px, ${e.clientY - 300}px, 0)`
+          }
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+    
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [isTouch])
+
   return (
     <>
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
@@ -291,7 +311,7 @@ export default function VisualEffects() {
       {isHome && showDeferred && !isTouch && (
         <canvas ref={canvasRef} className="particles-canvas particles" aria-hidden="true" />
       )}
-      <div className="mouse-glow" />
+      <div ref={glowRef} className="mouse-glow" />
     </>
   )
 }

@@ -44,3 +44,10 @@ export async function validateToken(token: string): Promise<boolean> {
     return false
   }
 }
+
+export function clearCookie() {
+  if (typeof document !== 'undefined') {
+    document.cookie = 'tripgem_admin=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax'
+    window.location.href = '/admin/login'
+  }
+}

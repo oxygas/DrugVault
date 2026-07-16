@@ -34,7 +34,7 @@ export default function ThemeSelector() {
   return (
     <div
       className="fixed inset-0 z-[111] flex items-end sm:items-center justify-center"
-      style={{ background: 'rgba(0,0,0,0.6)', animation: 'fadeIn 0.15s ease-out' }}
+      style={{ background: 'rgba(0,0,0,0.7)', animation: 'fadeIn 0.15s ease-out' }}
       onClick={(e) => { if (e.target === e.currentTarget) setThemeOpen(false) }}
       role="dialog"
       aria-modal="true"
@@ -42,9 +42,9 @@ export default function ThemeSelector() {
     >
       <div
         ref={containerRef}
-        className="w-full sm:max-w-2xl rounded-t-2xl sm:rounded-2xl overflow-hidden border border-[var(--border)]"
+        className="w-full sm:max-w-4xl rounded-t-2xl sm:rounded-2xl overflow-hidden border border-[var(--border)]"
         style={{
-          background: 'rgba(8,8,24,0.97)',
+          background: 'rgba(8,8,24,0.98)',
           transform: 'translateY(0)',
           willChange: 'transform',
           animation: 'slideUp 0.25s cubic-bezier(0.16,1,0.3,1)',
@@ -73,14 +73,14 @@ export default function ThemeSelector() {
           <p className="text-xs text-[var(--text4)] font-mono uppercase tracking-[0.15em] mb-3">
             Choose your vibe
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {grid.map(({ t, active }) => (
               <button
                 key={t.id}
                 onClick={() => setTheme(t.id)}
-                className={`flex flex-col items-start gap-2 p-3 rounded-xl border text-left ${
+                className={`flex flex-col items-start gap-2.5 p-4 rounded-xl border text-left ${
                   active
-                    ? 'bg-[rgba(var(--accent-rgb),0.1)] border-[var(--accent2)]'
+                    ? 'bg-[rgba(var(--accent-rgb),0.1)] border-[var(--accent2)] ring-1 ring-[var(--accent2)]'
                     : 'bg-[rgba(255,255,255,0.02)] border-[var(--border)] hover:border-[var(--border2)] hover:bg-[rgba(255,255,255,0.04)]'
                 }`}
               >
@@ -88,7 +88,7 @@ export default function ThemeSelector() {
                   {t.preview.map((c, i) => (
                     <div
                       key={i}
-                      className="h-5 flex-1 rounded-sm first:rounded-l-md last:rounded-r-md"
+                      className="h-6 flex-1 rounded-sm first:rounded-l-md last:rounded-r-md"
                       style={{ background: c }}
                     />
                   ))}
