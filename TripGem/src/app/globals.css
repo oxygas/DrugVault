@@ -674,6 +674,38 @@
   --cyan-rgb: 255, 255, 255;
   --amber-rgb: 204, 204, 204;
 }
+[data-theme="obsidian"] {
+  --bg: #020202;
+  --bg2: #020202;
+  --bg3: #050505;
+  --bg-rgb: 2, 2, 2;
+  --bg2-rgb: 2, 2, 2;
+  --bg3-rgb: 5, 5, 5;
+  --surface: rgba(0, 0, 0, 0.65);
+  --surface-hover: rgba(0, 0, 0, 0.75);
+  --surface-solid: rgba(0, 0, 0, 0.92);
+  --surface-elevated: rgba(5, 5, 5, 0.95);
+  --surface-rgb: 0, 0, 0;
+  --border: rgba(226, 232, 240, 0.10);
+  --border2: rgba(251, 191, 36, 0.18);
+  --border3: rgba(226, 232, 240, 0.28);
+  --accent: #e2e8f0;
+  --accent2: #fbbf24;
+  --accent3: #94a3b8;
+  --neon-magenta: #e2e8f0;
+  --hot-pink: #fbbf24;
+  --plasma-red: #94a3b8;
+  --deep-crimson: #475569;
+  --laser-cyan: #e2e8f0;
+  --amber-glow: #fbbf24;
+  --accent-rgb: 226, 232, 240;
+  --accent2-rgb: 251, 191, 36;
+  --hot-pink-rgb: 251, 191, 36;
+  --plasma-red-rgb: 148, 163, 184;
+  --deep-crimson-rgb: 71, 85, 105;
+  --cyan-rgb: 226, 232, 240;
+  --amber-rgb: 251, 191, 36;
+}
 
 /* ══ Base & Reset ══ */
 * { margin: 0; padding: 0; box-sizing: border-box; }

@@ -89,7 +89,7 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
   const [popupSubstance, setPopupSubstance] = useState<Substance | null>(null)
   const [activeStatModal, setActiveStatModal] = useState<string | null>(null)
   const [activeSection, setActiveSection] = useState<Section>(defaultSection)
-  const [needsCombos, setNeedsCombos] = useState(false)
+  const [needsCombos, setNeedsCombos] = useState(defaultSection === 'matrix' || defaultSection === 'tools')
   const [prevDefaultSection, setPrevDefaultSection] = useState(defaultSection)
 
   if (defaultSection !== prevDefaultSection) {
@@ -108,15 +108,14 @@ export default function HomeClient({ stats, categories, comboMatrix, initialSubs
 
   const queryClient = useQueryClient()
 
-  // Seed the React Query cache with server-prefetched data — this makes
-  // the useQuery below return data immediately with no network request.
-  // We do this before useQuery so it sees the data on its very first run.
-  if (initialSubstances && initialSubstances.length > 0) {
-    const cached = queryClient.getQueryData<Substance[]>(['substances'])
-    if (!cached || cached.length === 0) {
-      queryClient.setQueryData(['substances'], initialSubstances)
+  useEffect(() => {
+    if (initialSubstances && initialSubstances.length > 0) {
+      const cached = queryClient.getQueryData<Substance[]>(['substances'])
+      if (!cached || cached.length === 0) {
+        queryClient.setQueryData(['substances'], initialSubstances)
+      }
     }
-  }
+  }, [initialSubstances, queryClient])
 
   const { data: substances = [] } = useQuery({
     queryKey: ['substances'],
