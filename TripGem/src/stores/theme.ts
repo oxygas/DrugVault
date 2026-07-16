@@ -1,7 +1,7 @@
 'use client'
 
 import { create } from 'zustand'
-import { STORAGE_KEY, DEFAULT_THEME, type ThemeDefinition } from '@/themes/config'
+import { STORAGE_KEY, DEFAULT_THEME, THEMES, type ThemeDefinition } from '@/themes/config'
 
 function loadTheme(): string {
   if (typeof window === 'undefined') return DEFAULT_THEME
@@ -18,10 +18,6 @@ function saveTheme(id: string) {
   } catch {}
 }
 
-function lockScroll(lock: boolean) {
-  // Removed to prevent layout shift and VirtuosoGrid breaking
-}
-
 interface ThemeState {
   themeId: string
   themeOpen: boolean
@@ -29,6 +25,7 @@ interface ThemeState {
   setTheme: (id: string) => void
   setThemeOpen: (o: boolean) => void
   toggleTheme: () => void
+  randomTheme: () => void
   hydrate: () => void
 }
 
@@ -43,15 +40,14 @@ export const useThemeStore = create<ThemeState>()((set, get) => ({
       document.documentElement.setAttribute('data-theme', id)
     }
   },
-  setThemeOpen: (o) => {
-    set({ themeOpen: o })
-    lockScroll(o)
+  setThemeOpen: (o) => set({ themeOpen: o }),
+  toggleTheme: () => set((s) => ({ themeOpen: !s.themeOpen })),
+  randomTheme: () => {
+    const current = get().themeId
+    const others = THEMES.filter(t => t.id !== current)
+    const pick = others[Math.floor(Math.random() * others.length)]
+    get().setTheme(pick.id)
   },
-  toggleTheme: () => set((s) => {
-    const next = !s.themeOpen
-    lockScroll(next)
-    return { themeOpen: next }
-  }),
   hydrate: () => {
     if (get().hydrated) return
     const id = loadTheme()

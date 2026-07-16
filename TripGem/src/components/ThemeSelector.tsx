@@ -13,6 +13,23 @@ const THEME_GROUPS = [
   { label: 'Soft', ids: ['rose-gold', 'sakura', 'emerald'] },
 ]
 
+function buildGroupedThemes() {
+  const grouped = THEME_GROUPS.map(g => ({
+    ...g,
+    themes: g.ids.map(id => THEMES.find(t => t.id === id)).filter(Boolean) as ThemeDefinition[],
+  })).filter(g => g.themes.length > 0)
+
+  const groupedIds = new Set(THEME_GROUPS.flatMap(g => g.ids))
+  const ungrouped = THEMES.filter(t => !groupedIds.has(t.id))
+  if (ungrouped.length > 0) {
+    grouped.push({ label: 'Other', ids: ungrouped.map(t => t.id), themes: ungrouped })
+  }
+  return grouped
+}
+
+const GROUPED_THEMES = buildGroupedThemes()
+const FLAT_THEME_IDS = GROUPED_THEMES.flatMap(g => g.themes.map(t => t.id))
+
 function PreviewBanner({ theme }: { theme: ThemeDefinition }) {
   return (
     <div
@@ -44,6 +61,7 @@ export default function ThemeSelector() {
   const themeOpen = useThemeStore(s => s.themeOpen)
   const setTheme = useThemeStore(s => s.setTheme)
   const setThemeOpen = useThemeStore(s => s.setThemeOpen)
+  const randomTheme = useThemeStore(s => s.randomTheme)
 
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const previewTheme = useMemo(
@@ -52,34 +70,58 @@ export default function ThemeSelector() {
   )
 
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const themeButtonsRef = useRef<Map<string, HTMLButtonElement>>(new Map())
+  const [focusedId, setFocusedId] = useState<string | null>(null)
   useScrollLock(themeOpen)
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setThemeOpen(false)
+      return
+    }
+
+    if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return
+
+    e.preventDefault()
+    const currentIdx = focusedId ? FLAT_THEME_IDS.indexOf(focusedId) : FLAT_THEME_IDS.indexOf(themeId)
+    if (currentIdx === -1) return
+
+    const cols = window.innerWidth >= 1024 ? 4 : window.innerWidth >= 640 ? 3 : 2
+    let nextIdx = currentIdx
+
+    switch (e.key) {
+      case 'ArrowRight': nextIdx = Math.min(currentIdx + 1, FLAT_THEME_IDS.length - 1); break
+      case 'ArrowLeft': nextIdx = Math.max(currentIdx - 1, 0); break
+      case 'ArrowDown': nextIdx = Math.min(currentIdx + cols, FLAT_THEME_IDS.length - 1); break
+      case 'ArrowUp': nextIdx = Math.max(currentIdx - cols, 0); break
+    }
+
+    const nextId = FLAT_THEME_IDS[nextIdx]
+    setFocusedId(nextId)
+    setHoveredId(nextId)
+    themeButtonsRef.current.get(nextId)?.focus()
+  }, [focusedId, themeId, setThemeOpen])
 
   useEffect(() => {
     if (!themeOpen) return
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setThemeOpen(false)
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [themeOpen, handleKeyDown])
+
+  useEffect(() => {
+    if (themeOpen && themeId) {
+      requestAnimationFrame(() => {
+        setFocusedId(themeId)
+        themeButtonsRef.current.get(themeId)?.focus()
+      })
     }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [themeOpen, setThemeOpen])
+  }, [themeOpen, themeId])
 
   const handleThemeHover = useCallback((id: string | null) => {
     setHoveredId(id)
   }, [])
 
   if (!themeOpen) return null
-
-  const groupedThemes = THEME_GROUPS.map(g => ({
-    ...g,
-    themes: g.ids.map(id => THEMES.find(t => t.id === id)).filter(Boolean) as ThemeDefinition[],
-  })).filter(g => g.themes.length > 0)
-
-  // Any themes not in a group
-  const groupedIds = new Set(THEME_GROUPS.flatMap(g => g.ids))
-  const ungrouped = THEMES.filter(t => !groupedIds.has(t.id))
-  if (ungrouped.length > 0) {
-    groupedThemes.push({ label: 'Other', ids: ungrouped.map(t => t.id), themes: ungrouped })
-  }
 
   return (
     <div
@@ -112,15 +154,27 @@ export default function ThemeSelector() {
               {THEMES.length}
             </span>
           </div>
-          <button
-            onClick={() => setThemeOpen(false)}
-            className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text4)] hover:text-white"
-            aria-label="Close"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={randomTheme}
+              className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text4)] hover:text-[var(--accent2)]"
+              aria-label="Random theme"
+              title="Random theme"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setThemeOpen(false)}
+              className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.06)] transition-colors text-[var(--text4)] hover:text-white"
+              aria-label="Close"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Scrollable content */}
@@ -132,21 +186,26 @@ export default function ThemeSelector() {
 
           {/* Grouped theme sections */}
           <div className="space-y-5">
-            {groupedThemes.map(group => (
+            {GROUPED_THEMES.map(group => (
               <div key={group.label}>
                 <p className="text-[10px] text-[var(--text4)] font-mono uppercase tracking-[0.2em] mb-2.5 px-1">
                   {group.label}
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5" role="radiogroup" aria-label={`${group.label} themes`}>
                   {group.themes.map(t => {
                     const active = themeId === t.id
                     return (
                       <button
                         key={t.id}
+                        ref={(el) => { if (el) themeButtonsRef.current.set(t.id, el) }}
                         onClick={() => setTheme(t.id)}
                         onMouseEnter={() => handleThemeHover(t.id)}
                         onMouseLeave={() => handleThemeHover(null)}
-                        className={`flex flex-col items-start gap-2 p-3 rounded-xl border text-left transition-all duration-200 ${
+                        onFocus={() => setFocusedId(t.id)}
+                        role="radio"
+                        aria-checked={active}
+                        tabIndex={active || focusedId === t.id ? 0 : -1}
+                        className={`flex flex-col items-start gap-2 p-3 rounded-xl border text-left transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent2)] ${
                           active
                             ? 'bg-[rgba(var(--accent-rgb),0.1)] border-[var(--accent2)] ring-1 ring-[var(--accent2)] shadow-[0_0_20px_rgba(var(--accent-rgb),0.15)]'
                             : 'bg-[rgba(255,255,255,0.02)] border-[var(--border)] hover:border-[var(--border2)] hover:bg-[rgba(255,255,255,0.04)] hover:shadow-[0_0_12px_rgba(255,255,255,0.03)]'
@@ -176,6 +235,22 @@ export default function ThemeSelector() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Keyboard hints */}
+          <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.04)] flex items-center justify-center gap-4">
+            <span className="text-[10px] text-[var(--text4)] font-mono hidden sm:flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 rounded bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)] text-[var(--text3)]">←→↑↓</kbd>
+              navigate
+            </span>
+            <span className="text-[10px] text-[var(--text4)] font-mono hidden sm:flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 rounded bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)] text-[var(--text3)]">Enter</kbd>
+              select
+            </span>
+            <span className="text-[10px] text-[var(--text4)] font-mono flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 rounded bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)] text-[var(--text3)]">Esc</kbd>
+              close
+            </span>
           </div>
         </div>
       </div>
