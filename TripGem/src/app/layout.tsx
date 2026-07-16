@@ -146,7 +146,7 @@ export default async function RootLayout({
           id="theme-loader"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('tripgem-theme');if(t)document.documentElement.setAttribute('data-theme',t);var isTouch=window.matchMedia&&window.matchMedia('(pointer: coarse)').matches;var s=localStorage.getItem('tripgem-settings');if(s){var p=JSON.parse(s);if(p&&p.loFiMode===true){document.documentElement.classList.add('lo-fi-mode')}else if(p&&p.loFiMode!==false&&isTouch){document.documentElement.classList.add('lo-fi-mode')}}else if(isTouch){document.documentElement.classList.add('lo-fi-mode')}}catch(e){}})()`,
+            __html: `(function(){try{document.documentElement.setAttribute('data-no-transitions','');var t=localStorage.getItem('tripgem-theme');if(t)document.documentElement.setAttribute('data-theme',t);var isTouch=window.matchMedia&&window.matchMedia('(pointer: coarse)').matches;var s=localStorage.getItem('tripgem-settings');if(s){var p=JSON.parse(s);if(p&&p.loFiMode===true){document.documentElement.classList.add('lo-fi-mode')}else if(p&&p.loFiMode!==false&&isTouch){document.documentElement.classList.add('lo-fi-mode')}}else if(isTouch){document.documentElement.classList.add('lo-fi-mode')}var r=typeof requestIdleCallback!=='undefined'?requestIdleCallback:function(fn){setTimeout(fn,200)};r(function(){document.documentElement.removeAttribute('data-no-transitions')})}catch(e){}})()`,
           }}
         />
         <Script
